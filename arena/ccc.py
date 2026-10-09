@@ -17,6 +17,7 @@ Usage (run from anywhere):
 import argparse
 import io
 import json
+import os
 import re
 import subprocess
 import sys
@@ -51,7 +52,9 @@ def state():
 
 def active_run():
     st = state()
-    name = st.get("active")
+    name = os.environ.get("CCC_RUN") or st.get("active")  # CCC_RUN lets parallel sessions use different runs
+    if name and name not in st["runs"]:
+        sys.exit(f"Unknown run {name!r}. Known: {', '.join(st['runs'])}")
     if not name:
         sys.exit("No active run. Use `train <gameSlug>` or `contest <contestName>` first.")
     return name, st["runs"][name], st

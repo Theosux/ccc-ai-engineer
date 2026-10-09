@@ -183,32 +183,5 @@
         }
       }
     }
-  },
-  "cooldowns": [
-    {
-      "level": 3,
-      "fileId": "2-small",
-      "remainingMs": 1556
-    },
-    {
-      "level": 3,
-      "fileId": "5-large",
-      "remainingMs": 3377
-    },
-    {
-      "level": 3,
-      "fileId": "3-medium",
-      "remainingMs": 2160
-    },
-    {
-      "level": 3,
-      "fileId": "4-medium",
-      "remainingMs": 2778
-    },
-    {
-      "level": 3,
-      "fileId": "1-small",
-      "remainingMs": 1039
-    }
-  ]
+  }
 }
