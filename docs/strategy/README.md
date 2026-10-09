@@ -7,8 +7,7 @@
 2. **At the start:** `python arena/ccc.py contest 42nd-classic-ccc-5872 --name contest`, then `fetch 1`.
 3. **Per level:** follow the `ccc-solve` loop.
    - Claude reads `statement.txt` and writes `solve.py`.
-   - `go N` verifies the example, submits, and shows the verdicts.
-   - Then `fetch N+1`.
+   - `go N` verifies, submits sequentially, and on a pass prints level N+1's statement (no separate fetch).
 4. **After each level:** commit the solutions.
 
 ## Training status
