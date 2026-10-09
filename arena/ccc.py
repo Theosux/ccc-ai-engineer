@@ -440,10 +440,12 @@ BOILER = re.compile(r"#WeLoveSoftware|cloudflight\.io/career|^PROCESSING|^For ea
                     r"|^Upload your output file|^LEVEL (ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)\b", re.I)
 
 SOLVE_TEMPLATE = '''import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+from lib import *  # Reader, grid/paths/search helpers: see .claude/skills/ccc-patterns
+# First line '# ccc: pypy' (or CCC_PY=pypy) runs this solver on PyPy.
 
 
 def solve(data: str) -> str:
-    t = data.split()
+    r = Reader(data)
     raise NotImplementedError
 
 
@@ -589,6 +591,7 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0):
     if pdfs:
         pdf_bytes = pdfs[0].read_bytes()
         stmt, content_pages = clean_statement(pdf_pages(pdf_bytes), gi.get("name"))
+        stmt = repair_garbled(stmt)
         (d / "statement.txt").write_text(stmt, encoding="utf-8")
     pngs = render_png(pdf_bytes, content_pages, d / "pages", scale) if png and pdf_bytes else []
     # solver: start from the previous level's solver (most levels extend it)
@@ -617,6 +620,10 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0):
         print("page PNGs (Read these for diagrams): " + ", ".join(str(p) for p in pngs))
     if stmt is not None:
         print(f"----- statement (statement.txt, pages {content_pages}; `fetch {n} --png` renders them)\n{stmt}")
+        bad = garbled_lines(stmt)
+        if bad:
+            print(f"!!!!! {len(bad)} statement line(s) were garbled (auto-repaired lines start with '[repaired]'),"
+                  f" e.g. {bad[0][:80]!r}. If still unclear: `fetch {n} --png` and Read the pages")
     else:
         print(f"(no PDF statement; files: {[p.name for p in files]})")
     for inp_rel, fid in mapping.items():
@@ -627,6 +634,34 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0):
             if exp:
                 print(f"----- expected output {exp.name}\n{head(exp)}")
     return d
+
+
+def repair_garbled(stmt):
+    """Some PDF fonts extract as UTF-16-ish bytes with glyph codes shifted by -29 ('D' -> 'a', '\\x03' -> ' ').
+    Decode those lines in place and tag them '[repaired]'."""
+    out = []
+    for line in stmt.splitlines():
+        if "\x00" in line:
+            s = line.replace("\x00", "")
+            line = "[repaired] " + "".join(chr(ord(c) + 29) if 3 <= ord(c) <= 93 else "?" if ord(c) > 126 else c for c in s)
+        out.append(line)
+    return "\n".join(out)
+
+
+def garbled_lines(stmt):
+    """PDF fonts sometimes extract as shifted/odd glyphs: flag lines dominated by 1-char tokens, control chars
+    or odd symbols."""
+    bad = []
+    for line in stmt.splitlines():
+        if line.startswith("[repaired] ") or any(ord(c) < 32 and c != "\t" for c in line):
+            bad.append(line)
+            continue
+        toks = line.split()
+        if len(toks) >= 8 and sum(len(t) == 1 and t.isalpha() for t in toks) / len(toks) > 0.6:
+            bad.append(line)
+        elif len(line) >= 20 and sum(not (c.isascii() or c in "–—‘’“”•▪…→×≤≥") for c in line) / len(line) > 0.3:
+            bad.append(line)
+    return bad
 
 
 def cmd_fetch(a):
@@ -667,12 +702,32 @@ def first_diff(want, got):
     return "identical"
 
 
+PYPY = ARENA / ".tools" / "pypy" / "pypy3.exe"
+
+
+def python_for(py_file):
+    """CPython by default; PyPy if CCC_PY=pypy or solve.py's first line contains '# ccc: pypy'."""
+    want = os.environ.get("CCC_PY", "")
+    try:
+        first = py_file.open(encoding="utf-8", errors="replace").readline()
+    except OSError:
+        first = ""
+    if want == "pypy" or "ccc: pypy" in first:
+        if PYPY.exists():
+            return str(PYPY)
+        print(f"  (PyPy requested but {PYPY} missing; using CPython)")
+    elif want and want != "cpython":
+        return want
+    return sys.executable
+
+
 def solver_cmd(d, solver):
     if not solver:
-        return [sys.executable, str(d / "solve.py")], False
+        return [python_for(d / "solve.py"), str(d / "solve.py")], False
     if solver.endswith(".py"):
         p = Path(solver)
-        return [sys.executable, str(p if p.is_absolute() or p.exists() else d / p)], False
+        p = p if p.is_absolute() or p.exists() else d / p
+        return [python_for(p), str(p)], False
     return solver, True  # arbitrary shell command, e.g. "pypy3 solve.py" or "node solve.js"
 
 

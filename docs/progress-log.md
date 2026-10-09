@@ -34,3 +34,27 @@
   - The per-file cooldown is about 5 s.
 
 **Next:** Lawn Mower L4+ (the first real algorithmic levels). Then a timed Challenge-mode rehearsal, which will also show whether wrong submits add penalty time. Then build a small solver helper library.
+
+## 2026-10-09 — Session 3: Optimization pass (2 agents)
+**Done**
+- **Speed agent:** rewrote `arena/ccc.py`. The target is 2 tool calls per level: write solve.py, then run `go N`.
+  - `fetch` prints the cleaned statement and the example. A new level's solve.py starts as a copy of the previous level's.
+  - `go` runs all inputs in parallel and verifies against the example or `check()`. It submits sequentially, smallest file first, stops on the first WRONG, then auto-fetches N+1.
+  - New commands: `wait` (contest start), `login --http` (uses `arena/.auth/credentials.env`).
+  - Runbook: `docs/strategy/workflow-speed.md`.
+- **Knowledge agent:** built `arena/lib/` (parsers, grid, Hamiltonian paths/cycles, search, simulation, optimization, geometry, checks; tests pass). Wrote `docs/knowledge/` (patterns, playbook, past games, resources) and the `ccc-patterns` skill.
+  - **Lawn Mower 7/7 solved.**
+- **Main session:**
+  - PyPy is now in `arena/.tools/pypy`, selected with `# ccc: pypy` or `CCC_PY=pypy`.
+  - Garbled PDF lines are auto-repaired (glyph shift −29).
+  - `.gitattributes` keeps inputs byte-exact.
+  - PDFs and PNGs are gitignored.
+
+**Key lessons**
+- Never submit in parallel: the server loses concurrent updates. This also applies to teammates.
+- Constructive levels need `check()`. Write each construction generally, because the next level usually drops a guarantee.
+- Hamiltonian-type searches have heavy tails: use a portfolio of restarts, not longer timeouts.
+
+**Open:** Teo will create `arena/.auth/credentials.env` (CCC_USER/CCC_PASS) for automatic re-login.
+
+**Next:** a timed Challenge-mode rehearsal on Spaceship (8 levels, the 2025 game). It will measure the real per-level pace, the unlocking in timed mode, and whether wrong submits add penalty time.

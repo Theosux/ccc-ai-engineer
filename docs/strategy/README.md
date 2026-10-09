@@ -14,10 +14,12 @@
 ## Training status
 | Run | Game | Mode | Levels passed | Notes |
 |---|---|---|---|---|
-| lawnmower | ccc-2024.04-classic-lawn-mower | exploration | 1–3 | L4+ (construct a Hamiltonian path) is the first real algorithmic level |
+| lawnmower | ccc-2024.04-classic-lawn-mower | exploration | **1–7 (all)** | L4 ~4 min, L5 40 s, L6 1.5 min, L7 24 min. L7 (Hamiltonian cycle with several trees) needed an exact solver with restarts, now `lib.paths.ham_cycle` |
+| speedtest | ccc-2024.10-classic-desks | exploration | 1–3 | Used to benchmark the new `go` loop |
+
+Speed details and the contest-day runbook are in [workflow-speed.md](workflow-speed.md).
 
 ## Ideas to build next
 - **Timed rehearsal:** a full Challenge-mode run (4 h) on Room Planner or Spaceship.
 - **Penalty check:** in Challenge mode, see whether a wrong submit adds to `gameScore.timeMs`.
 - **Parallelism:** for a team of 2–3, each person runs their own Claude session on a different level or approach. Any member can submit.
-- **Solver library:** grid/BFS helpers and common parsers in `arena/lib/` so solvers can be written faster.

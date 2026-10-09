@@ -21,12 +21,22 @@
 |---|---|
 | [README.md](strategy/README.md) | Contest-day workflow + training status |
 
+## Problem-solving knowledge (`docs/knowledge/`)
+| File | Purpose |
+|---|---|
+| [ccc-patterns.md](knowledge/ccc-patterns.md) | "Level says X → technique Y → arena/lib function Z" + pitfalls |
+| [solving-playbook.md](knowledge/solving-playbook.md) | Step-by-step procedure per level under time pressure; slow-solver recipe |
+| [past-games.md](knowledge/past-games.md) | Level-by-level progressions + techniques of past CCC games |
+| [resources.md](knowledge/resources.md) | External references + locally available libraries |
+
 ## Custom skills (`.claude/skills/`)
 | Skill | Purpose |
 |---|---|
 | `ccc-context` | The ritual: reloads all project context after /clear |
 | `ccc-solve` | Fast loop per level: fetch → statement → solve.py → go (training + contest) |
+| `ccc-patterns` | How to solve a level: technique cheat sheet + `arena/lib` API (with ccc-solve) |
 
 ## Other
 - [progress-log.md](progress-log.md) — dated session log
+- `arena/lib/` — Python helper library for solvers (parse, grid, paths/Hamiltonian, search, sim, opt, geom, check). Tests: `python arena/lib/tests/test_lib.py`
 - [arena/README.md](../arena/README.md) — working folder: CLI usage, folder layout (zips, inputs, outputs, solvers)

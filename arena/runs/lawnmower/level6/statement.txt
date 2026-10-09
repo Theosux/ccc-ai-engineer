@@ -1,0 +1,54 @@
+LEVEL 6#WeLoveSoftware
+u too? cloudflight.io/career
+
+The lawn mower must get back to where it started.
+▪ You are given a list of lawns.
+Each lawn has one tree on it.
+▪ For each lawn, find a valid path. 
+▪ You can choose the start cell.
+▪ The end cell must be a neighbor of 
+the start cell. 
+[repaired] Diagonals don?t count as neighbors.
+▪ Every given lawn is solvable.
+There are multiple correct solutions.
+LEVEL 6
+
+
+Input - identical to previous level​
+Name Description Example
+N Number of lawns 3
+7 5
+.......
+.......
+.......
+.......
+....X..
+7 7
+.......
+.......
+.......
+.......
+.......
+.....X.
+.......
+5 5
+..X..
+.....
+.....
+.....
+.....
+Repeated N times
+Lawn size The width and height of the lawn
+Lawn A paragraph of characters
+LEVEL 6
+Output - identical to previous level​
+Name Description Example
+Path 
+(repeated N times) A string of characters
+SSSSDDDWDDSDWWWWAASDSAAASAWWDDWAA
+SSSSSSDDDDDDWWWWWWAASDSASDSASAWASAWWWWDSSDWWWAA
+SSSSDDDDWWWWASASDSAAWWW
+
+#WeLoveSoftware
+u too? cloudflight.io/career Lawn Mower
+PROCESSING…

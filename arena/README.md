@@ -26,7 +26,7 @@ Diagrams: `fetch N --png` renders the statement pages to `levelN/pages/p*.png` (
 | `login` / `login --http` | Browser login (Edge), or HTTP login using `.auth/credentials.env` (`CCC_USER=`, `CCC_PASS=`). |
 | `games`, `use NAME`, `api GET\|POST <path> [--game]` | Utilities. `api` survives Git Bash path mangling. |
 
-`--solver "pypy3 solve.py"` or `--solver "node solve.js"` runs any command (cwd = levelN). PyPy is not installed (as of 2026-10-09).
+`--solver "pypy3 solve.py"` or `--solver "node solve.js"` runs any command (cwd = levelN). **PyPy:** `arena/.tools/pypy/pypy3.exe` (gitignored). Activate it with a first line `# ccc: pypy` in solve.py or `CCC_PY=pypy`. To reinstall: unzip the PyPy 3.11 win64 release from pypy.org into `arena/.tools/pypy/`.
 
 ## Layout
 ```

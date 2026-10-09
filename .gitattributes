@@ -1,0 +1,4 @@
+# keep contest inputs/outputs byte-exact (no CRLF conversion on Windows checkout)
+arena/runs/** -text
+*.py text eol=lf
+*.md text eol=lf

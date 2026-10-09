@@ -14,13 +14,16 @@ CLI: `python arena/ccc.py` from the repo root (details in `arena/README.md`). **
 
 ## 1. Read
 `fetch N` (or the tail of `go N-1`) prints the cleaned statement, the example input and the expected output. **Do not re-read files that were already printed.**
-- If a diagram, colours or a picture matter, run `fetch N --png` and Read `levelN/pages/pK.png`. The page numbers appear as `[pK]` in the statement.
+- Lines starting `[repaired]` were garbled in the PDF and were auto-decoded. If a diagram, colours or a picture matter, run `fetch N --png` and Read `levelN/pages/pK.png`. The page numbers appear as `[pK]` in the statement.
 - `levelN/sandbox.html`, when present, is the official visualizer.
 
 ## 2. Write `arena/runs/<run>/levelN/solve.py`
 - It is already a **copy of level N-1's solver**. Edit it: keep the parsing, change what is new.
 - It reads stdin and writes stdout. For arena/lib, use the header `import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))` and then `from lib import ...`.
 - **Many valid answers** ("order does not matter", constructions): define `check(data, out) -> bool | (bool, msg)` in solve.py. `go` then accepts outputs that pass `check()` even if the example differs. A copied `check()` from the previous level must be updated, or deleted.
+
+- **Patterns and helpers:** see the `ccc-patterns` skill (lib cheat sheet, pattern → technique). For profiling: `python arena/lib/check.py arena/runs/<run>/levelN --profile`.
+- **Heavy brute force or simulation:** make the first line of solve.py `# ccc: pypy` to run it on PyPy (~60× faster on plain loops). Or set `CCC_PY=pypy` per command.
 
 ## 3. `python arena/ccc.py go N` (use a tool timeout of 600000 ms)
 It runs all inputs in parallel and verifies (example or check). It submits sequentially, smallest first, and stops at the first WRONG. Passed files are skipped.
