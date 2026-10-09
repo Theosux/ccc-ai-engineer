@@ -64,3 +64,20 @@
 
 ## Open questions
 - Whether the zip naming and statement format will be the same for the new 2026 game. If not, the tool falls back to the platform's "last number picks the case" rule.
+
+## Confirmed by hands-on test (2026-10-09, Room Planner `speedtest` run; see docs/strategy/workflow-speed.md)
+Sources are the game client bundle `https://desks.codingcontest.org/assets/index-*.js`, the platform bundle `https://codingcontest.org/main-*.js` + chunks, and live API responses.
+- **Concurrent submits lose updates.** 5 parallel `submit-2-*` requests all returned CORRECT, but only 2 were recorded in `passedFiles`. Sequential submits accumulate correctly. Submit one file at a time, and teammates must not submit at the same moment.
+- **The submit response includes the full `score`** (`gameScore.level`, `state.levelN.passedFiles/passedAt`) plus `cooldownSec`. No `contestant-info` call is needed after a submit.
+- **Grading time scales with size:** ≤150 KB takes ~1–1.6 s; a 1.2 MB output took ~20 s (server side).
+- **Public game metadata:** `GET <gameBaseUrl>/game/game-info` (no auth) → `levelsInfo.count` and per level `{optimization, sandbox, scoreDirection, passScore?, inputFiles, unscoredFiles}`.
+- **Level files:** `GET /api/contestant/level/N/files` → `{"url": "https://files.codingcontest.org/game-files/<game>/level-N.zip?<SAS>"}` (a short-lived pre-signed blob). The client falls back to `...?raw=true` if the blob fetch fails. `/input/{fileId}` also returns `{url}`.
+- **Unlocking in the client:** `maxAccessibleLevel = score.gameScore.level`; a level is accessible if untimed (`durationMinutes == 0`) or `N <= maxAccessibleLevel`.
+- **`contestant-info`** also returns `cooldowns: [{level, fileId, remainingMs}]` and `state.levelN.submissions[{fileId, submittedAt, result, submittedBy}]`.
+- **Case feedback fields:** `caseState`, `caseMessage`, `startLineNumber`, `endLineNumberExcl`, `errorLineNumber`, `optimizationScore`.
+- **Other game endpoints:** `/api/game-engine/participant/state`, `/api/game-engine/leaderboard?scope=WORLD`, and the dev-only `/api/dev/*` (not used).
+- **Platform endpoints:** `GET /api/contests/my-registrations`; SSE `/api/contests/status/stream` (event `contest-status` `{contestId, contestSlug, status}`); SSE `/api/contests/scores/stream?contestSlug=` (event `score-update`).
+- **Contest page logic:** the game iframe loads only if the status is `RUNNING` or `STATS_FROZEN`, the user is registered (or it is a training run), and `gameBaseUrl` is https. The `serverNowMs` in `/api/contests/{name}` is used for clock offset.
+- **Login:** `POST /api/auth/login {username, password}` with the `X-XSRF-TOKEN` header from the `XSRF-TOKEN` cookie (Angular default). There is no captcha on login (only on register and password reset). Bad credentials → 401 `{"error":"Invalid credentials"}`. `GET /api/auth/current-user` → 401 when logged out.
+- **Session:** `SESSION` and `XSRF-TOKEN` are session cookies (no expiry). The game token is an opaque 36-char UUID with an unknown TTL.
+- **Our registration:** 42nd CLASSIC CCC, team "Krateo" (2 members), venue CREIC Cluj-Napoca, time zone Europe/Bucharest. Start `2026-10-23T13:00:00Z`, 240 min.

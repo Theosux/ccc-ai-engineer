@@ -1,0 +1,44 @@
+[p1]
+LEVEL 2
+
+[p2]
+You've done a satisfactory job, and as a result, you've been promoted to the position of
+“Inventory Manager”. The previous Inventory Manager has been let go.
+Moving forward, the calculations will be handled by someone else. Your primary responsibility
+now is to oversee and direct the team in ensuring that desks are properly arranged.
+From: global.head.of.logistics@toxic-company.com
+Subject: Your first promotion
+▪ You are given a list of rooms that follow the rules from last level
+▪ For each room, you are given the number of desks that you must place in that room
+(the number will be the maximum that you calculated last level)
+▪ The desks have IDs ranging from 1 to the given number of desks
+▪ For each cell of the room, output the ID of the desk at that position
+
+[p3]
+Output
+Name Description Example
+Room
+(repeated N times)
+A matrix of integers, with y rows and x columns
+Each integer represents the ID of the table at that cell
+The order of the tables does not matter
+The empty line between rooms is optional
+1 1 1 2 2 2
+4 4 4 3 3 3
+10 10 10 6 6 6
+7 7 7 8 8 8
+5 5 5 9 9 9
+1 1 1 2 2 2 3 3 3
+6 6 6 5 5 5 4 4 4
+...
+Input
+Name Description Example
+N Number of rooms 3
+6 5 10
+9 8 24
+Room 6 7 14
+(repeated N times)
+Three space separated integers representing a room
+First integer: x room length (divisible by 3)
+Second integer: y room length
+Third integer: number of desks to be placed

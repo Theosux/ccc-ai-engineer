@@ -1,49 +1,73 @@
 #!/usr/bin/env python3
 """CCC arena CLI: fetch levels, run solvers, submit outputs on codingcontest.org.
 
-Usage (run from anywhere):
-  python arena/ccc.py login                    # one-time: log in via Edge window, saves cookies
-  python arena/ccc.py games                    # list practice games (slugs)
+  python arena/ccc.py fetch N [--png]   # download level N, print cleaned statement + example; solve.py = copy of N-1
+  python arena/ccc.py go N [--force]    # run all inputs (parallel), check example (or solve.check), submit
+                                        # (sequential, verified), and if the level passed: fetch N+1 + print it
+  python arena/ccc.py run N [--only ID] [--solver CMD]     # outputs only
+  python arena/ccc.py submit N [--only ID ...] [--include-example]
+  python arena/ccc.py info [--raw]
+  python arena/ccc.py wait [contestName] [--name contest]  # contest day: block until the game is live, then fetch 1
+  python arena/ccc.py contest [contestName] [--name contest]
   python arena/ccc.py train <gameSlug> [--mode exploration|challenge] [--name NAME]
-  python arena/ccc.py contest <contestName> [--name NAME]   # contest day
-  python arena/ccc.py use <NAME>               # switch active run folder
-  python arena/ccc.py info                     # level/file status of active run
-  python arena/ccc.py fetch <N>                # download + unzip level N
-  python arena/ccc.py run <N> [--only ID]      # run levelN/solve.py on every input -> out/
-  python arena/ccc.py submit <N> [--only ID] [--include-example]
-  python arena/ccc.py go <N>                   # run + submit (example checked first)
-  python arena/ccc.py api <GET|POST> <path> [--game]   # raw API call (debug)
+  python arena/ccc.py login [--http]    # browser login (Edge) or HTTP login from .auth/credentials.env
+  python arena/ccc.py games | use NAME | api GET|POST <path> [--game]
+Env: CCC_RUN=<name> selects the run for one command (and keeps `train`/`contest` from changing the active run).
 """
 import argparse
+import concurrent.futures as cf
+import importlib.util
 import io
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
+import threading
 import time
 import zipfile
 from pathlib import Path
 
 import requests
 
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
+    except Exception:
+        pass
+
 BASE = "https://codingcontest.org"
+CONTEST = "42nd-classic-ccc-5872"
 ARENA = Path(__file__).resolve().parent
 AUTH = ARENA / ".auth"
 RUNS = ARENA / "runs"
 COOKIES = AUTH / "cookies.json"
 STATE = AUTH / "state.json"
+CREDS = AUTH / "credentials.env"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36 Edg/141.0"
+T0 = time.time()
+LOCK = threading.Lock()
 
 
-# ---------------------------------------------------------------- state / http
+def die(msg, code=2):
+    print(f"ERROR: {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+# ---------------------------------------------------------------- state
 def load_json(p, default):
-    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else default
+    try:
+        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else default
+    except json.JSONDecodeError:
+        return default
 
 
 def save_json(p, data):
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    tmp = p.with_suffix(p.suffix + ".tmp")
+    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    os.replace(tmp, p)
 
 
 def state():
@@ -52,67 +76,112 @@ def state():
 
 def active_run():
     st = state()
-    name = os.environ.get("CCC_RUN") or st.get("active")  # CCC_RUN lets parallel sessions use different runs
+    name = os.environ.get("CCC_RUN") or st.get("active")
     if name and name not in st["runs"]:
-        sys.exit(f"Unknown run {name!r}. Known: {', '.join(st['runs'])}")
+        die(f"Unknown run {name!r}. Known: {', '.join(st['runs'])}")
     if not name:
-        sys.exit("No active run. Use `train <gameSlug>` or `contest <contestName>` first.")
+        die("No active run. Use `train <gameSlug>`, `contest` or `wait` first.")
     return name, st["runs"][name], st
+
+
+def update_run(name, **fields):
+    """Re-read state.json and patch one run (other sessions may write the file concurrently)."""
+    with LOCK:
+        st = state()
+        st["runs"].setdefault(name, {}).update(fields)
+        save_json(STATE, st)
+
+
+# ---------------------------------------------------------------- http
+_TLS = threading.local()
+
+
+def _sess():
+    s = getattr(_TLS, "s", None)
+    if s is None:  # one keep-alive session per thread (requests.Session is not guaranteed thread-safe)
+        s = _TLS.s = requests.Session()
+        s.headers["User-Agent"] = UA
+    return s
+
+
+def req(method, url, session=None, tries=3, **kw):
+    """HTTP with retry on network errors and 502/503/504. Exits cleanly instead of a traceback."""
+    kw.setdefault("timeout", 60)
+    s = session or _sess()
+    for i in range(tries):
+        try:
+            r = s.request(method, url, **kw)
+            if r.status_code in (502, 503, 504) and i < tries - 1:
+                time.sleep(1 + i)
+                continue
+            return r
+        except (requests.ConnectionError, requests.Timeout) as e:
+            if i == tries - 1:
+                die(f"network error on {method} {url.split('?')[0]}: {e.__class__.__name__}. Check the connection and retry.")
+            time.sleep(1 + 2 * i)
 
 
 def platform_session():
     s = requests.Session()
-    s.headers["User-Agent"] = UA
+    s.headers.update({"User-Agent": UA, "Referer": BASE + "/", "Origin": BASE})
     for c in load_json(COOKIES, []):
         s.cookies.set(c["name"], c["value"], domain=c.get("domain"), path=c.get("path", "/"))
     xsrf = s.cookies.get("XSRF-TOKEN")
     if xsrf:
         s.headers["X-XSRF-TOKEN"] = xsrf
-    s.headers["Referer"] = BASE + "/"
-    s.headers["Origin"] = BASE
     return s
 
 
+def plat(method, path, s=None, **kw):
+    """Platform request; on 401 with credentials available, re-login over HTTP once and retry."""
+    r = req(method, BASE + path, session=s or platform_session(), **kw)
+    if r.status_code == 401 and all(read_creds()):
+        print("(session expired -> automatic HTTP re-login)", file=sys.stderr)
+        http_login()
+        fresh = platform_session()
+        if s is not None:
+            s.cookies, s.headers = fresh.cookies, fresh.headers
+        r = req(method, BASE + path, session=s or fresh, **kw)
+    return r
+
+
 def check(r, what):
-    if r.status_code == 401 or r.status_code == 403 and "login" in r.text.lower():
-        sys.exit(f"{what}: not logged in ({r.status_code}). Run `python arena/ccc.py login`.")
+    if r.status_code == 401 or (r.status_code == 403 and "login" in r.text.lower()):
+        die(f"{what}: SESSION EXPIRED / not logged in (HTTP {r.status_code}). Run `python arena/ccc.py login` "
+            f"(or `login --http` if .auth/credentials.env exists), then repeat the command.")
     if not r.ok:
-        sys.exit(f"{what}: HTTP {r.status_code} {r.text[:300]}")
+        die(f"{what}: HTTP {r.status_code} {r.text[:300]}")
     return r
 
 
 def game_headers(run):
     origin = run["gameBaseUrl"].rstrip("/")
-    return {
-        "Authorization": run["token"],
-        "X-CCC-SLUG": run["contestSlug"],
-        "Referer": origin + "/",
-        "Origin": origin,
-        "Sec-Fetch-Site": "same-origin",
-        "User-Agent": UA,
-    }
+    return {"Authorization": run["token"], "X-CCC-SLUG": run["contestSlug"], "Referer": origin + "/",
+            "Origin": origin, "Sec-Fetch-Site": "same-origin", "User-Agent": UA}
 
 
-def refresh_token(name, run, st):
-    s = platform_session()
-    r = check(s.post(f"{BASE}/api/game-token", json={"contestSlug": run["contestSlug"]}), "game-token")
-    run["token"] = r.json()["token"]
-    run["tokenAt"] = time.time()
-    st["runs"][name] = run
-    save_json(STATE, st)
+def refresh_token(name, run, seen=None):
+    with LOCK:
+        if seen is not None and run.get("token") != seen:  # another thread already refreshed
+            return run
+        r = check(plat("POST", "/api/game-token", json={"contestSlug": run["contestSlug"]}), "game-token")
+        run["token"] = r.json()["token"]
+        run["tokenAt"] = time.time()
+    update_run(name, token=run["token"], tokenAt=run["tokenAt"])
     return run
 
 
-def game_req(method, path, run_ctx=None, **kw):
+def game_req(method, path, ctx, **kw):
     """Request against the game origin; refreshes the game token once on 401/403."""
-    name, run, st = run_ctx or active_run()
+    name, run, _ = ctx
     if not run.get("token"):
-        run = refresh_token(name, run, st)
+        refresh_token(name, run)
     url = run["gameBaseUrl"].rstrip("/") + path
     for attempt in range(2):
-        r = requests.request(method, url, headers=game_headers(run), timeout=120, **kw)
+        tok = run["token"]
+        r = req(method, url, headers=game_headers(run), **kw)
         if r.status_code in (401, 403) and attempt == 0:
-            run = refresh_token(name, run, st)
+            refresh_token(name, run, seen=tok)
             continue
         return r
     return r
@@ -124,20 +193,63 @@ def run_dir(name):
     return d
 
 
-# ---------------------------------------------------------------- commands
+def level_dir(name, n):
+    return run_dir(name) / f"level{n}"
+
+
+def game_info(ctx):
+    """Public /game/game-info: level count + per level inputFiles/unscoredFiles/sandbox/optimization. Cached."""
+    name, run, _ = ctx
+    p = run_dir(name) / "game-info.json"
+    gi = load_json(p, None)
+    if gi is None:
+        origin = run["gameBaseUrl"].rstrip("/")
+        r = req("GET", origin + "/game/game-info", headers={"Referer": origin + "/", "Sec-Fetch-Site": "same-origin"})
+        try:
+            gi = r.json() if r.ok else {}
+        except ValueError:
+            gi = {}
+        if gi:
+            save_json(p, gi)
+    return gi or {}
+
+
+def level_meta(gi, n):
+    lv = (gi.get("levelsInfo") or {}).get("levels") or []
+    return lv[n - 1] if 0 < n <= len(lv) else {}
+
+
+def total_levels(gi):
+    return (gi.get("levelsInfo") or {}).get("count")
+
+
+def contestant_info(ctx):
+    r = game_req("GET", "/api/contestant/contestant-info", ctx)
+    if not r.ok:
+        die(f"contestant-info: HTTP {r.status_code} {r.text[:300]}")
+    info = r.json()
+    save_json(run_dir(ctx[0]) / "contestant-info.json", info)
+    return info
+
+
+def passed_files(score, n):
+    lv = ((score or {}).get("state") or {}).get(f"level{n}") or {}
+    return {f for f, v in (lv.get("passedFiles") or {}).items() if v}, lv.get("passedAt")
+
+
+# ---------------------------------------------------------------- auth
 def cmd_login(a):
+    if a.http:
+        return http_login()
     from playwright.sync_api import sync_playwright
 
     AUTH.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
-        ctx = p.chromium.launch_persistent_context(
-            str(AUTH / "edge-profile"), channel="msedge", headless=False, viewport=None
-        )
+        ctx = p.chromium.launch_persistent_context(str(AUTH / "edge-profile"), channel="msedge", headless=False, viewport=None)
         page = ctx.pages[0] if ctx.pages else ctx.new_page()
         page.goto(BASE + "/login")
         print("Log in in the Edge window (waiting up to 5 min)...")
-        deadline = time.time() + 300
-        user = None
+        deadline, user = time.time() + 300, None
         while time.time() < deadline:
             r = ctx.request.get(BASE + "/api/auth/current-user")
             if r.ok:
@@ -150,42 +262,88 @@ def cmd_login(a):
             time.sleep(2)
         if not user:
             ctx.close()
-            sys.exit("Login not detected.")
-        cookies = [c for c in ctx.cookies() if "codingcontest.org" in c["domain"]]
-        save_json(COOKIES, cookies)
+            die("Login not detected.")
+        save_json(COOKIES, [c for c in ctx.cookies() if "codingcontest.org" in c["domain"]])
         ctx.close()
-    print(f"Logged in as {user.get('username')} (participant roles: {user.get('roles')}). Cookies saved.")
+    print(f"Logged in as {user.get('username')} (roles: {user.get('roles')}). Cookies saved.")
 
 
+def read_creds():
+    env = {}
+    if CREDS.exists():
+        for line in CREDS.read_text(encoding="utf-8").splitlines():
+            if "=" in line and not line.lstrip().startswith("#"):
+                k, v = line.split("=", 1)
+                env[k.strip()] = v.strip().strip('"').strip("'")
+    user = os.environ.get("CCC_USER") or env.get("CCC_USER")
+    pw = os.environ.get("CCC_PASS") or env.get("CCC_PASS")
+    return user, pw
+
+
+def http_login():
+    """POST /api/auth/login {username,password} with the XSRF double-submit cookie. Saves cookies only on success."""
+    user, pw = read_creds()
+    if not user or not pw:
+        die(f"No credentials. Put CCC_USER=... and CCC_PASS=... in {CREDS} (gitignored), or use `login` (browser).")
+    s = requests.Session()
+    s.headers.update({"User-Agent": UA, "Referer": BASE + "/login", "Origin": BASE})
+    req("GET", BASE + "/api/auth/current-user", session=s)
+    if not s.cookies.get("XSRF-TOKEN"):
+        req("GET", BASE + "/login", session=s)
+    xsrf = s.cookies.get("XSRF-TOKEN")
+    if xsrf:
+        s.headers["X-XSRF-TOKEN"] = xsrf
+    r = req("POST", BASE + "/api/auth/login", session=s, json={"username": user, "password": pw}, tries=2)
+    if not r.ok:
+        die(f"HTTP login failed: HTTP {r.status_code} {r.text[:200]} (xsrf cookie {'present' if xsrf else 'MISSING'}). "
+            "Fall back to `python arena/ccc.py login` (browser).")
+    me = req("GET", BASE + "/api/auth/current-user", session=s)
+    try:
+        who = me.json()
+    except ValueError:
+        who = {}
+    if not me.ok or not who.get("username"):
+        die(f"HTTP login: current-user check failed (HTTP {me.status_code}). Use browser `login`.")
+    save_json(COOKIES, [{"name": c.name, "value": c.value, "domain": c.domain.lstrip("."), "path": c.path or "/"}
+                        for c in s.cookies if "codingcontest.org" in (c.domain or "")])
+    print(f"Logged in (HTTP) as {who.get('username')} (roles: {who.get('roles')}). Cookies saved.")
+
+
+# ---------------------------------------------------------------- runs
 def cmd_games(a):
-    r = check(requests.get(f"{BASE}/api/games", headers={"User-Agent": UA}), "games")
-    for g in r.json():
+    for g in check(req("GET", f"{BASE}/api/games"), "games").json():
         print(f"{g.get('slug'):45} {g.get('totalLevels')!s:>3} lv  {g.get('title') or g.get('name')}")
 
 
-def register_run(name, contest_name, extra):
-    s = platform_session()
-    c = check(s.get(f"{BASE}/api/contests/{contest_name}"), "contest").json()
-    gbu = c.get("gameBaseUrl")
-    slug = c.get("slug") or contest_name
-    if not gbu:
-        save_json(run_dir(name) / "contest.json", c)
-        sys.exit(f"Contest has no gameBaseUrl yet (game not assigned?). Saved contest.json in runs/{name}.")
-    st = state()
-    st["runs"][name] = {"contestName": contest_name, "contestSlug": slug, "gameBaseUrl": gbu, "token": None, **extra}
-    st["active"] = name
-    save_json(STATE, st)
+def register_run(name, contest_name, extra, c=None):
+    c = c or check(plat("GET", f"/api/contests/{contest_name}"), "contest").json()
+    gbu, slug = c.get("gameBaseUrl"), c.get("slug") or contest_name
     save_json(run_dir(name) / "contest.json", c)
-    print(f"Active run: {name}  (contest {slug}, game {gbu})")
-    refresh_token(name, st["runs"][name], st)
-    print("Game token OK.")
+    if not gbu:
+        die(f"Contest {slug} has no game yet (status {c.get('status')}, start {c.get('startTime')}). "
+            f"Use `python arena/ccc.py wait` to block until it is live.")
+    with LOCK:
+        st = state()
+        st["runs"][name] = {"contestName": contest_name, "contestSlug": slug, "gameBaseUrl": gbu, "token": None, **extra}
+        if not os.environ.get("CCC_RUN"):
+            st["active"] = name
+        save_json(STATE, st)
+    run = st["runs"][name]
+    (run_dir(name) / "game-info.json").unlink(missing_ok=True)
+    refresh_token(name, run)
+    gi = game_info((name, run, st))
+    act = "active" if not os.environ.get("CCC_RUN") else "not activated (CCC_RUN set)"
+    print(f"Run {name} [{act}]: contest {slug}, game {gi.get('name') or gbu}, {total_levels(gi)} levels. Token OK.")
+    return name, run, st
 
 
 def cmd_train(a):
     s = platform_session()
-    r = s.post(f"{BASE}/api/training/{a.slug}/start", params={"mode": a.mode})
-    if r.status_code == 409 or not r.ok:
-        act = s.get(f"{BASE}/api/training/active")
+    r = plat("POST", f"/api/training/{a.slug}/start", s, params={"mode": a.mode})
+    if not r.ok:
+        if r.status_code == 401:
+            check(r, "training start")
+        act = plat("GET", "/api/training/active", s)
         print(f"start -> HTTP {r.status_code} {r.text[:200]}; active training: {act.status_code} {act.text[:300]}")
         if not act.ok or not act.text.strip():
             sys.exit(1)
@@ -193,53 +351,114 @@ def cmd_train(a):
     else:
         data = r.json()
     contest_name = data.get("contestName") or data.get("name") or data.get("slug")
-    name = a.name or a.slug.split("-")[-1]
-    register_run(name, contest_name, {"gameSlug": a.slug, "mode": a.mode})
+    register_run(a.name or a.slug.split("-")[-1], contest_name, {"gameSlug": a.slug, "mode": a.mode})
 
 
 def cmd_contest(a):
-    register_run(a.name or "contest", a.contest_name, {})
+    register_run(a.name, a.contest_name, {})
+
+
+def hms(sec):
+    sec = int(sec)
+    d, h, m, s = sec // 86400, sec % 86400 // 3600, sec % 3600 // 60, sec % 60
+    return (f"{d}d " if d else "") + f"{h:02d}:{m:02d}:{s:02d}"
+
+
+def cmd_wait(a):
+    """Block until the contest is live (status RUNNING + gameBaseUrl), keeping the session warm; then register + fetch 1."""
+    s = platform_session()
+    last_auth = 0
+    while True:
+        if time.time() - last_auth > 240:  # also keeps the server-side session from idling out
+            check(plat("GET", "/api/auth/current-user", s), "session check")
+            last_auth = time.time()
+        r = plat("GET", f"/api/contests/{a.contest_name}", s)
+        if r.status_code == 401:
+            check(r, "contest")
+        c = r.json() if r.ok else {}
+        status, gbu = c.get("status"), c.get("gameBaseUrl")
+        if status in ("RUNNING", "STATS_FROZEN") and gbu:
+            break
+        left = None
+        if c.get("startTime") and c.get("serverNowMs"):
+            from datetime import datetime
+            start = datetime.fromisoformat(c["startTime"].replace("Z", "+00:00")).timestamp() * 1000
+            left = (start - c["serverNowMs"]) / 1000
+        nap = 2 if left is None or left < 90 else min(left - 60, 240)
+        print(f"[{time.strftime('%H:%M:%S')}] status={status} game={'yes' if gbu else 'no'} "
+              f"starts in {'?' if left is None else hms(left)}; next check in {nap:.0f}s", flush=True)
+        time.sleep(nap)
+    print(f"[{time.strftime('%H:%M:%S')}] LIVE: {c.get('gameName')} at {gbu}", flush=True)
+    for i in range(30):  # game token / game API can lag the status flip by a few seconds
+        try:
+            ctx = register_run(a.name, a.contest_name, {}, c=c)
+            break
+        except SystemExit:
+            if i == 29:
+                raise
+            time.sleep(2)
+            c = plat("GET", f"/api/contests/{a.contest_name}", s).json()
+    os.environ["CCC_RUN"] = a.name
+    fetch_level(ctx, 1, retry_s=60)
 
 
 def cmd_use(a):
-    st = state()
-    if a.name not in st["runs"]:
-        sys.exit(f"Unknown run. Known: {', '.join(st['runs'])}")
-    st["active"] = a.name
-    save_json(STATE, st)
+    with LOCK:
+        st = state()
+        if a.name not in st["runs"]:
+            die(f"Unknown run. Known: {', '.join(st['runs'])}")
+        st["active"] = a.name
+        save_json(STATE, st)
     print(f"Active run: {a.name}")
-
-
-def contestant_info(ctx=None):
-    r = game_req("GET", "/api/contestant/contestant-info", ctx)
-    if not r.ok:
-        sys.exit(f"contestant-info: HTTP {r.status_code} {r.text[:300]}")
-    return r.json()
 
 
 def cmd_info(a):
     ctx = active_run()
     info = contestant_info(ctx)
-    save_json(run_dir(ctx[0]) / "contestant-info.json", info)
     if a.raw:
         print(json.dumps(info, indent=2)[:6000])
         return
-    print(f"Run: {ctx[0]}")
-    state_ = (info.get("score") or {}).get("state") or {}
-    for k in sorted(state_, key=lambda x: int(re.sub(r"\D", "", x) or 0)):
-        lv = state_[k]
-        passed = lv.get("passedFiles") or {}
-        print(f"  {k}: passedAt={lv.get('passedAt')} passedFiles={sorted(f for f, v in passed.items() if v)}")
-    for key in ("currentLevel", "maxAccessibleLevel", "level", "levels"):
-        if key in info:
-            val = info[key]
-            print(f"  {key}: {json.dumps(val)[:800]}")
+    gi = game_info(ctx)
+    score = info.get("score") or {}
+    gs = score.get("gameScore") or {}
+    print(f"Run {ctx[0]} ({ctx[1]['contestSlug']}): unlocked level {gs.get('level')}/{total_levels(gi)}")
+    st = score.get("state") or {}
+    for k in sorted(st, key=lambda x: int(re.sub(r"\D", "", x) or 0)):
+        n = int(re.sub(r"\D", "", k) or 0)
+        ok, at = passed_files(score, n)
+        allf = list((st[k].get("passedFiles") or {}).keys())
+        todo = [f for f in allf if f not in ok]
+        print(f"  {k}: {'PASSED' if at else f'{len(ok)}/{len(allf)} passed, todo {todo}'}")
+    cds = [f"L{c['level']}/{c['fileId']} {c['remainingMs'] / 1000:.0f}s" for c in info.get("cooldowns") or [] if c.get("remainingMs", 0) > 0]
+    if cds:
+        print(f"  cooldowns: {', '.join(cds)}")
+
+
+# ---------------------------------------------------------------- fetch
+IN_RE = re.compile(r"^in_level-?(\d+)_(.+)\.[a-z]+$", re.I)
+BOILER = re.compile(r"#WeLoveSoftware|cloudflight\.io/career|^PROCESSING|^For each input file, calculate the output"
+                    r"|^Upload your output file|^LEVEL (ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)\b", re.I)
+
+SOLVE_TEMPLATE = '''import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+
+
+def solve(data: str) -> str:
+    t = data.split()
+    raise NotImplementedError
+
+
+# Optional: def check(data: str, out: str) -> bool | (bool, str)
+# If defined, `go` accepts outputs that check() validates even when the example output differs.
+
+if __name__ == "__main__":
+    sys.stdout.write(solve(sys.stdin.read()))
+'''
 
 
 def file_id_for(stem, ids):
-    """Mirror the platform rule: exact id in name, else the last number in the filename picks the case."""
+    """Platform rule: exact id at the end of the name, else the last number in the filename picks the case."""
     for fid in sorted(ids, key=len, reverse=True):
-        if re.search(rf"(^|[^0-9a-z]){re.escape(fid)}$", stem.lower()):
+        if re.search(rf"(^|[^0-9a-z]){re.escape(fid.lower())}$", stem.lower()):
             return fid
     if "example" in stem.lower():
         ex = [i for i in ids if "example" in i]
@@ -255,80 +474,166 @@ def file_id_for(stem, ids):
     return None
 
 
-def level_dir(name, n):
-    return run_dir(name) / f"level{n}"
+def pdf_pages(pdf_bytes):
+    try:
+        import pypdfium2 as pdfium
+        doc = pdfium.PdfDocument(pdf_bytes)
+        pages = [doc[i].get_textpage().get_text_bounded() for i in range(len(doc))]
+        doc.close()
+        return pages
+    except Exception:
+        from pypdf import PdfReader
+        return [pg.extract_text() or "" for pg in PdfReader(io.BytesIO(pdf_bytes)).pages]
 
 
-def cmd_fetch(a):
-    ctx = active_run()
+def clean_statement(pages, game_name=None):
+    """Drop slide boilerplate (#WeLoveSoftware, career link, PROCESSING, duplicate LEVEL headers, game name)."""
+    out, seen = [], set()
+    for i, txt in enumerate(pages, 1):
+        lines = []
+        for line in txt.replace("\r", "").splitlines():
+            s = line.strip()
+            if not s or BOILER.search(s) or (game_name and s == game_name):
+                continue
+            if re.fullmatch(r"LEVEL \d+", s, re.I):
+                if s.upper() in seen:
+                    continue
+                seen.add(s.upper())
+            lines.append(line.rstrip())
+        if lines:
+            out += [f"[p{i}]"] + lines + [""]
+    return "\n".join(out).strip() + "\n", [int(l[2:-1]) for l in out if re.fullmatch(r"\[p\d+\]", l)]
+
+
+def render_png(pdf_bytes, pages, outdir, scale):
+    import pypdfium2 as pdfium
+    outdir.mkdir(exist_ok=True)
+    doc = pdfium.PdfDocument(pdf_bytes)
+    paths = []
+    for p in pages:
+        path = outdir / f"p{p}.png"
+        doc[p - 1].render(scale=scale).to_pil().save(path)
+        paths.append(path)
+    doc.close()
+    return paths
+
+
+def head(path, n=25, width=160):
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    shown = [l if len(l) <= width else l[:width] + " ..." for l in lines[:n]]
+    more = f"\n... ({len(lines)} lines total)" if len(lines) > n else ""
+    return "\n".join(shown) + more
+
+
+def download_zip(ctx, n, retry_s=0):
+    deadline = time.time() + retry_s
+    while True:
+        r = game_req("GET", f"/api/contestant/level/{n}/files", ctx)
+        if r.ok:
+            break
+        if time.time() >= deadline:
+            die(f"level {n} files: HTTP {r.status_code} {r.text[:200]} (level not unlocked yet? check `info`)")
+        time.sleep(2)
+    if "application/json" in r.headers.get("content-type", ""):
+        z = req("GET", r.json()["url"], timeout=(10, 30))  # pre-signed blob URL, no auth; retried on stalls
+        if not z.ok:  # same fallback as the game client
+            z = game_req("GET", f"/api/contestant/level/{n}/files?raw=true", ctx)
+        if not z.ok:
+            die(f"level {n} zip download: HTTP {z.status_code}")
+        return z.content
+    return r.content
+
+
+def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0):
     name, run, _ = ctx
-    n = a.level
+    t0 = time.time()
     d = level_dir(name, n)
     d.mkdir(parents=True, exist_ok=True)
-    r = game_req("GET", f"/api/contestant/level/{n}/files", ctx)
-    if not r.ok:
-        sys.exit(f"files: HTTP {r.status_code} {r.text[:300]}")
-    if "application/json" in r.headers.get("content-type", ""):
-        url = r.json()["url"]
-        r = requests.get(url, timeout=120, headers={"User-Agent": UA})
-        r.raise_for_status()
     zpath = d / f"level-{n}.zip"
-    zpath.write_bytes(r.content)
-    with zipfile.ZipFile(io.BytesIO(r.content)) as z:
-        z.extractall(d / "files")
-    info = contestant_info(ctx)
-    save_json(run_dir(name) / "contestant-info.json", info)
-    lv = ((info.get("score") or {}).get("state") or {}).get(f"level{n}") or {}
-    scored = list((lv.get("passedFiles") or {}).keys())
+    with cf.ThreadPoolExecutor(3) as ex:
+        f_gi = ex.submit(game_info, ctx)
+        reuse = png and zpath.exists()
+        f_zip = None if reuse else ex.submit(download_zip, ctx, n, retry_s)
+        gi = f_gi.result()
+        meta = level_meta(gi, n)
+        f_sb = ex.submit(game_req, "GET", f"/api/contestant/level/{n}/sandbox", ctx) if meta.get("sandbox", True) else None
+        data = zpath.read_bytes() if reuse else f_zip.result()
+        sandbox = f_sb.result() if f_sb else None
+    if not reuse:
+        zpath.write_bytes(data)
+        with zipfile.ZipFile(io.BytesIO(data)) as z:
+            z.extractall(d / "files")
+    if sandbox is not None and sandbox.ok and sandbox.text.strip():
+        (d / "sandbox.html").write_text(sandbox.text, encoding="utf-8")
     files = sorted(p for p in (d / "files").rglob("*") if p.is_file())
-    # 2026 naming: in_level-N_<fileId>.txt, expected example output: out_level-N_0-example.txt
+    # input -> fileId mapping: game-info lists the ids; files are in_level-N_<fileId>.txt (2026 naming)
+    ids = meta.get("inputFiles") or []
+    unscored = meta.get("unscoredFiles") or [i for i in ids if "example" in i]
     mapping = {}
     for p in files:
         m = IN_RE.match(p.name)
         if m:
             mapping[str(p.relative_to(d)).replace("\\", "/")] = m.group(2)
-    if not mapping:  # unknown naming: fall back to the platform's "last number picks the case" rule
+    if not mapping:
         for p in files:
             if p.suffix.lower() in (".in", ".txt") and not p.stem.lower().startswith("out"):
-                mapping[str(p.relative_to(d)).replace("\\", "/")] = file_id_for(p.stem, scored + ["0-example"])
-    unscored = sorted(set(mapping.values()) - set(scored)) if scored else [f for f in mapping.values() if "example" in f]
+                mapping[str(p.relative_to(d)).replace("\\", "/")] = file_id_for(p.stem, ids or ["0-example"])
+    if not ids:
+        ids = sorted(set(mapping.values()))
+        unscored = [i for i in ids if i and "example" in i]
+    scored = [i for i in ids if i not in unscored]
     save_json(d / "map.json", {"scoredFiles": scored, "unscoredFiles": unscored, "inputs": mapping})
-    for pdf in [p for p in files if p.suffix.lower() == ".pdf"]:
-        try:
-            from pypdf import PdfReader
-            text = "\n\n".join(pg.extract_text() or "" for pg in PdfReader(str(pdf)).pages)
-            (d / "statement.txt").write_text(text, encoding="utf-8")
-        except Exception as e:
-            print(f"  (pdf text extraction failed: {e})")
-    sandbox = game_req("GET", f"/api/contestant/level/{n}/sandbox", ctx)
-    if sandbox.ok and sandbox.text.strip() and "html" in sandbox.headers.get("content-type", "") + sandbox.text[:200].lower():
-        (d / "sandbox.html").write_text(sandbox.text, encoding="utf-8")
-    solve = d / "solve.py"
-    if not solve.exists():
+    # statement
+    stmt, content_pages, pdf_bytes = None, [], None
+    pdfs = [p for p in files if p.suffix.lower() == ".pdf"]
+    if pdfs:
+        pdf_bytes = pdfs[0].read_bytes()
+        stmt, content_pages = clean_statement(pdf_pages(pdf_bytes), gi.get("name"))
+        (d / "statement.txt").write_text(stmt, encoding="utf-8")
+    pngs = render_png(pdf_bytes, content_pages, d / "pages", scale) if png and pdf_bytes else []
+    # solver: start from the previous level's solver (most levels extend it)
+    solve, prev = d / "solve.py", level_dir(name, n - 1) / "solve.py"
+    if solve.exists():
+        solve_note = "kept existing"
+    elif n > 1 and prev.exists():
+        shutil.copy(prev, solve)
+        solve_note = f"copied from level{n - 1}/solve.py"
+    else:
         solve.write_text(SOLVE_TEMPLATE, encoding="utf-8")
-    print(f"Level {n} -> {d}")
-    for p in files:
-        print(f"  {p.relative_to(d)}  ({p.stat().st_size} B)")
-    print(f"  scored: {scored}  unscored: {unscored}")
-    print(f"  input -> fileId: {mapping}")
+        solve_note = "stub"
+    if quiet:
+        return d
+    flags = [k for k in ("optimization", "sandbox") if meta.get(k)]
+    print(f"===== Level {n}/{total_levels(gi) or '?'}  {d}  ({time.time() - t0:.1f}s)  {' '.join(flags)}")
+    print(f"inputs: {', '.join(f'{fid}' + ('*' if fid in unscored else '') for fid in mapping.values())}  (* = unscored)")
+    other = [str(p.relative_to(d)) for p in files if str(p.relative_to(d)).replace('\\', '/') not in mapping
+             and not p.name.startswith("out_") and p.suffix.lower() != ".pdf"]
+    if other:
+        print(f"other files: {other}")
+    if (d / "sandbox.html").exists():
+        print(f"sandbox (visualizer): {d / 'sandbox.html'}")
+    print(f"solve.py: {solve_note}")
+    if pngs:
+        print("page PNGs (Read these for diagrams): " + ", ".join(str(p) for p in pngs))
+    if stmt is not None:
+        print(f"----- statement (statement.txt, pages {content_pages}; `fetch {n} --png` renders them)\n{stmt}")
+    else:
+        print(f"(no PDF statement; files: {[p.name for p in files]})")
+    for inp_rel, fid in mapping.items():
+        if fid in unscored:
+            inp = d / inp_rel
+            print(f"----- example input {inp.name}\n{head(inp)}")
+            exp = expected_path(inp)
+            if exp:
+                print(f"----- expected output {exp.name}\n{head(exp)}")
+    return d
 
 
-IN_RE = re.compile(r"^in_level-?(\d+)_(.+)\.[a-z]+$", re.I)
+def cmd_fetch(a):
+    fetch_level(active_run(), a.level, png=a.png, scale=a.scale)
 
 
-SOLVE_TEMPLATE = '''import sys
-
-
-def solve(data: str) -> str:
-    lines = data.splitlines()
-    raise NotImplementedError
-
-
-if __name__ == "__main__":
-    sys.stdout.write(solve(sys.stdin.read()))
-'''
-
-
+# ---------------------------------------------------------------- run / submit
 def norm(s):
     return "\n".join(line.rstrip() for line in s.strip().splitlines())
 
@@ -338,7 +643,7 @@ def inputs_of(d):
     return [(d / rel, fid) for rel, fid in m.items()]
 
 
-def out_path(d, inp, fid):
+def out_path(d, inp):
     stem = inp.stem[3:] if inp.stem.lower().startswith("in_") else inp.stem
     return d / "out" / f"out_{stem}.txt"
 
@@ -352,110 +657,232 @@ def expected_path(inp):
     return q if q.exists() else None
 
 
-def cmd_run(a):
-    name, run, _ = active_run()
-    d = level_dir(name, a.level)
-    solver = Path(a.solver) if a.solver else d / "solve.py"
+def first_diff(want, got):
+    w, g = want.splitlines(), got.splitlines()
+    for i in range(max(len(w), len(g))):
+        a_ = w[i] if i < len(w) else "<missing>"
+        b_ = g[i] if i < len(g) else "<missing>"
+        if a_ != b_:
+            return f"line {i + 1}: want {a_[:120]!r} got {b_[:120]!r} (want {len(w)} lines, got {len(g)})"
+    return "identical"
+
+
+def solver_cmd(d, solver):
+    if not solver:
+        return [sys.executable, str(d / "solve.py")], False
+    if solver.endswith(".py"):
+        p = Path(solver)
+        return [sys.executable, str(p if p.is_absolute() or p.exists() else d / p)], False
+    return solver, True  # arbitrary shell command, e.g. "pypy3 solve.py" or "node solve.js"
+
+
+def load_checker(d):
+    p = d / "solve.py"
+    if not p.exists() or "def check(" not in p.read_text(encoding="utf-8", errors="replace"):
+        return None
+    sys.path.insert(0, str(ARENA))
+    spec = importlib.util.spec_from_file_location("ccc_solve_mod", str(p))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return getattr(mod, "check", None)
+
+
+def run_level(name, n, only=None, solver=None, timeout=600):
+    """Run the solver on every input in parallel. Returns (ok_all, list of fileIds produced)."""
+    d = level_dir(name, n)
+    if not (d / "map.json").exists():
+        die(f"level {n} not fetched: run `fetch {n}`")
     (d / "out").mkdir(exist_ok=True)
-    ok_all = True
-    for inp, fid in inputs_of(d):
-        if a.only and fid not in a.only and inp.stem not in a.only:
-            continue
+    cmd, shell = solver_cmd(d, solver)
+    env = {**os.environ, "PYTHONPATH": str(ARENA) + os.pathsep + os.environ.get("PYTHONPATH", ""),
+           "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1",
+           "PYTHON_COLORS": "0", "NO_COLOR": "1"}
+    jobs = [(inp, fid) for inp, fid in inputs_of(d) if not only or fid in only or inp.stem in only]
+
+    def one(job):
+        inp, fid = job
         t0 = time.time()
-        p = subprocess.run([sys.executable, str(solver)], stdin=inp.open("rb"), capture_output=True, timeout=a.timeout)
-        dt = time.time() - t0
+        try:
+            with inp.open("rb") as fin:
+                p = subprocess.run(cmd, stdin=fin, capture_output=True, timeout=timeout, shell=shell, cwd=d, env=env)
+        except subprocess.TimeoutExpired:
+            return inp, fid, None, f"TIMEOUT after {timeout}s", time.time() - t0
         if p.returncode != 0:
+            return inp, fid, None, p.stderr.decode(errors="replace")[-1500:], time.time() - t0
+        return inp, fid, p.stdout.decode("utf-8", errors="replace").replace("\r\n", "\n"), None, time.time() - t0
+
+    with cf.ThreadPoolExecutor(max(1, min(len(jobs), os.cpu_count() or 4))) as ex:
+        results = list(ex.map(one, jobs))
+    checker, ok_all, produced, shown = None, True, [], set()
+    try:
+        checker = load_checker(d)
+    except Exception as e:
+        print(f"  (check() in solve.py failed to load: {e})")
+    for inp, fid, out, err, dt in results:
+        if out is None:
             ok_all = False
-            print(f"  {inp.name}: CRASH ({dt:.1f}s)\n{p.stderr.decode(errors='replace')[-1500:]}")
+            print(f"  {fid}: CRASH ({dt:.1f}s)" + ("  (same error as above)" if err in shown else f"\n{err}"))
+            shown.add(err)
             continue
-        out = p.stdout.decode()
-        op = out_path(d, inp, fid)
+        op = out_path(d, inp)
         op.write_text(out, encoding="utf-8", newline="\n")
+        produced.append(fid)
         status = ""
         exp = expected_path(inp)
         if exp:
             want = norm(exp.read_text(encoding="utf-8"))
             match = want == norm(out)
-            status = "EXAMPLE OK" if match else "EXAMPLE MISMATCH"
-            ok_all &= match
-            if not match:
-                print(f"--- expected ({exp.name}) ---\n{want[:1500]}\n--- got ---\n{norm(out)[:1500]}")
-        print(f"  {inp.name} -> out/{op.name}  [{fid}]  {dt:.1f}s  {status}")
-    return ok_all
+            status = "EXAMPLE OK" if match else "EXAMPLE MISMATCH " + first_diff(want, norm(out))
+            if not match and checker is None:
+                ok_all = False
+        if checker is not None:
+            try:
+                res = checker(inp.read_text(encoding="utf-8"), out)
+                cok, msg = (res if isinstance(res, tuple) else (bool(res), ""))
+            except Exception as e:
+                cok, msg = False, f"check() raised {e!r}"
+            status += f"  check:{'OK' if cok else 'FAIL ' + str(msg)[:200]}"
+            ok_all &= bool(cok)
+        print(f"  {fid}: {dt:.1f}s  {status}".rstrip())
+    return ok_all, produced
 
 
-def cmd_submit(a):
-    ctx = active_run()
-    name, run, _ = ctx
-    d = level_dir(name, a.level)
-    m = load_json(d / "map.json", {"unscoredFiles": []})
-    unscored = set(m.get("unscoredFiles") or [])
-    results = {}
-    for inp, fid in inputs_of(d):
-        if fid is None:
-            print(f"  {inp.name}: no fileId mapping, skipped")
-            continue
-        if a.only and fid not in a.only and inp.stem not in a.only:
-            continue
-        if fid in unscored and not a.include_example:
-            continue
-        op = out_path(d, inp, fid)
-        if not op.exists():
-            print(f"  {inp.name}: no output yet, skipped")
-            continue
-        for _ in range(5):
-            r = game_req("POST", f"/api/contestant/submit-{a.level}-{fid}", ctx,
-                         files={"solution": (op.name, op.read_bytes(), "text/plain")})
-            if r.status_code == 429:
-                try:
-                    wait = int(r.json().get("cooldownSec") or 0)
-                except Exception:
-                    wait = int(r.headers.get("Retry-After") or 5)
-                print(f"  {fid}: cooldown {wait}s, waiting...")
-                time.sleep(max(wait, 1) + 0.5)
-                continue
-            break
-        try:
-            body = r.json()
-        except Exception:
-            body = r.text[:300]
-        results[fid] = body
-        print(f"  {fid}: {verdict_line(r.status_code, body)}")
-    log = d / "submissions.jsonl"
-    with log.open("a", encoding="utf-8") as f:
-        f.write(json.dumps({"t": time.time(), "results": results}) + "\n")
+def cmd_run(a):
+    name, _, _ = active_run()
+    ok, _ = run_level(name, a.level, a.only, a.solver, a.timeout)
+    print("ALL OK" if ok else "NOT OK")
 
 
 def verdict_line(status, body):
     ev = body.get("evaluation") if isinstance(body, dict) else None
     if not ev:
-        return f"HTTP {status} {json.dumps(body)[:400]}"
+        return f"HTTP {status} {json.dumps(body)[:300]}"
     cases = ev.get("cases") or []
     bad = [c for c in cases if not c.get("isCorrect")]
-    head = "CORRECT" if ev.get("isCorrect") else "WRONG"
+    s = f"{'CORRECT' if ev.get('isCorrect') else 'WRONG'} {len(cases) - len(bad)}/{len(cases)}"
     extra = {k: v for k, v in ev.items() if k not in ("isCorrect", "cases")}
-    s = f"{head} ({len(cases) - len(bad)}/{len(cases)} cases)"
+    scores = [c["optimizationScore"] for c in cases if c.get("optimizationScore") is not None]
+    if scores:
+        s += f" score={sum(scores)}"
     if extra:
-        s += f" {json.dumps(extra)[:300]}"
-    for c in bad[:5]:
-        s += f"\n      case lines {c.get('startLineNumber')}-{c.get('endLineNumberExcl')}: {c.get('caseState')} {c.get('caseMessage') or c.get('message') or ''}"
+        s += f" {json.dumps(extra)[:200]}"
+    for c in bad[:3]:
+        el = c.get("errorLineNumber")
+        s += (f"\n      lines {c.get('startLineNumber')}-{c.get('endLineNumberExcl')}: {c.get('caseState')} "
+              f"{c.get('caseMessage') or ''}{f' (error at line {el})' if el is not None else ''}")
+    if len(bad) > 3:
+        s += f"\n      ... {len(bad) - 3} more failing cases"
     return s
 
 
+def submit_one(ctx, n, fid, path):
+    for _ in range(6):
+        r = game_req("POST", f"/api/contestant/submit-{n}-{fid}", ctx,
+                     files={"solution": (path.name, path.read_bytes(), "text/plain")})
+        if r.status_code == 429:
+            try:
+                wait = float(r.json().get("cooldownSec") or 0)
+            except Exception:
+                wait = float(r.headers.get("Retry-After") or 5)
+            time.sleep(max(wait, 1) + 0.3)
+            continue
+        break
+    try:
+        body = r.json()
+    except ValueError:
+        body = r.text[:300]
+    return fid, r.status_code, body
+
+
+def submit_level(ctx, n, fids, optimization=False, stop_on_wrong=True):
+    """Submit fileIds SEQUENTIALLY and return the server score state from the last response.
+
+    Smallest file first; stops at the first non-CORRECT file (big files take ~16 s/MB to grade server-side).
+    Never submit in parallel: the game engine loses updates on concurrent submits (tested 2026-10-09: 5 parallel
+    CORRECT verdicts, only 2 recorded). Each response carries the cumulative score, so the last one is the truth;
+    a CORRECT file missing from it (e.g. a teammate submitted at the same moment) is re-submitted once."""
+    d = level_dir(ctx[0], n)
+    paths = {fid: out_path(d, inp) for inp, fid in inputs_of(d)}
+    todo = sorted((f for f in fids if paths.get(f) and paths[f].exists()), key=lambda f: paths[f].stat().st_size)
+    for f in fids:
+        if f not in todo:
+            print(f"  {f}: no output file, skipped")
+    score, log, correct = None, {}, set()
+    for rnd in range(2):
+        for i, f in enumerate(todo):
+            fid, status, body = submit_one(ctx, n, f, paths[f])
+            if rnd == 0:
+                print(f"  {fid}: {verdict_line(status, body)}")
+            ev = body.get("evaluation") if isinstance(body, dict) else None
+            if ev:
+                log[fid] = {"correct": ev.get("isCorrect"), "bad": [c for c in ev.get("cases") or [] if not c.get("isCorrect")][:20]}
+                if ev.get("isCorrect"):
+                    correct.add(fid)
+            else:
+                log[fid] = body
+            if isinstance(body, dict) and body.get("score"):
+                score = body["score"]
+            if stop_on_wrong and not (ev and ev.get("isCorrect")) and todo[i + 1:]:
+                print(f"  stopped at first failure; not submitted: {todo[i + 1:]} (submit --only ... to force)")
+                break
+        lost = sorted(correct - passed_files(score, n)[0]) if score and not optimization else []
+        if not lost:
+            break
+        print(f"  CORRECT but not recorded by the server (concurrent submit?): {lost} -> re-submitting")
+        todo = lost
+    with (d / "submissions.jsonl").open("a", encoding="utf-8") as f:
+        f.write(json.dumps({"t": time.time(), "results": log}) + "\n")
+    return score
+
+
+def cmd_submit(a):
+    ctx = active_run()
+    d = level_dir(ctx[0], a.level)
+    m = load_json(d / "map.json", {"scoredFiles": [], "unscoredFiles": []})
+    fids = a.only or [f for f in m["scoredFiles"]] + (m["unscoredFiles"] if a.include_example else [])
+    sc = submit_level(ctx, a.level, fids, level_meta(game_info(ctx), a.level).get("optimization", False), stop_on_wrong=not a.only)
+    ok, at = passed_files(sc, a.level)
+    print(f"level {a.level}: {'PASSED' if at else f'{len(ok)} files passed'}")
+
+
 def cmd_go(a):
-    a.only, a.solver, a.include_example = None, None, False
-    if not cmd_run(a) and not a.force:
-        sys.exit("Example mismatch or crash: not submitting (use --force to override).")
-    cmd_submit(a)
-    a.raw = False
-    cmd_info(a)
+    ctx = active_run()
+    name, n = ctx[0], a.level
+    with cf.ThreadPoolExecutor(1) as ex:
+        f_info = ex.submit(contestant_info, ctx)  # overlaps with the solver run
+        ok, produced = run_level(name, n, solver=a.solver, timeout=a.timeout)
+        info = f_info.result()
+    if not ok and not a.force:
+        die("Example mismatch / check failed / crash: NOT submitted (fix solve.py, or --force).", 1)
+    m = load_json(level_dir(name, n) / "map.json", {"scoredFiles": []})
+    done, at = passed_files(info.get("score"), n)
+    todo = [f for f in m["scoredFiles"] if f not in done and f in produced]
+    if done:
+        print(f"  already passed (skipped): {sorted(done)}")
+    gi = game_info(ctx)
+    total = total_levels(gi)
+    sc = submit_level(ctx, n, todo, level_meta(gi, n).get("optimization", False)) if todo else info.get("score")
+    sc = sc or info.get("score")
+    ok_files, at = passed_files(sc, n)
+    level_now = ((sc or {}).get("gameScore") or {}).get("level")
+    if at or (level_now or 0) > n:
+        print(f"LEVEL {n} PASSED  (unlocked level {level_now}/{total})  [{time.time() - T0:.1f}s]")
+        if total and n >= total:
+            print("ALL LEVELS DONE.")
+        elif (level_dir(name, n + 1) / "map.json").exists():
+            print(f"level {n + 1} already fetched: {level_dir(name, n + 1) / 'statement.txt'}")
+        elif not a.no_next:
+            fetch_level(ctx, n + 1, retry_s=20)
+    else:
+        missing = [f for f in m["scoredFiles"] if f not in ok_files]
+        print(f"LEVEL {n} NOT PASSED: failing {missing}. Fix solve.py, then `go {n}` again (passed files are skipped).")
 
 
 def cmd_api(a):
-    if a.game:
-        r = game_req(a.method, a.path)
-    else:
-        r = platform_session().request(a.method, BASE + a.path)
+    path = a.path.replace("\\", "/")
+    i = max(path.find("/api/"), path.find("/game/"))
+    path = path[i:] if i >= 0 else "/" + path.lstrip("/")  # undo Git Bash path mangling (C:/Program Files/Git/api/...)
+    r = game_req(a.method, path, active_run()) if a.game else plat(a.method, path)
     print(r.status_code, r.headers.get("content-type"))
     print(r.text[:5000])
 
@@ -463,28 +890,37 @@ def cmd_api(a):
 def main():
     ap = argparse.ArgumentParser(description="CCC arena CLI")
     sp = ap.add_subparsers(dest="cmd", required=True)
-    sp.add_parser("login").set_defaults(f=cmd_login)
+    p = sp.add_parser("login"); p.add_argument("--http", action="store_true"); p.set_defaults(f=cmd_login)
     sp.add_parser("games").set_defaults(f=cmd_games)
     p = sp.add_parser("train"); p.add_argument("slug"); p.add_argument("--mode", default="exploration", choices=["exploration", "challenge"]); p.add_argument("--name"); p.set_defaults(f=cmd_train)
-    p = sp.add_parser("contest"); p.add_argument("contest_name"); p.add_argument("--name"); p.set_defaults(f=cmd_contest)
+    for nm, fn in (("contest", cmd_contest), ("wait", cmd_wait)):
+        p = sp.add_parser(nm); p.add_argument("contest_name", nargs="?", default=CONTEST); p.add_argument("--name", default="contest"); p.set_defaults(f=fn)
     p = sp.add_parser("use"); p.add_argument("name"); p.set_defaults(f=cmd_use)
     p = sp.add_parser("info"); p.add_argument("--raw", action="store_true"); p.set_defaults(f=cmd_info)
-    p = sp.add_parser("fetch"); p.add_argument("level", type=int); p.set_defaults(f=cmd_fetch)
+    p = sp.add_parser("fetch"); p.add_argument("level", type=int); p.add_argument("--png", action="store_true"); p.add_argument("--scale", type=float, default=0.75); p.set_defaults(f=cmd_fetch)
     for nm, fn in (("run", cmd_run), ("submit", cmd_submit), ("go", cmd_go)):
         p = sp.add_parser(nm); p.add_argument("level", type=int)
-        p.add_argument("--timeout", type=int, default=600)
+        if nm != "submit":
+            p.add_argument("--timeout", type=int, default=600)
+            p.add_argument("--solver", help="solver .py path or shell command (default levelN/solve.py)")
         if nm != "go":
             p.add_argument("--only", nargs="*")
-        if nm == "run":
-            p.add_argument("--solver")
         if nm == "submit":
             p.add_argument("--include-example", action="store_true")
         if nm == "go":
             p.add_argument("--force", action="store_true")
+            p.add_argument("--no-next", action="store_true")
         p.set_defaults(f=fn)
     p = sp.add_parser("api"); p.add_argument("method"); p.add_argument("path"); p.add_argument("--game", action="store_true"); p.set_defaults(f=cmd_api)
     a = ap.parse_args()
-    a.f(a)
+    try:
+        a.f(a)
+    except KeyboardInterrupt:
+        die("interrupted", 130)
+    except OSError as e:
+        if getattr(e, "errno", None) in (22, 32):  # stdout closed (e.g. piped into head)
+            os._exit(0)
+        raise
 
 
 if __name__ == "__main__":

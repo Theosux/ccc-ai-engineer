@@ -1,45 +1,42 @@
-# Arena: the working folder for training and contest day
+# Arena: training + contest working folder
 
-All commands are run from the repo root: `python arena/ccc.py <cmd>`.
+Run everything from the repo root: `python arena/ccc.py <cmd>`. Run selection: the active run, or `CCC_RUN=<name>` per command.
 
-## Layout: what is where
+## The loop (2 tool calls per level)
+1. `fetch N`: downloads the level and **prints the cleaned statement + example input/expected output**. `levelN/solve.py` starts as a copy of level N-1's solver (or a stub).
+2. Edit `levelN/solve.py`: stdin → stdout. Optionally add `check(data, out) -> bool | (bool, msg)` for levels with many valid answers.
+3. `go N`:
+   - runs all inputs in parallel and verifies the example (or `check()` on every file);
+   - submits smallest file first, **sequentially**, skips files already passed, and stops at the first WRONG;
+   - if the level passed, **fetches N+1 and prints its statement**. So `go N` → write solver → `go N+1` → ...
+
+Diagrams: `fetch N --png` renders the statement pages to `levelN/pages/p*.png` (local zip, ~1 s). Read them.
+
+## Commands
+| Command | What it does |
+|---|---|
+| `wait [contest] [--name contest]` | Contest day. Polls until the game is live (keeps the session warm), registers the run, prints level 1. Run it in the background from T-15 min. |
+| `contest [contest] [--name contest]` | Registers the contest run now (fails clearly if not started). Default contest is `42nd-classic-ccc-5872`. |
+| `train <gameSlug> [--mode exploration\|challenge] [--name X]` | Starts a practice run. Becomes active unless `CCC_RUN` is set. |
+| `fetch N [--png] [--scale 0.75]` | Downloads, unzips, writes `map.json` and `statement.txt`, and prints the statement + example. |
+| `go N [--force] [--no-next] [--solver CMD] [--timeout S]` | Run + verify + submit + auto-fetch next. `--force` submits despite an example/check mismatch. |
+| `run N [--only ID] [--solver CMD]` | Outputs only (into `levelN/out/`). |
+| `submit N [--only ID ...] [--include-example]` | Submits (sequentially). With `--only` it does not stop on WRONG. |
+| `info [--raw]` | Unlocked level, per-level todo files, cooldowns. |
+| `login` / `login --http` | Browser login (Edge), or HTTP login using `.auth/credentials.env` (`CCC_USER=`, `CCC_PASS=`). |
+| `games`, `use NAME`, `api GET\|POST <path> [--game]` | Utilities. `api` survives Git Bash path mangling. |
+
+`--solver "pypy3 solve.py"` or `--solver "node solve.js"` runs any command (cwd = levelN). PyPy is not installed (as of 2026-10-09).
+
+## Layout
 ```
-arena/
-├── ccc.py                 # the CLI: login / train / contest / fetch / run / submit / go / info / api
-├── README.md              # this file
-├── .auth/                 # GITIGNORED: Edge login profile, cookies.json, state.json (active run + game token)
-└── runs/
-    └── <run>/             # one folder per game or contest (e.g. spaceship, desks, contest)
-        ├── contest.json           # platform contest metadata (slug, gameBaseUrl, ...)
-        ├── contestant-info.json   # latest level/score state from the game API
-        └── level<N>/
-            ├── level-<N>.zip      # the raw download, as given by the platform
-            ├── files/             # unzipped zip: statement + inputs + example (in/out)
-            ├── map.json           # input file -> platform fileId; which files are unscored
-            ├── sandbox.html       # optional visualizer, when the level has one
-            ├── solve.py           # THE solver: reads stdin, writes stdout
-            ├── out/<stem>.out     # generated outputs, one per input
-            └── submissions.jsonl  # log of each submit and its verdicts
+arena/.auth/        GITIGNORED: cookies.json, state.json (runs + game tokens), edge-profile/, credentials.env (optional)
+arena/runs/<run>/   contest.json, game-info.json (level metadata), contestant-info.json
+  level<N>/         files/ (unzipped: level-N.pdf, in_level-N_<id>.txt, out_level-N_0-example.txt)
+                    statement.txt, map.json, solve.py, out/, submissions.jsonl, sandbox.html?, pages/?
 ```
 
-## Loop per level (the fast path)
-1. `python arena/ccc.py fetch N` downloads and unzips level N, writes `map.json`, and creates a `solve.py` stub.
-2. Read the statement in `files/` and write `levelN/solve.py`. It reads stdin and prints the answer, so you can reuse code from level N-1.
-3. `python arena/ccc.py go N` runs the solver on every input and checks the example against its expected output. **It only submits if the example matches.** Then it prints the verdicts and the level status.
-4. When the level passes, the next level unlocks: `fetch N+1`.
-
-Useful extras:
-- `run N`: generate outputs only.
-- `submit N --only 3`: submit a single file.
-- `info`: show status. `info --raw`: dump the raw JSON.
-
-## Setup
-- **Practice:** run `python arena/ccc.py train <gameSlug> --mode exploration` (no timer, all levels open). Use `--mode challenge` for a timed 4 h rehearsal where levels unlock one by one.
-- **Contest day:** run `python arena/ccc.py contest 42nd-classic-ccc-5872`. Do this once the contest has started and its game is assigned.
-- **List practice games:** `python arena/ccc.py games`.
-- **Switch between runs:** `python arena/ccc.py use <run>`.
-
-## Auth
-- `login` opens Edge with a dedicated profile. You log in once, and the cookies are saved to `.auth/`.
-- The game token is fetched automatically and refreshed on a 401/403.
-- If the commands report "not logged in", run `login` again.
+## Rules learned the hard way
+- **Never submit in parallel.** The game engine loses concurrent updates: 5 parallel CORRECT verdicts, only 2 recorded. `submit`/`go` are sequential and re-submit any file that was CORRECT but not recorded. Teammates: do not submit the same level at the same moment.
+- Large outputs are slow to grade (~16 s/MB server side). The 1.2 MB file took 20 s. Give `go` a long tool timeout.
+- An expired session (HTTP 401) prints `SESSION EXPIRED`. With `credentials.env` present, the CLI re-logs in automatically.

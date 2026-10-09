@@ -11,3 +11,5 @@ Thumbs.db
 arena/.auth/
 arena/runs/*/level*/level-*.zip
 arena/runs/*/level*/out/
+arena/runs/*/level*/pages/
+arena/runs/*/level*/files/*.pdf

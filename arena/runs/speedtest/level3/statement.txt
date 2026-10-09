@@ -1,0 +1,48 @@
+[p1]
+LEVEL 3
+
+[p2]
+Your performance in organizing and positioning the desks within the room has been commendable.
+You have been officially promoted to the position of “Senior Inventory Manager”.
+To date, your responsibilities have been limited to managing rooms of convenient sizes. Moving forward,
+you will be tasked with overseeing rooms of any size. It is anticipated that, as a “Senior Inventory Manager”,
+you will demonstrate proficiency and excellence in managing inventory across diverse room sizes.
+From: global.head.of.logistics@toxic-company.com
+Subject: Your second promotion
+▪ The x side length is no longer guaranteed to be divisible by 3
+▪ For each room place the given number of desks in that room
+▪ The given number of desks is the maximum number that is possible
+▪ For some rooms, not all cells can be filled with desks. An empty cell is represented with the ID 0
+
+[p3]
+Output
+Name Description Example
+Room
+(repeated N times)
+A matrix of integers, with y rows and x columns
+Each integer represents the ID of the table at that cell
+The order of the tables does not matter
+The empty line between rooms is optional
+The empty cells (0) may be anywhere in the room
+format identical to previous level
+0 1 1 1 2 2 2
+3 3 3 4 4 4 11
+5 5 5 6 6 6 11
+7 7 7 8 8 8 11
+9 9 9 10 10 10 0
+1 1 1 2 2 2 3 3 3
+4 4 4 5 5 5 6 6 6
+...
+Input
+Name Description Example
+N Number of rooms format identical to previous level
+3
+7 5 11
+9 7 21
+6 8 16
+Room
+(repeated N times)
+Three space separated integers representing a room
+First integer: x room length
+Second integer: y room length
+Third integer: number of desks

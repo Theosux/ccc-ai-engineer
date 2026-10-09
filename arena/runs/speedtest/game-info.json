@@ -1,0 +1,139 @@
+{
+  "id": "ccc-2024.10-classic-desks",
+  "edition": "40",
+  "name": "Room Planner",
+  "tags": [
+    "CCC40",
+    "classic",
+    "levels"
+  ],
+  "description": "Fit as many desks as possible into rectangular rooms",
+  "levelsInfo": {
+    "count": 7,
+    "levels": [
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": true,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": true,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": true,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": true,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      }
+    ]
+  },
+  "dev": false,
+  "versions": {
+    "base": {
+      "version": "0.35.0",
+      "commit": "9a57e86a"
+    },
+    "game": {
+      "version": "1.0.0-rc17",
+      "commit": "e8e38376"
+    }
+  }
+}

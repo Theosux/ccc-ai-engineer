@@ -5,38 +5,32 @@ description: Fast loop for solving a CCC level on codingcontest.org with the are
 
 # CCC Solve Loop
 
-The CLI is `python arena/ccc.py` (see `arena/README.md`). Commands run from the repo root.
+CLI: `python arena/ccc.py` from the repo root (details in `arena/README.md`). **Target: 2 tool calls per level, which are writing solve.py and running `go`.**
 
-## 0. Session setup (once)
-- Check the active run: `python arena/ccc.py info`.
-  - If it says "not logged in", run `python arena/ccc.py login`. Teo logs in through the Edge window.
-- **Training:** `python arena/ccc.py train <gameSlug> --mode exploration|challenge --name <short>`. List the slugs with `games`.
-- **Contest:** `python arena/ccc.py contest 42nd-classic-ccc-5872 --name contest`, run once the contest has started.
+## 0. Setup (once)
+- **Contest:** from T-15 min, run `python arena/ccc.py wait` in the **background** (run_in_background). When it exits, its output already contains the level 1 statement and example. If it says SESSION EXPIRED, run `login` and restart it.
+- **Training:** `python arena/ccc.py train <gameSlug> --mode exploration|challenge --name <short>`, then `fetch 1`.
+- Check: `python arena/ccc.py info`.
 
-## 1. Fetch
-`python arena/ccc.py fetch N` creates `arena/runs/<run>/levelN/`:
-- `files/`: the unzipped level. Inputs are `in_level-N_<fileId>.txt` with fileIds `0-example`, `1-small`, `2-small`, `3-medium`, `4-medium`, `5-large`. The expected example output is `out_level-N_0-example.txt`. The statement is `level-N.pdf`.
-- `statement.txt`: text extracted from the PDF. **Read this first.** Only Read the PDF itself if the text is ambiguous or a diagram matters.
-- `solve.py`: a stub.
+## 1. Read
+`fetch N` (or the tail of `go N-1`) prints the cleaned statement, the example input and the expected output. **Do not re-read files that were already printed.**
+- If a diagram, colours or a picture matter, run `fetch N --png` and Read `levelN/pages/pK.png`. The page numbers appear as `[pK]` in the statement.
+- `levelN/sandbox.html`, when present, is the official visualizer.
 
-## 2. Solve
-- Write `levelN/solve.py`. It reads **stdin** and writes **stdout**, with no file I/O.
-- Check whether the statement says "Input — identical to previous level". If it does, copy the previous level's `solve.py` and change only the output logic.
-- Parse with `data.split()` (tokens) unless lines matter, for example grids containing spaces.
-- Keep it simple and correct. Inputs are small (≈150 KB), so brute force usually works on early levels.
+## 2. Write `arena/runs/<run>/levelN/solve.py`
+- It is already a **copy of level N-1's solver**. Edit it: keep the parsing, change what is new.
+- It reads stdin and writes stdout. For arena/lib, use the header `import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))` and then `from lib import ...`.
+- **Many valid answers** ("order does not matter", constructions): define `check(data, out) -> bool | (bool, msg)` in solve.py. `go` then accepts outputs that pass `check()` even if the example differs. A copied `check()` from the previous level must be updated, or deleted.
 
-## 3. Run and submit
-`python arena/ccc.py go N`:
-- It runs every input, compares the example with the expected output, and **submits only if the example matches**.
-- It prints a verdict per file: `CORRECT (k/k cases)` or `WRONG` with the line ranges of the failing cases and a message such as "Wrong answer, got 'X'".
-- If one file is wrong: fix the solver, then `python arena/ccc.py run N` followed by `submit N --only <fileId>`.
-- The per-file cooldown after a submit is about 5 s. `submit` waits it out automatically.
-- If the solver times out on large inputs, optimise, or raise the limit with `--timeout`.
+## 3. `python arena/ccc.py go N` (use a tool timeout of 600000 ms)
+It runs all inputs in parallel and verifies (example or check). It submits sequentially, smallest first, and stops at the first WRONG. Passed files are skipped.
+- **PASSED:** it prints the next level's statement in the same output. Go straight to step 2 for N+1.
+- **WRONG:** read the case line ranges and messages, fix, and run `go N` again.
+- **EXAMPLE MISMATCH** with no check: look at the shown first diff and fix. If the answer is non-unique, add `check()`. `--force` is the last resort.
+- **CRASH / TIMEOUT:** the traceback is shown once. Optimise, or use `--timeout`.
 
-## 4. Next
-Once all scored files pass, the next level unlocks: `fetch N+1`. The level status shows in `info`.
-
-## Speed rules (contest)
-- Never submit unverified output. A wrong submit may cost penalty time (unconfirmed for 2026).
-- Build a small validator when a level asks for one. Later levels often reuse it ("use your code from the previous level to validate").
-- Commit solutions after each passed level: `git add arena/runs && git commit -m "<run> level N" && git push`.
+## Rules
+- Never submit files in parallel or from two sessions at once: the server loses updates. Teammates coordinate per level.
+- Never submit unverified output. A wrong submit may cost penalty time.
+- Later levels often say "validate with your previous code", so keep `check()` functions around.
+- After each passed level (contest): `git add arena/runs && git commit -m "<run> level N" && git push`. Run it in the background; don't wait on it.

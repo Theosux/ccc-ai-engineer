@@ -1,0 +1,221 @@
+{
+  "score": {
+    "gameScore": {
+      "timeMs": 1791553215450,
+      "level": 4
+    },
+    "state": {
+      "level1": {
+        "kind": "levels",
+        "passedAt": 1791549201817,
+        "submissions": [
+          {
+            "fileId": "1-small",
+            "submittedAt": 1791549199406,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "2-small",
+            "submittedAt": 1791549200084,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "3-medium",
+            "submittedAt": 1791549200622,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "4-medium",
+            "submittedAt": 1791549201178,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "5-large",
+            "submittedAt": 1791549201817,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "3-medium",
+            "submittedAt": 1791553087481,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          }
+        ],
+        "passedFiles": {
+          "1-small": 1791549199406,
+          "2-small": 1791549200084,
+          "3-medium": 1791549200622,
+          "4-medium": 1791549201178,
+          "5-large": 1791549201817
+        }
+      },
+      "level2": {
+        "kind": "levels",
+        "passedAt": 1791553114148,
+        "submissions": [
+          {
+            "fileId": "2-small",
+            "submittedAt": 1791553055425,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "5-large",
+            "submittedAt": 1791553075635,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "1-small",
+            "submittedAt": 1791553111934,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "3-medium",
+            "submittedAt": 1791553113034,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "4-medium",
+            "submittedAt": 1791553114148,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          }
+        ],
+        "passedFiles": {
+          "1-small": 1791553111934,
+          "2-small": 1791553055425,
+          "3-medium": 1791553113034,
+          "4-medium": 1791553114148,
+          "5-large": 1791553075635
+        }
+      },
+      "level3": {
+        "kind": "levels",
+        "passedAt": 1791553215450,
+        "submissions": [
+          {
+            "fileId": "1-small",
+            "submittedAt": 1791553190923,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "2-small",
+            "submittedAt": 1791553191119,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "3-medium",
+            "submittedAt": 1791553192016,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "4-medium",
+            "submittedAt": 1791553194578,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "5-large",
+            "submittedAt": 1791553215450,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "1-small",
+            "submittedAt": 1791553241653,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "3-medium",
+            "submittedAt": 1791553243263,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "5-large",
+            "submittedAt": 1791553263690,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          }
+        ],
+        "passedFiles": {
+          "1-small": 1791553190923,
+          "2-small": 1791553191119,
+          "3-medium": 1791553192016,
+          "4-medium": 1791553194578,
+          "5-large": 1791553215450
+        }
+      },
+      "level4": {
+        "kind": "levels",
+        "submissions": [
+          {
+            "fileId": "1-small",
+            "submittedAt": 1791553515887,
+            "result": {
+              "correct": false
+            },
+            "submittedBy": "teosux"
+          }
+        ],
+        "passedFiles": {
+          "1-small": null,
+          "2-small": null,
+          "3-medium": null,
+          "4-medium": null,
+          "5-large": null
+        }
+      }
+    }
+  }
+}

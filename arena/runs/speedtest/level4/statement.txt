@@ -1,0 +1,53 @@
+[p1]
+LEVEL 4
+
+[p2]
+You’ve been promoted to “Junior Room Planner”, and we expect better results than your
+predecessor.
+Your new responsibility is to set up the CCC rooms, not just place desks in storage. This is
+a critical role, as participants will need adequate space around the desks for seating.
+From: chief.of.operations@toxic-company.com
+Subject: Your third promotion
+Hint: There is a visualizer.html in the input folder.
+You can use it to visualize and play around with desk positioning.
+Desks are no longer allowed to touch each other. Diagonal connection also counts as touching
+Desks are allowed to touch the walls
+For each room place the given number of desks in that room
+The given number of desks is the maximum number that is possible
+It is no longer necessary to assign IDs to the desks
+
+[p3]
+Output
+Name Description Example
+Room
+(repeated N times)
+A matrix of characters, with y rows and x columns
+‘X’ represents a desk
+‘.’ represents no desk
+X.X.X.X
+X.X.X.X
+X.X.X.X
+.......
+XXX.XXX
+X.X.X.
+X.X.X.
+X.X.X.
+......
+X.X.X.
+X.X.X.
+X.X.X.
+......
+...
+Input
+Name Description Example
+N Number of rooms format identical to previous level
+3
+7 5 6
+6 8 6
+9 7 10
+Room
+(repeated N times)
+Three space separated integers representing a room
+First integer: x room length (min room length is 4)
+Second integer: y room length (min room length is 4)
+Third integer: number of desks

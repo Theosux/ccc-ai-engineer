@@ -1,0 +1,69 @@
+#WeLoveSoftwareu too? cloudflight.io/career
+#WeLoveSoftware
+u too? cloudflight.io/career
+
+
+Our corporation is approaching a major milestone 
+with the 40th edition of CCC. 
+Senior leadership has set high expectations, and they'll be closely 
+monitoring your KPIs. Additionally, we have onboarded a robust cohort of new 
+talent, ready to contribute to our objectives.
+Regarding event optimization, management is working on reconfiguring desk 
+arrangements across all CCC sites. Your immediate focus 
+will remain on overseeing the storage rooms which contain the desks 
+for the CCC.
+Remember, you're easily replaceable, so don't get too comfortable.
+From: your.manager@toxic-company.com
+Subject: Meet your manager
+
+
+LEVEL 1
+LEVEL 1
+#WeLoveSoftwareu too? cloudflight.io/career
+#WeLoveSoftware
+u too? cloudflight.io/career
+
+
+LEVEL 1
+LEVEL 1
+You are now assigned the role of “Junior Inventory Manager”.
+Your primary task is to determine the maximum number of desks that can be efficiently 
+stored in the storage rooms.
+From: global.head.of.logistics@toxic-company.com
+Subject: Your role
+▪ You are given a list of rooms
+▪ A room is a two-dimensional space with the sides x and y
+Desks cannot be placed on top of each other, therefore there is no z dimension
+▪ The desk size is 1 by 3
+▪ The x side of each room is divisible by 3. 
+▪ Calculate the maximum number of desks that can be placed in each room
+
+LEVEL ONE
+LEVEL ONE
+For each input file, calculate the output and write it in a file. 
+Upload your output file to the coding contest platform.
+LEVEL 1
+LEVEL 1
+Output
+Name Description Example
+Number of desks 
+(repeated N times) The maximum number of desks for the given room
+10
+24
+14
+Input
+Name Description Example
+N Number of rooms 3
+6 5
+9 8
+6 7Room 
+(repeated N times)
+Two space separated integers representing a room
+First integer: x room length (divisible by 3)
+Second integer: y room length
+
+#WeLoveSoftwareu too? cloudflight.io/career
+#WeLoveSoftware
+u too? cloudflight.io/career
+Room Planner
+Room Planner

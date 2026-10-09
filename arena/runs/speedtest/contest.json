@@ -1,0 +1,26 @@
+{
+  "id": 9651,
+  "name": "training-ccc-2024.10-classic-desks-54290-65c8fb53",
+  "slug": "training-ccc-2024-10-classic-desks-54290-65c8fb53",
+  "contestType": "CLASSIC",
+  "status": "RUNNING",
+  "startTime": "2026-10-09T12:33:00.597432Z",
+  "registrationStartTime": "2026-10-09T12:33:00.597432Z",
+  "durationMinutes": 0,
+  "maxTeamSize": 1,
+  "editionName": null,
+  "gameSlug": "ccc-2024.10-classic-desks",
+  "gameName": "Room Planner",
+  "gameDescription": "Fit as many desks as possible into rectangular rooms",
+  "gameImage": null,
+  "gameBaseUrl": "https://desks.codingcontest.org/",
+  "gameTags": [
+    "CCC40",
+    "classic",
+    "levels"
+  ],
+  "venues": [],
+  "registrationCount": 1,
+  "totalLevels": 7,
+  "serverNowMs": 1791549181107
+}
