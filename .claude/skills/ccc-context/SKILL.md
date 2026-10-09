@@ -13,7 +13,7 @@ Run these steps in order before answering anything else. Read in parallel where 
 4. Read the last 3 entries of `docs/progress-log.md`.
 5. List `.claude/skills/*/SKILL.md` and read the frontmatter (name + description) of each custom skill,
    so you know which project skills exist and when to use them.
-6. Skim `problems/` (directory listing only) to know which training problems exist.
+6. Skim `arena/runs/` (directory listing only: runs and levels with a `solve.py`) to know what was trained.
 7. Run `git status --short` and `git log --oneline -5`.
 
 Do NOT read `docs/research/` unless a question needs the raw sources.

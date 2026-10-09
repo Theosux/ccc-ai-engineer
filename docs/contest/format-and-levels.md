@@ -29,6 +29,7 @@ The usual progression goes from parsing and counting, to simulation, to a valida
 - **Rock Paper Scissors (2023.03):** L1 decides one fight, L2 simulates rounds, L3–4 build rigged pairings, L5 adds new styles, L6–7 add wildcards.
 - **Archive:** level PDFs and inputs are at https://github.com/gergely-elias/ccc
 
-## Open questions
-- The exact file names inside the 2026 zip, and whether the statement is a PDF or HTML. Check by downloading a level in Exploration mode.
-- How long the per-file cooldown lasts.
+## Resolved (hands-on, 2026-10-09)
+- **Zip contents:** `level-N.pdf`, the inputs `in_level-N_{0-example,1-small,2-small,3-medium,4-medium,5-large}.txt`, and the expected example output `out_level-N_0-example.txt`.
+- **Cooldown:** about 5 s per file.
+- **Feedback:** per case, with line ranges and a message. See [platform.md](platform.md).

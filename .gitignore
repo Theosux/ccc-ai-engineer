@@ -8,3 +8,6 @@ Thumbs.db
 .env
 *.log
 .claude/settings.local.json
+arena/.auth/
+arena/runs/*/level*/level-*.zip
+arena/runs/*/level*/out/

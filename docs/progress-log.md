@@ -18,3 +18,19 @@
 - Pick a venue.
 
 **Next:** log in to /challenges and run Exploration mode on a past Classic game (Lawn Mower or Room Planner) to capture the real 2026 zip format and upload flow. Then design the contest-day pipeline (`docs/strategy/`) and the first custom solving skills.
+
+## 2026-10-09 — Session 2: Arena workflow, tested live
+**Done**
+- Teo registered a team and cleared the rules with the organizers.
+- Reverse-engineered the new platform's API from its JS bundles. Built `arena/ccc.py`:
+  - `login` uses Edge via Playwright with a dedicated profile; cookies are kept in the gitignored `arena/.auth/`.
+  - The other commands: `train`, `contest`, `fetch`, `run`, `submit`, `go`, `info`, `api`.
+- Added the `ccc-solve` skill (the per-level loop) and `arena/README.md` (folder map).
+- **Live test:** Lawn Mower in Exploration mode. Levels 1–3 all passed, about 30 s per level.
+- **Confirmed facts:**
+  - Zip naming: `in_level-N_<fileId>.txt`.
+  - The statement is a PDF, auto-extracted to `statement.txt`.
+  - Verdicts come per case with line ranges.
+  - The per-file cooldown is about 5 s.
+
+**Next:** Lawn Mower L4+ (the first real algorithmic levels). Then a timed Challenge-mode rehearsal, which will also show whether wrong submits add penalty time. Then build a small solver helper library.

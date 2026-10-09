@@ -1,0 +1,26 @@
+{
+  "id": 9644,
+  "name": "training-ccc-2024.04-classic-lawn-mower-54290-f1d84633",
+  "slug": "training-ccc-2024-04-classic-lawn-mower-54290-f1d84633",
+  "contestType": "CLASSIC",
+  "status": "RUNNING",
+  "startTime": "2026-10-09T12:11:05.533181Z",
+  "registrationStartTime": "2026-10-09T12:11:05.533181Z",
+  "durationMinutes": 0,
+  "maxTeamSize": 1,
+  "editionName": null,
+  "gameSlug": "ccc-2024.04-classic-lawn-mower",
+  "gameName": "Robotic Lawn Mower",
+  "gameDescription": "Program an autonomous mower to sweep every patch of grass exactly once",
+  "gameImage": null,
+  "gameBaseUrl": "https://lawn-mower.codingcontest.org/",
+  "gameTags": [
+    "CCC39",
+    "classic",
+    "levels"
+  ],
+  "venues": [],
+  "registrationCount": 1,
+  "totalLevels": 7,
+  "serverNowMs": 1791547865978
+}

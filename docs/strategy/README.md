@@ -1,5 +1,23 @@
 # Strategy
 
-To be built in upcoming sessions: the contest-day workflow, the Claude Code pipeline
-(skills, templates, automation for reading levels, solving, validating against examples, and submitting),
-and lessons learned from training problems.
+## Contest-day workflow (v1, tested 2026-10-09)
+1. **Before the start:**
+   - `python arena/ccc.py info` confirms the login is still valid. If not, run `login`.
+   - Have the repo open in Claude Code with the `ccc-solve` skill loaded.
+2. **At the start:** `python arena/ccc.py contest 42nd-classic-ccc-5872 --name contest`, then `fetch 1`.
+3. **Per level:** follow the `ccc-solve` loop.
+   - Claude reads `statement.txt` and writes `solve.py`.
+   - `go N` verifies the example, submits, and shows the verdicts.
+   - Then `fetch N+1`.
+4. **After each level:** commit the solutions.
+
+## Training status
+| Run | Game | Mode | Levels passed | Notes |
+|---|---|---|---|---|
+| lawnmower | ccc-2024.04-classic-lawn-mower | exploration | 1–3 | L4+ (construct a Hamiltonian path) is the first real algorithmic level |
+
+## Ideas to build next
+- **Timed rehearsal:** a full Challenge-mode run (4 h) on Room Planner or Spaceship.
+- **Penalty check:** in Challenge mode, see whether a wrong submit adds to `gameScore.timeMs`.
+- **Parallelism:** for a team of 2–3, each person runs their own Claude session on a different level or approach. Any member can submit.
+- **Solver library:** grid/BFS helpers and common parsers in `arena/lib/` so solvers can be written faster.

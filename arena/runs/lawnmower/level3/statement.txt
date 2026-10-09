@@ -1,0 +1,63 @@
+LEVEL 3#WeLoveSoftware
+u too? cloudflight.io/career
+
+▪ You are given a list of lawns.
+Each lawn has one tree on it.
+▪ For each lawn, you are also given a path for a lawn mower.
+▪ For each path, check if it is valid.
+You can find the definition of a valid path on the next page.
+LEVEL 3
+
+A path is valid if:
+▪ It visits each free cell of the given lawn
+▪ It does not visit any cell twice
+▪ It does not visit the cell with the tree on it
+▪ It does not leave the lawn
+LEVEL 3
+
+
+LEVEL 3
+Input
+Name Description Example
+N Number of lawns 4
+5 3
+..X..
+.....
+.....
+SSDWDSDWWDSS
+5 3
+..X..
+.....
+.....
+DSSAWDDSDWWDSS
+5 3
+..X..
+.....
+.....
+SSDWWDSSDWWDSS
+5 3
+..X..
+.....
+.....
+ASSDWDSDWWDSS
+Repeated N times
+Lawn size The width followed by the height of the lawn, separated by a space
+Lawn
+A paragraph of characters
+‘.’ represents a free cell
+‘X’ represents the tree
+Path A string of characters
+Output
+Name Description Example
+Validity 
+(repeated N times)
+‘VALID’ if the conditions of the previous page are met
+Otherwise ‘INVALID’
+INVALID
+INVALID
+INVALID
+VALID
+
+#WeLoveSoftware
+u too? cloudflight.io/career Lawn Mower
+PROCESSING…

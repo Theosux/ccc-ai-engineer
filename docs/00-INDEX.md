@@ -19,13 +19,14 @@
 ## Strategy (`docs/strategy/`)
 | File | Purpose |
 |---|---|
-| [README.md](strategy/README.md) | Contest-day workflow / AI pipeline (to be built) |
+| [README.md](strategy/README.md) | Contest-day workflow + training status |
 
 ## Custom skills (`.claude/skills/`)
 | Skill | Purpose |
 |---|---|
 | `ccc-context` | The ritual: reloads all project context after /clear |
+| `ccc-solve` | Fast loop per level: fetch → statement → solve.py → go (training + contest) |
 
 ## Other
 - [progress-log.md](progress-log.md) — dated session log
-- `problems/` — training problems
+- [arena/README.md](../arena/README.md) — working folder: CLI usage, folder layout (zips, inputs, outputs, solvers)
