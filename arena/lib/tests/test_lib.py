@@ -163,6 +163,18 @@ def t_runner():
     assert run_cases(split, lambda c: c, data="0\n", write=False) == ""
 
 
+def t_cp():
+    from lib.cp import cp_circuit_on_grid, exact_cover, cp_model, cp_solve
+    g = [".....", ".....", "X....", ".....", ".....", ".....", "....."]
+    assert valid_cover(g, cells_to_moves(cp_circuit_on_grid(g, seconds=10)), cycle=True)
+    p = cp_circuit_on_grid(["...", "...", "..."], cycle=False, start=(0, 0), end=(2, 2), seconds=10)
+    assert p[0] == (0, 0) and p[-1] == (2, 2) and len(p) == 9
+    assert cp_circuit_on_grid(["...", "...", "..."], seconds=5) is None  # odd count: no cycle
+    assert sorted(exact_cover([{0, 1}, {1, 2}, {2, 3}, {1}], 4)) == [0, 2]
+    m = cp_model.CpModel(); x = m.NewIntVar(0, 10, "x"); m.Add(x * 2 >= 7); m.Minimize(x)
+    assert cp_solve(m, 5).Value(x) == 4
+
+
 if __name__ == "__main__":
     t0 = time.time()
     for name, fn in list(globals().items()):

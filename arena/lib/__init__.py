@@ -6,7 +6,9 @@
 Modules: parse (Reader/Lines), grid (dirs, symmetries), paths (cover/hamiltonian),
 search (BFS/Dijkstra/A*/DSU/toposort), sim (cycle skip), check (local validation), opt (annealing), geom,
 pack (rectangle packing: guillotine DP + pinwheel + exact; no-touch gap; validator),
-tourney (knockout brackets: simulate, construct by counts, fill wildcards, rig vs adversary).
+tourney (knockout brackets: simulate, construct by counts, fill wildcards, rig vs adversary),
+runner (run_cases: pool across cases, progress/ETA, CCC_PROBE), cp (OR-Tools CP-SAT: circuit, exact cover;
+import explicitly: `from lib.cp import ...`, it loads ortools).
 """
 from .parse import Reader, Lines, paragraphs, out_lines, run, ints_of, pairs_of
 from .grid import *  # noqa: F401,F403
