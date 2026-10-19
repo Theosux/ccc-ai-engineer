@@ -53,18 +53,12 @@ def blu3r4y_outputs():
 
 def level_inputs(src, n):
     """[(fileId, input Path, example output Path or None)], example first."""
-    if src["kind"] == "gergely":
-        d = GE / src["dir"] / "input" / f"level{n}"
-        ex = d / f"level{n}_example.in"
-        res = [("0-example", ex, d / f"level{n}_example.out")] if ex.exists() else []
-        nums = sorted((p for p in d.glob(f"level{n}_*.in") if p.stem.split("_")[1].isdigit()),
-                      key=lambda p: int(p.stem.split("_")[1]))
-        return res + [(p.stem.split("_")[1], p, None) for p in nums]
-    d = DATA / src["dir"] / "data" / f"level{n}"
-    ps = sorted(d.glob(f"level{n}_*.in"), key=lambda p: int(p.stem.split("_")[1]))
-    # 2021 archive has no separate example: the first file is shown as the example (with its output)
-    return [("0-example" if i == 0 else p.stem.split("_")[1], p, p.with_suffix(".out") if i == 0 else None)
-            for i, p in enumerate(ps)]
+    d = (GE / src["dir"] / "input" if src["kind"] == "gergely" else DATA / src["dir"] / "data") / f"level{n}"
+    ex = d / f"level{n}_example.in"
+    res = [("0-example", ex, d / f"level{n}_example.out")] if ex.exists() else []
+    nums = sorted((p for p in d.glob(f"level{n}_*.in") if p.stem.split("_")[1].isdigit()),
+                  key=lambda p: int(p.stem.split("_")[1]))
+    return res + [(p.stem.split("_")[1], p, None) for p in nums]
 
 
 def level_pdf(src, n):
@@ -84,7 +78,7 @@ def ref_script(src, n):
     return p if p.exists() else None
 
 
-def run_ref(script, inp, timeout=600):
+def run_ref(script, inp, timeout=60):
     with inp.open("rb") as f:
         p = subprocess.run([sys.executable, "-I", str(script)], stdin=f, capture_output=True, timeout=timeout,
                            cwd=script.parent)
