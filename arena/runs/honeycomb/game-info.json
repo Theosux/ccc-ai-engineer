@@ -1,0 +1,107 @@
+{
+  "id": "ccc-2023.03-school-honeycomb",
+  "edition": "37",
+  "name": "Wasp in the Honeycomb",
+  "tags": [
+    "CCC37",
+    "school",
+    "levels"
+  ],
+  "description": "Help the queen bee trap the wasp in the honeycomb before it can escape and hurt the bees",
+  "levelsInfo": {
+    "count": 5,
+    "levels": [
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      }
+    ]
+  },
+  "dev": false,
+  "versions": {
+    "base": {
+      "version": "0.36.0",
+      "commit": "48090eb3"
+    },
+    "game": {
+      "version": "1.0.0-rc18",
+      "commit": "95806a19"
+    }
+  }
+}

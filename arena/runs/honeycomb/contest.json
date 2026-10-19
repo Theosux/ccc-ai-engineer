@@ -1,0 +1,27 @@
+{
+  "id": 10966,
+  "name": "training-ccc-2023.03-school-honeycomb-54290-bbf99589",
+  "slug": "training-ccc-2023-03-school-honeycomb-54290-bbf99589",
+  "contestType": "CLASSIC",
+  "status": "RUNNING",
+  "startTime": "2026-10-19T13:50:16.252334Z",
+  "registrationStartTime": "2026-10-19T13:50:16.252334Z",
+  "durationMinutes": 120,
+  "maxTeamSize": 1,
+  "editionName": null,
+  "gameSlug": "ccc-2023.03-school-honeycomb",
+  "gameName": "Wasp in the Honeycomb",
+  "gameDescription": "Help the queen bee trap the wasp in the honeycomb before it can escape and hurt the bees",
+  "gameImage": null,
+  "gameBaseUrl": "https://honeycomb.codingcontest.org/",
+  "gameTags": [
+    "CCC37",
+    "school",
+    "levels"
+  ],
+  "venues": [],
+  "registrationCount": 1,
+  "totalLevels": 5,
+  "recruiting": false,
+  "serverNowMs": 1792417817232
+}

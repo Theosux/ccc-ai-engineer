@@ -722,6 +722,10 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=
             exp = expected_path(inp)
             if exp:
                 print(f"----- expected output {exp.name}\n{head(exp)}")
+                blanks = sum(not l.strip() for l in exp.read_text(encoding="utf-8").strip().splitlines())
+                if blanks:
+                    print(f"!!!!! expected output has {blanks} BLANK separator line(s): keep them "
+                          f"(run_cases(..., sep='\\n\\n', header=...))")
     return d
 
 
@@ -949,6 +953,15 @@ def run_level(name, n, only=None, solver=None, timeout=180):
                 cok, msg = False, f"check() raised {e!r}"
             if cok and status.startswith("EXAMPLE MISMATCH"):
                 status = "check OK (example output differs; answer not unique)"
+                want_raw = exp.read_text(encoding="utf-8").strip().splitlines()
+                got_raw = out.strip().splitlines()
+                wb, gb = sum(not l.strip() for l in want_raw), sum(not l.strip() for l in got_raw)
+                if wb != gb:  # honeycomb L5: blank-line block separators missing -> server saw no cases
+                    ok_all = False
+                    status += (f"  BUT SHAPE DIFFERS: example output has {wb} blank separator lines, yours {gb}"
+                               f" -> fix the format (or --force)")
+                elif len(want_raw) != len(got_raw):
+                    status += f"  (note: {len(got_raw)} lines vs example {len(want_raw)})"
             else:
                 status += f"  check:{'OK' if cok else 'FAIL ' + str(msg)[:200]}"
             ok_all &= bool(cok)

@@ -1,0 +1,11 @@
+[p5]
+honeycomb cellCount
+honeycomb (StringList):
+paragraph of characters representing a honeycomb
+cellCount (int): the number of cells in the
+honeycomb
+O-O-O-O-O-
+-O-O-O-O-O
+O-O-O-O-O-
+-O-O-O-O-O
+O-O-O-O-O25

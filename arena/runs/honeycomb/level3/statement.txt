@@ -1,0 +1,30 @@
+[p3]
+••
+
+[p4]
+N
+honeycomb
+(repeated N times)
+freeOrTrapped
+(repeated N times)
+N (int): the number of honeycombs in the file
+honeycomb (StringList):
+paragraph of characters representing a honeycomb
+freeOrTrapped (String): “FREE” if the wasp can
+escape, “TRAPPED” if it cannot .
+3
+O-X-X-O-X-
+-O-O-O-X-O
+X-O-W-O-O-
+-O-X-X-X-X
+O-X-X-O-OX-O-O-O-X-
+-O-X-X-X-X
+O-O-O-O-X-
+-X-W-O-O-X
+O-X-X-O-XX-X-X-X-O-
+-X-W-X-O-X
+O-X-O-X-X-
+-O-X-X-X-X
+O-O-O-O-XFREE
+TRAPPED
+TRAPPED

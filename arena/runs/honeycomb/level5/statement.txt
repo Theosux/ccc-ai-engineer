@@ -1,0 +1,55 @@
+[p3]
+•••
+
+[p4]
+N
+barrierCount
+honeycomb
+(repeated N times)
+N
+honeycomb
+(repeated N times)
+N (int): the number of honeycombs in the file
+barrierCount (int): the number of additional
+barriers you can construct
+honeycomb (StringList):
+paragraph of characters representing a honeycomb
+N (int): the number of honeycombs in the file
+honeycomb (StringList):
+paragraph of characters representing a honeycomb
+
+[p5]
+34O
+-X-X-O-X-
+-O-O-O-X-O
+X-O-W-O-O-
+-O-X-X-X-X
+O-X-X-O-O-
+2X
+-O-O-O-X-
+-O-X-X-X-X
+O-O-O-O-X-
+-X-W-O-O-X
+O-X-X-O-X-
+0X
+-X-X-X-O-
+-X-W-X-O-X
+O-X-O-X-X-
+-O-X-X-X-X
+O-O-O-O-X-
+3O
+-X-X-O-X-
+-O-X-X-X-O
+X-X-W-X-O-
+-O-X-X-X-X
+O-X-X-O-O-
+X-O-O-O-X-
+-O-X-X-X-X
+O-X-O-O-X-
+-X-W-O-O-X
+O-X-X-X-X-
+X-X-X-X-O-
+-X-W-X-O-X
+O-X-O-X-X-
+-O-X-X-X-X
+O-O-O-O-X-

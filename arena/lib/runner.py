@@ -53,8 +53,10 @@ def _fmt(s):
     return f"{s:.0f} s" if s >= 10 else f"{s:.1f} s"
 
 
-def _join(outs):
-    text = "\n".join(str(o).rstrip("\n") for o in outs)
+def _join(outs, sep="\n", header=None):
+    text = sep.join(str(o).rstrip("\n") for o in outs)
+    if header is not None:
+        text = f"{header}{sep}{text}" if text else str(header)
     return text + "\n" if text else ""
 
 
@@ -124,8 +126,10 @@ def _probe(items, solve_case, init, initargs, k):
     _err(f"[probe] ETA_SECONDS={eta:.2f}")
 
 
-def run_cases(cases, solve_case, data=None, init=None, initargs=(), write=True):
-    """Split `data` (default: stdin) with cases(), solve each with solve_case(), return/print the joined output."""
+def run_cases(cases, solve_case, data=None, init=None, initargs=(), write=True, sep="\n", header=False):
+    """Split `data` (default: stdin) with cases(), solve each with solve_case(), return/print the joined output.
+    sep: between case outputs ("\\n\\n" = blank line between blocks). header=True: first line is the case count
+    (followed by sep), as in "N, then N blocks" output formats."""
     if data is None:
         data = sys.stdin.read()
     cs = cases(data) if callable(cases) else list(cases)
@@ -187,7 +191,7 @@ def run_cases(cases, solve_case, data=None, init=None, initargs=(), write=True):
     el = time.perf_counter() - T0
     if el > 3:
         _err(f"[runner] done {n} cases in {_fmt(el)}")
-    text = _join(outs)
+    text = _join(outs, sep, len(cs) if header else None)
     if write:
         sys.stdout.write(text)
         sys.stdout.flush()
