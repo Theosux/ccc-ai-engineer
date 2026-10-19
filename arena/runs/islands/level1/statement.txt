@@ -1,0 +1,60 @@
+[p2]
+Islands
+You find yourself on a sailing ship.
+The captain, in his friendly way,
+informs you that you are the navigator.
+Rise and shine, ya
+landlubbing barnacle!
+
+[p3]
+Islands
+
+[p4]
+Given a map and a list of coordinates,
+for each coordinate, find out whether
+it is on land or water.
+Hav a look at ye map,
+ya milk drinkin parrot!
+
+[p5]
+Input
+Name Description Example
+Size of Map An integer representing the width and height of the map 11
+WWWWWWWWWWW
+WLWWWWWWWWW
+WWWWLLLLWWW
+WWWLLLLLWWW
+WWWLWWWLLWW
+WWLLWLWWLWW
+WWLLWWWWWWW
+WWWWLWWWLWW
+WWLWWWLLWWW
+WLLWWWWWWWW
+WWWWWWWWWWW
+3
+4,2
+6,6
+10,6
+Map
+A paragraph of characters
+‘L’ represents Land.
+‘W’ represents Water.
+N An integer representing the number of coordinates
+Coordinate
+(repeated N times)
+A pair of integers representing a tile on the map.
+The order is X,Y (column,row).
+Indexing starts with 0.
+Output
+Name Description Example
+Tile Type
+(repeated N times)
+‘L’ represents Land.
+‘W’ represents Water.
+L
+W
+W
+
+[p6]
+May the winds of fortune
+blow in your favor.

@@ -1,0 +1,17 @@
+{"t": 1792418322.6, "event": "fetch", "level": 1}
+{"t": 1792418331.1, "event": "pass", "level": 1, "wrong": 0}
+{"t": 1792418331.2, "event": "fetch", "level": 2}
+{"t": 1792418342.7, "event": "pass", "level": 2, "wrong": 0}
+{"t": 1792418342.7, "event": "fetch", "level": 3}
+{"t": 1792418354.3, "event": "pass", "level": 3, "wrong": 0}
+{"t": 1792418354.3, "event": "fetch", "level": 4}
+{"t": 1792418388.9, "event": "pass", "level": 4, "wrong": 0}
+{"t": 1792418388.9, "event": "fetch", "level": 5}
+{"t": 1792418465.7, "event": "pass", "level": 5, "wrong": 0}
+{"t": 1792418465.7, "event": "fetch", "level": 6}
+{"t": 1792418516.5, "event": "wrong", "level": 6, "file": "1", "msg": "case 2: valid but not shortest: 34 tiles, a route with 33 tiles exists"}
+{"t": 1792418572.4, "event": "pass", "level": 6, "wrong": 1}
+{"t": 1792418572.4, "event": "fetch", "level": 7}
+{"t": 1792419314.2, "event": "wrong", "level": 7, "file": "5", "msg": "case 39: route also encircles another island"}
+{"t": 1792419611.9, "event": "wrong", "level": 7, "file": "5", "msg": "case 39: valid but not shortest: 85 tiles, a route with 83 tiles exists"}
+{"t": 1792419657.5, "event": "pass", "level": 7, "wrong": 3}

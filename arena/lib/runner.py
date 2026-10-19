@@ -123,7 +123,7 @@ def _probe(items, solve_case, init, initargs, k):
     _err(f"[probe] ETA full file: {_fmt(eta)} on {cores} cores, {_fmt(n * mean)} sequential{lb}")
     if unfinished:
         _err("[probe] heavy tail: some cases take > budget. Use a restart portfolio / better heuristic, not a longer timeout.")
-    _err(f"[probe] ETA_SECONDS={eta:.2f}")
+    _err(f"[probe] ETA_SECONDS={eta:.2f}" + (" HEAVY_TAIL" if unfinished else ""))
 
 
 def run_cases(cases, solve_case, data=None, init=None, initargs=(), write=True, sep="\n", header=False):
@@ -159,13 +159,14 @@ def run_cases(cases, solve_case, data=None, init=None, initargs=(), write=True, 
     pos = {ic[0]: k for k, ic in enumerate(items)}
     done, last = 1, time.perf_counter()
 
-    def tick():
+    def tick(pending=()):
         nonlocal last
         now = time.perf_counter()
         if now - last >= 10:
             last = now
             el = now - T0
-            _err(f"[runner] {done}/{n} cases  {el / done:.2f} s/case wall  ETA {_fmt(el / done * (n - done))}")
+            tail = f"  still running: cases {sorted(pending)}" if 0 < len(pending) <= 8 else ""
+            _err(f"[runner] {done}/{n} cases  {el / done:.2f} s/case wall  ETA {_fmt(el / done * (n - done))}{tail}")
 
     if seq:
         for ic in rest:
@@ -180,14 +181,18 @@ def run_cases(cases, solve_case, data=None, init=None, initargs=(), write=True, 
         w = _workers(len(rest))
         _err(f"[runner] {n} cases, first took {dt:.2f} s -> pool of {w} workers")
         with mp.Pool(w, initializer=_worker_init, initargs=(solve_case, init, initargs)) as pool:
-            for i, out, dt, err in pool.imap_unordered(_timed, rest, chunksize=1):
-                if err:
-                    _err(f"[runner] case {i} crashed:\n{err}")
-                    pool.terminate()
-                    sys.exit(1)
-                outs[pos[i]] = out
-                done += 1
-                tick()
+            pending = {ic[0]: pool.apply_async(_timed, (ic,)) for ic in rest}
+            while pending:  # poll (not imap) so stragglers are named while they run
+                for k in [k for k, r in pending.items() if r.ready()]:
+                    i, out, dt, err = pending.pop(k).get()
+                    if err:
+                        _err(f"[runner] case {i} crashed:\n{err}")
+                        pool.terminate()
+                        sys.exit(1)
+                    outs[pos[i]] = out
+                    done += 1
+                tick(pending)
+                time.sleep(0.02)
     el = time.perf_counter() - T0
     if el > 3:
         _err(f"[runner] done {n} cases in {_fmt(el)}")

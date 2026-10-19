@@ -1,0 +1,51 @@
+[p1]
+Islands
+
+[p2]
+▪ Given a map and a list of coordinate
+pairs, for each pair, find out
+whether both coordinates are on the
+same island.
+▪ In this level, all given coordinates
+will be on land.
+▪ Islands don’t connect diagonally.
+Ahoy navigator! Tell me,
+which points are on the
+same island?
+
+[p3]
+Input
+Name Description Example
+Size of Map An integer representing the width and height of the map 11
+WWWWWWWWWWW
+WLWWWWWWWWW
+WWWWLLLLWWW
+WWWLLLLLWWW
+WWWLWWWLLWW
+WWLLWLWWLWW
+WWLLWWWWWWW
+WWWWLWWWLWW
+WWLWWWLLWWW
+WLLWWWWWWWW
+WWWWWWWWWWW
+3
+4,2 8,5
+3,5 4,7
+5,5 7,8
+Map A paragraph of characters
+N An integer representing the number of coordinate pairs
+Coordinate Pair
+(repeated N times)
+A pair of coordinates separated by a space
+The order is X1,Y1 X2,Y2
+Output
+Name Description Example
+Result
+(repeated N times)
+SAME
+DIFFERENT
+DIFFERENT
+
+[p4]
+May the winds of fortune
+blow in your favor.

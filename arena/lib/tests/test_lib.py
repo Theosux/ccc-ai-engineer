@@ -175,6 +175,14 @@ def t_cp():
     assert cp_solve(m, 5).Value(x) == 4
 
 
+def t_flow():
+    from lib.flow import grid_vertex_cut, max_flow_graph
+    cut, v = grid_vertex_cut(5, 5, cost=lambda x, y: None if (x, y) == (2, 2) else 1,
+                             source=lambda x, y: (x, y) == (2, 2), sink=lambda x, y: False, border_is_sink=True)
+    assert v == 4 and cut == {(1, 2), (3, 2), (2, 1), (2, 3)}  # the diamond (Islands L5 example "5,4 6,5 5,6 4,5")
+    assert max_flow_graph(4, [(0, 1, 3), (0, 2, 2), (1, 3, 2), (2, 3, 3)], 0, 3)[0] == 4
+
+
 if __name__ == "__main__":
     t0 = time.time()
     for name, fn in list(globals().items()):

@@ -1,0 +1,65 @@
+[p1]
+Islands
+
+[p2]
+Shiver my timbers!
+I forgot to tell you,
+to win my bet, I need
+the fastest routes.
+▪ For each coordinate, find the shortest sea
+route encircling the given island.
+▪ A step to any of the 8 neighbour tiles
+counts as length 1.
+▪ There might be multiple correct solutions
+of the same length.
+▪ Hint: the islands were generated with
+Perlin Noise, therefore not all island
+shapes that are theoretically possible will
+occur in the input. This will stay the same
+for all future levels.
+
+[p3]
+Checklist for routes:
+▪ Must not visit any tile that is land.
+▪ Must not have gaps.
+▪ Must not visit the same tile twice.
+▪ Must not have two diagonal steps crossing each other.
+▪ Must end on one of the 8 neighbor tiles of tile where it started.
+▪ Must be the shortest possible route.
+
+[p4]
+Input - identical to previous level
+Name Description Example
+Size of Map An integer representing the width and height of the map 11
+WWWWWWWWWWW
+WLWWWWWWWWW
+WWWWLLLLWWW
+WWWLLLLLWWW
+WWWLWWWLLWW
+WWLLWLWWLWW
+WWLLWWWWWWW
+WWWWLWWWLWW
+WWLWWWLLWWW
+WLLWWWWWWWW
+WWWWWWWWWWW
+3
+7,3
+5,5
+7,8
+Map A paragraph of characters
+N An integer representing the number of coordinates
+Coordinate
+(repeated N times) A pair of integers representing a tile on the map.
+Output - identical to previous level
+Name Example
+Path
+(repeated N times)
+4,1 5,1 6,1 7,1 8,2 8,3 9,4 9,5 8,6 7,6 6,6 5,6 4,6 3,7 2,7 1,6 1,5 1,4 2,3 3,2
+5,4 6,5 5,6 4,5
+6,7 7,7 8,8 7,9 6,9 5,8
+This is just an example solution. Any solution satisfying
+the rules on the previous page is correct.
+
+[p5]
+May the winds of fortune
+blow in your favor.

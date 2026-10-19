@@ -64,16 +64,17 @@ Hex grid as ASCII rows `O-X-O-...`, alternate rows offset; neighbours (0,±2), (
 L1 count `O` · L2 empty neighbours of `W` · L3 straight-line escape in 6 directions · L4 flood fill to the border · L5 place ≤ k barriers to trap the wasp = **min vertex cut** (networkx max-flow, node splitting). Output is `N`, a blank line, then blocks separated by blank lines (2 WRONGs: separators missing).
 **School games are easy** (L5 ≈ Classic L3–L4). Use them only as speed drills.
 
-## Islands (2023)
-| L | Change | Technique |
+## Islands (38th Classic, 2023, offline): we solved 7/7 in 22.3 min, 3 WRONG (run `islands`, 2026-10-19)
+| L | Change | Technique (our time) |
 |---|---|---|
-| 1 | land or water at x,y (coords "x,y") | index `grid[y][x]` |
-| 2 | two coords on same island? (4-connected) | flood fill / DSU component ids |
-| 3 | route (8-dir) self-intersects? (repeat tile or crossing diagonals) | set of tiles + set of diagonal edges; crossing = (a→b diag) and the other diagonal of the same 2×2 |
-| 4 | find sea route A→B (8-dir, no land, no crossing) | BFS on water with 8-neighbours (shortest has no self-cross) |
-| 5 | route encircling an island (end adjacent to start) | *(s)* walk ring of water around island (boundary following) |
-| 6 | shortest encircling route | *(s)* BFS on (cell, winding/crossing a ray) state = "cut" trick: forbid crossing a ray from island to edge, BFS from one side to the other |
-| 7 | must not encircle other islands | *(s)* same + extra rays/constraints for other islands |
+| 1 | land or water at x,y (coords "x,y") | index `grid[y][x]` (1 min) |
+| 2 | two coords on same island? (4-connected) | flood-fill component ids (1 min) |
+| 3 | route (8-dir) self-intersects? (repeat tile or crossing diagonals) | set of tiles + set of diagonal edges; crossing = the other diagonal of the same 2×2 (1 min) |
+| 4 | find sea route A→B (8-dir, no land, no crossing, ≤ 2W) | BFS on water, 8-neighbours (the shortest never self-crosses) (1.5 min) |
+| 5 | route encircling an island (end adjacent to start) | **ray-cut BFS**: ray up from the top-left tile T's corner; start on a ray cell, BFS without crossing the ray, end on a neighbour across it. Try every ray cell as the start (2.5 min, 2 crashes) |
+| 6 | **shortest** encircling route | same, best over all ray starts; prune when 2·(y0−ys) ≥ best; a diagonal step through T's corner **counts as crossing** (1 WRONG: I had forbidden it) (2.5 min) |
+| 7 | must not encircle any other island | parity bitmask per island ray was exact but blew up (2¹¹ states). **Reformulated as a MIN VERTEX CUT** (OR-Tools max flow, water cost 1, T = source, other land + window border = sink): ~0.1 s per case. If the cut splits into several rings (outer loop + a ring around a nearby island), add an uncuttable corridor from that island to a map edge (try all 4 edges, keep the shortest) (13.5 min, 2 WRONG) |
+**Lesson:** "shortest closed route around X that keeps Y outside" = min vertex cut (`lib.flow.grid_vertex_cut`). When the probe flags a HEAVY TAIL, change the formulation; don't tune.
 
 ## Spaceship (2025.11, 41st CCC, 8 levels): **we solved 8/8 in 36.6 min** (timed Challenge rehearsal, 2026-10-19, run `spaceship`)
 The 2025 winners did 7/8 in 3h42m, and nobody solved L8. Pace = time per 1 unit of space (5 slow … 1 fast, negative = backwards, 0 = stand still for 1 tick). Paces change one step at a time: `-1⇆…⇆-5⇆0⇄5⇄…⇄1`. Sequences start and end with 0.

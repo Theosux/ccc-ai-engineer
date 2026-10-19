@@ -43,6 +43,7 @@ Local run with timings: `python arena/lib/check.py arena/runs/<run>/levelN [1-sm
 - **tourney:** `make_fight(beats)` (beats={'R':'SL',...}) · `play_round/play_rounds(s,f,k)/champion` · `build_bracket(counts,'S',beats)` (arrange counts so S wins) · `fill_bracket(s,'S',beats)` (choose X spots) · `rig_bracket(s,'S',beats,wild='X',adv='Z')` (S wins for every Z)
 - **cp** (`from lib.cp import ...`, OR-Tools CP-SAT on 16 cores): `cp_model`, `cp_solve(m, seconds) -> solver|None` · `cp_circuit_on_grid(g, cycle=True|False, start, end, diag)` (Hamiltonian cycle or path, exact) · `cp_circuit(n, arcs, ...)` (any graph) · `exact_cover(rows, n_items, optional_items)` (tilings, placements). Inside a `run_cases` pool, pass `workers=1`.
   It is the **fastest-to-write exact method** for constructions and feasibility: it solved all 128 Lawn Mower L7 cycles first try in 32 s, where the hand-built `ham_cycle` took 24 min to develop.
+- **flow** (`from lib.flow import ...`, OR-Tools C++ max flow): `grid_vertex_cut(W, H, cost, source, sink, border_is_sink, diag)` → (cut cells, value), a min set of cells separating A from B; `max_flow_graph(n, arcs, s, t)`. **"Shortest loop/route around X keeping Y outside" or "fewest barriers to trap/separate" = min vertex cut**: Islands L7 went from a heavy-tailed parity BFS to 0.1 s per case, and the Honeycomb L5 trap is the same pattern.
 - Also installed: `networkx` (flows, matching), `scipy.optimize` (`linear_sum_assignment`, `milp`), `numpy`, `python-sat` (`pysat`), `z3-solver`, `sortedcontainers`.
 
 ## Decision rules

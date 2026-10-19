@@ -1,0 +1,64 @@
+[p1]
+Islands
+
+[p2]
+Yarr! I made another drunken
+bet against Captain Sparrow.
+Now we need routes encircling
+each of these island, otherwise
+I will lose my ship.
+▪ Given a map and a list of coordinates,
+for each coordinate, find a sea route
+encircling the island containing that tile.
+▪ You can choose the start of your route freely.
+▪ Your route must end on one of the 8 neighbor
+tiles of tile where it started.
+▪ Your route may or may not encircle other
+islands as well.
+▪ Hint: Islands will never contain lakes.
+
+[p3]
+Checklist for routes:
+▪ Must not visit any tile that is land.
+▪ Must not have gaps.
+▪ Must not visit the same tile twice.
+▪ Must not have two diagonal steps crossing each other.
+▪ Must not be longer than twice the width of the map.
+▪ Must end on one of the 8 neighbor tiles of tile where it started.
+
+[p4]
+Input
+Name Description Example
+Size of Map An integer representing the width and height of the map 11
+WWWWWWWWWWW
+WLWWWWWWWWW
+WWWWLLLLWWW
+WWWLLLLLWWW
+WWWLWWWLLWW
+WWLLWLWWLWW
+WWLLWWWWWWW
+WWWWLWWWLWW
+WWLWWWLLWWW
+WLLWWWWWWWW
+WWWWWWWWWWW
+3
+7,3
+5,5
+7,8
+Map A paragraph of characters
+N An integer representing the number of coordinates
+Coordinate
+(repeated N times) A pair of integers representing a tile on the map.
+Output - identical to previous level
+Name Example
+Path
+(repeated N times)
+4,1 5,1 6,1 7,1 8,2 8,3 9,4 9,5 8,6 7,6 6,6 5,6 4,6 3,7 2,7 1,6 1,5 1,4 2,3 3,2
+5,4 6,5 5,6 4,5
+6,7 7,7 8,8 7,9 6,9 5,8
+This is just an example solution. Any solution satisfying
+the rules on the previous page is correct.
+
+[p5]
+May the winds of fortune
+blow in your favor.

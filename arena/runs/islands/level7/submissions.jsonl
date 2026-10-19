@@ -1,0 +1,3 @@
+{"t": 1792419314.1724696, "results": {"2": {"correct": true, "bad": []}, "1": {"correct": true, "bad": []}, "3": {"correct": true, "bad": []}, "5": {"correct": false, "bad": [{"isCorrect": false, "caseState": "WRONG", "caseMessage": "case 39: route also encircles another island", "startLineNumber": 1, "endLineNumberExcl": null, "errorLineNumber": null}]}}}
+{"t": 1792419611.919078, "results": {"5": {"correct": false, "bad": [{"isCorrect": false, "caseState": "WRONG", "caseMessage": "case 39: valid but not shortest: 85 tiles, a route with 83 tiles exists", "startLineNumber": 1, "endLineNumberExcl": null, "errorLineNumber": null}]}}}
+{"t": 1792419657.50211, "results": {"5": {"correct": true, "bad": []}, "4": {"correct": true, "bad": []}}}

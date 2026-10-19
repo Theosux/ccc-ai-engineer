@@ -884,6 +884,7 @@ def run_solver(cmd, shell, inp, d, env, timeout, tag):
                 m = re.search(r"ETA_SECONDS=([\d.]+)", line)
                 if m:
                     run_solver.last_eta = float(m.group(1))
+                    run_solver.heavy_tail = "HEAVY_TAIL" in line
                     continue
                 print(f"  {tag}: {line}", flush=True)
             else:
@@ -991,7 +992,7 @@ def cmd_probe(a):
     uses_runner = "run_cases" in src
     print(f"probe {fid} ({inp.stat().st_size / 1e6:.2f} MB), {a.k} sampled cases (largest + random), 20 s budget"
           + ("" if uses_runner else "  [solve.py does not use lib.runner.run_cases: timing the WHOLE file]"))
-    run_solver.last_eta = None
+    run_solver.last_eta, run_solver.heavy_tail = None, False
     out, err, dt = run_solver(cmd, shell, inp, d, solver_env({"CCC_PROBE": str(a.k)}), a.timeout, fid)
     if out is None:
         print(f"  {fid}: {err}")
@@ -1002,7 +1003,10 @@ def cmd_probe(a):
     if eta is None:
         return
     pypy = "ccc: pypy" in src.split("\n", 1)[0] or os.environ.get("CCC_PY") == "pypy"
-    if eta < 60:
+    if uses_runner and getattr(run_solver, "heavy_tail", False):
+        v = ("HEAVY TAIL: some sampled cases did not finish in 20 s -> change the formulation "
+             "(exact model: flow/min-cut, CP-SAT, DP) or a restart portfolio; a longer timeout will not help")
+    elif eta < 60:
         v = "OK: full run"
     elif eta < 300:
         v = f"SLOW but feasible: go {a.level} --timeout {int(eta * 1.5) + 30}" + ("" if pypy else "  (or add `# ccc: pypy`: 10-60x)")
