@@ -16,7 +16,7 @@ separate private repo with our tooling, workflow and Data/AI research. After the
 - ☑ 1. This doc, CLAUDE.md ritual, memory (main repo)
 - ☑ 2. Create repo, clone, skeleton (CLAUDE.md, INDEX, docs/team/, ccc-ai-context skill, .gitignore), push
 - ◐ 3. (running in background since 19:26) Research agents A (contest facts) + B (problem side) → new repo `docs/research/`
-- ☐ 4. Port tooling (ccc.py, golive.py, lib) to the AI slug; install sklearn/lightgbm/xgboost; `lib/ml.py`; smoke-test Birds `train` + `fetch 1`
+- ☑ 4. Port tooling (ccc.py, golive.py, lib) to the AI slug; install sklearn/lightgbm/xgboost; `lib/ml.py`; smoke-test Birds `train` + `fetch 1`
 - ☐ 5. Verification agent → `docs/research/verification-report.md`
 
 ## it-2: hands-on Migratory Birds
