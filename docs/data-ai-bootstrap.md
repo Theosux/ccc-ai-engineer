@@ -20,7 +20,7 @@ separate private repo with our tooling, workflow and Data/AI research. After the
 - ◐ 5. (running in background since ~19:55) Verification agent → `docs/research/verification-report.md`
 
 ## it-2: hands-on Migratory Birds
-- ◐ 1. (L1–L3 passed, started early in it-1 session) Fetch L1–L6 (exploration), solve level by level with the CLI loop, time each level
+- ☑ 1. (6/6 in 16.1 min fetch→pass; L5 score 0.5687 vs 0.50) Fetch L1–L6 (exploration), solve level by level with the CLI loop, time each level
 - ☐ 2. Write `knowledge/past-games.md`, `data-ai-patterns.md`, `ml-playbook.md`; generalize helpers into `lib/ml.py`
 - ☐ 3. Fix tool gaps the Data/AI format exposes
 
