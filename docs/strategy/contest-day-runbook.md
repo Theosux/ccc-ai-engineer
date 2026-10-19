@@ -50,3 +50,11 @@ Everything is logged raw, with tokens redacted, to `arena/runs/contest/golive-lo
 - **Wrong submits:** a wrong submit did **not** add penalty time to `passedAt` in Challenge mode (tested 2026-10-19). Still, use `check()` and never submit unverified output.
 - **Visualizers:** `levelN/sandbox.html` or `files/sandbox-level-N.html` is the official visualizer. Its JavaScript contains the **exact simulation and collision rules** (Spaceship L5), so read it when the semantics are unclear.
 - **Images:** when the statement text is only bullets, the rules are images. `fetch` now auto-renders them and prints which PNGs to Read.
+
+## Optional: teammate second-opinion session (not the primary strategy)
+Use it only when a level has been stuck for more than about 10 minutes, typically the last 1–2 levels. Teo's laptop stays the **only submitter**.
+1. **Setup (once, before the contest):** on the teammate's laptop, `git clone` the repo, then `pip install requests playwright pypdf pypdfium2 ortools networkx scipy`. Install Claude Code and log in with the teammate's own account.
+2. **When a level is stuck:** Teo's session runs `git add arena/runs/contest/levelN && git commit -m wip && git push`. The teammate runs `git pull`. The level folder then has the statement, the inputs and our current `solve.py`.
+3. The teammate opens Claude Code in the repo and asks: *"We are working on ccc check claude.md for context. Level N of run contest is stuck. Our approach was X. Solve it with a DIFFERENT method. Use only `python arena/ccc.py run N` and `probe N`, never `go` or `submit`."* `run` and `probe` work offline from the local files; only `go` and `submit` touch the server.
+4. **Handover:** the teammate copies the solver to `arena/runs/contest/levelN/solve_alt.py` and pushes a branch: `git checkout -b alt-N && git add ... && git commit && git push -u origin alt-N`. Teo's session runs `git fetch && git checkout origin/alt-N -- arena/runs/contest/levelN/solve_alt.py`, then `python arena/ccc.py go N --solver solve_alt.py`.
+5. **Cost:** this uses the teammate's own Claude usage. Its value is a genuinely different approach (for example CP-SAT or min-cut instead of a search) while the main session keeps trying its own.
