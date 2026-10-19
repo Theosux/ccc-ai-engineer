@@ -64,6 +64,16 @@ Hex grid as ASCII rows `O-X-O-...`, alternate rows offset; neighbours (0,±2), (
 L1 count `O` · L2 empty neighbours of `W` · L3 straight-line escape in 6 directions · L4 flood fill to the border · L5 place ≤ k barriers to trap the wasp = **min vertex cut** (networkx max-flow, node splitting). Output is `N`, a blank line, then blocks separated by blank lines (2 WRONGs: separators missing).
 **School games are easy** (L5 ≈ Classic L3–L4). Use them only as speed drills.
 
+## Smart Grid (2020.10, offline): Sonnet 7/7 in 4.4 min and Opus 7/7 in 4.1 min, 0 WRONG (model A/B, runs `sg-*`)
+L1 cheapest minute (argmin) · L2 cheapest window (prefix sums) · L3 cheapest minute in [start, end] (range argmin; ties: any) ·
+L4 spread power ≤ maxPower per minute with bill ≤ limit (**min-cost flow** task→minute→sink, or greedy cheapest minutes) ·
+L5 + max concurrent tasks per minute (greedy over several task orders, keep the lowest bill) ·
+L6 convex price `floor(P·price·(1+P/maxPower))` (the statement says "rounded up", but the example only matches floor) → **marginal-cost heap greedy** + refill fallback ·
+L7 several households share the city-wide load in the price → same greedy with global usage.
+
+## Interpreter (35th Classic, Nov 2021, offline): Sonnet and Opus 4/4 in ~50 s, 0 WRONG (runs `i21-*`)
+L1 tokens, join the `print` args · L2 recursive-descent parser + executor, `return` via an exception · L3 `var`/`set` with one table per function; any error → `ERROR` · L4 `postpone` appends statements to the current block's queue.
+
 ## Islands (38th Classic, 2023, offline): we solved 7/7 in 22.3 min, 3 WRONG (run `islands`, 2026-10-19)
 | L | Change | Technique (our time) |
 |---|---|---|

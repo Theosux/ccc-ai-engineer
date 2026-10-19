@@ -1,0 +1,94 @@
+[p1]
+14of 45
+event organizer
+
+[p2]
+15of 45
+event organizer
+Glowy:
+Splendid! You’re a natural. Just like Harry
+Potter was, remember what Hagrid told
+him when they first met?
+“You’re a unit of electrical energy,
+Harry.” “I’m a watt?”
+Huehuehue. Yes, I’ll have one for each
+level, what did you expect?
+
+[p3]
+16of 45
+event organizer
+Glowy:
+Getting close to that unlimited power we
+talked about 😏
+Additional info
+Tasks can now draw as much power as wanted at any given minute
+within a certain interval
+Task for Level 3:
+Find the cheapest minute to draw power for each task
+
+[p4]
+17of 45
+event organizer
+› Tasks now don’t have to run for a certain time, but have to draw a certain
+amount of power to be completed.
+› Tasks can now draw as much power as needed at any given minute within a
+given interval. This might change in future levels 😉
+› Find the cheapest minute within this interval to complete the task.
+
+[p5]
+18of 45
+event organizer
+Input Output
+Format
+N
+price
+(repeats N times)
+M
+taskId power startInterval endInterval
+(repeats M times)
+M
+taskId minuteId power
+(repeats N times)
+For each task, find the cheapest minute to draw enough power to finish
+the task.
+Types
+N (int) number of minutes that follow
+price (int) price of power at that minute
+M (int) Number of tasks that follow
+taskId (int) id of the task starting at 1
+power (int) the amount of power the task has to draw to be completed
+startInterval (int) the id of the first minute that power can be drawn for this task
+endInterval (int) the id of the last minute that power can be drawn for this task
+M (int) Number of tasks that follow
+taskId (int) id of the task
+minuteId (int) id of the minute the task is drawing power
+power (int) amount of power that is drawn
+Example
+10
+9796
+8267
+5415
+8256
+6770
+3985
+2567
+2753
+5600
+5046
+5
+1 4 2 8
+2 7 1 8
+3 1 0 2
+4 1 7 8
+5 1 1 2
+5
+1 6 4
+2 6 7
+3 2 1
+4 7 1
+5 2 1
+
+[p6]
+46of 45
+event organizer
+GOOD LUCK

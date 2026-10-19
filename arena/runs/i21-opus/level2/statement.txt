@@ -1,0 +1,57 @@
+[p2]
+well, that was easy…
+now where’d that rabbit go?
+Looking at another wall of green text
+you understand almost nothing of it
+... soon after though, the rabbit
+jumps straight towards a different
+part ...
+
+[p3]
+New in Level 2:
+If / Else, Return statement
+In order to be able to decipher all the text from this simulation, you’ll
+have to be able to interpret more and more complex statements.
+
+[p4]
+The following new statements will be added:
+● return <Boolean | Integer | String>, this statement once reached, will terminate
+the execution of its function and return its value to the caller function if any (will
+be relevant for later levels). Any other statements after reaching this statement
+should be ignored
+● if <Boolean> <statement>* end else <statement>* end, this statement works
+very similar to how it works in other languages. In case of true Boolean value the
+first set of statements get executed otherwise the set of statements in the else
+part get executed
+Where <statement>* means zero or more code statements
+
+[p5]
+● In this level if / else statements cannot contain other if / else statements
+Considering these changes execute the function like in the previous level.
+
+[p6]
+Input Output
+Format N
+lineOfCode (repeated N times)
+functionOutput
+Types N (int) number of code lines that follow
+lineOfCode (string) one or more space separated tokens
+functionOutput (string) the output that print
+statements in the the given code produce
+Example
+15
+start
+print hello
+if true
+print world
+end
+else
+print something
+end
+print good
+print night
+return true
+print notprinted
+end
+helloworldgoodnight
+The input and output format is identical to last level

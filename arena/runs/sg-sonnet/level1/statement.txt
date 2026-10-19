@@ -1,0 +1,103 @@
+[p1]
+1of 45
+event organizer
+Cloudflight Coding Contest
+30th October 2020
+
+[p2]
+2of 45
+event organizer
+In order to better adjust power consumption to power production, electricity price is
+now determined by supply and demand. When excess power is produced, the
+electricity price is lowered, which will increase consumption. Since renewable energy
+sources like wind and sun are weather dependent which can change any minute,
+power prices are adjusted every minute.
+
+[p3]
+3of 45
+event organizer
+YOUR TASK
+› You’ll program an AI smart home
+assistant that will schedule the
+operation of all electrical devices in a
+household, and later of all
+households of an entire city.
+› You’ll have to find ways to draw the
+power at the cheapest possible
+moment to match the power
+production.
+
+[p4]
+4of 45
+event organizer
+
+[p5]
+5of 45
+event organizer
+Glowy:
+POWER!!! Infinite, raw power 🤤
+…
+… so said my agent.
+By the looks of you, we’re doing
+something a lot simpler, right? … right. No
+Avengers level stuff for me.
+You know, I might look like a lightbulb,
+but I got a lot going for me. I’m smart, ok?
+I’ll help, just … listen.
+Oh and I’m funny, too.
+
+[p6]
+6of 45
+event organizer
+Glowy:
+Alright, so there’s this “smart”
+neighborhood we’re planning to
+manage… no, I shouldn’t start from there.
+So there’s this thing, electricity, and it
+costs money...
+.
+Task for Level 1:
+Find the cheapest power price during the given timespan
+
+[p7]
+7of 45
+event organizer
+› The electricity price changes every minute
+› You are given the prices for a certain timespan
+› Find the minute with the cheapest power price
+
+[p8]
+8of 45
+event organizer
+Input Output
+Format
+N
+price
+(repeats N times)
+minPriceId
+Find the minute where the price is the lowest, ids
+start at 0, if there are multiple minutes that all
+have the lowest value, take the one with the
+lowest id
+Types
+N (int) number of minutes that follow
+price (int) price of power at that minute
+minPriceId (int)
+Example
+10
+7414
+8948
+6850
+8474
+6794
+7035
+4322
+2876
+2660
+5136
+8
+
+[p9]
+9of 45
+event organizer
+GOOD LUCK

@@ -1,0 +1,2 @@
+{"t": 1792417332.7764978, "results": {"1": {"correct": false, "bad": [{"isCorrect": false, "caseState": "WRONG", "caseMessage": "differs from reference: line 1: want '13 8' got '3 4' (want 1000 lines, got 1000)", "startLineNumber": 1, "endLineNumberExcl": null, "errorLineNumber": 1}]}}}
+{"t": 1792417333.8713777, "results": {"1": {"correct": true, "bad": []}, "5": {"correct": true, "bad": []}, "4": {"correct": true, "bad": []}, "2": {"correct": true, "bad": []}, "3": {"correct": true, "bad": []}}}

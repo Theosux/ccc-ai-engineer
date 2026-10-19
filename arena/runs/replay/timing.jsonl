@@ -1,0 +1,9 @@
+{"t": 1792417321.7, "event": "fetch", "level": 1}
+{"t": 1792417323.4, "event": "pass", "level": 1, "wrong": 0}
+{"t": 1792417323.4, "event": "fetch", "level": 2}
+{"t": 1792417332.8, "event": "wrong", "level": 2, "file": "1", "msg": "differs from reference: line 1: want '13 8' got '3 4' (want 1000 lines, got 1000)"}
+{"t": 1792417333.9, "event": "pass", "level": 2, "wrong": 1}
+{"t": 1792417333.9, "event": "fetch", "level": 3}
+{"t": 1792417335.5, "event": "pass", "level": 3, "wrong": 1}
+{"t": 1792417335.5, "event": "fetch", "level": 4}
+{"t": 1792417337.3, "event": "pass", "level": 4, "wrong": 1}

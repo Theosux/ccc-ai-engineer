@@ -1,0 +1,80 @@
+[p2]
+Alright, I know how to
+memorize some things now ...
+[ yet again, the white rabbit
+hops its way towards a wall of
+green text ... ]
+what in the world is a
+postpone instruction?
+
+[p3]
+New in Level 4:
+Postpone Statement
+
+[p4]
+In this level a new statement is introduced, which is the postpone statement and it is
+defined as the following:
+● postpone <statement> * end
+Where
+● <statement> * means zero or more code statements.
+
+[p5]
+The execution of this statement adds the provided statements to the end of the
+execution queue. Which means they will be executed when all other statements
+queued before them are done.
+The if / else statement (both parts, if and else) has its own execution queue, which
+means all statements should be done first before any other statement outside.
+All statements outside a postpone statement are added to the execution queue by
+default in their order of appearance.
+Considering these changes execute all the functions like in the previous levels.
+
+[p6]
+Input Output
+Example 1
+9
+start
+postpone
+postpone
+print Third
+end
+print Second
+end
+print first
+end
+firstSecondThird
+Example 2
+10
+start
+if false
+end
+else
+postpone
+print first
+end
+end
+print Second
+end
+firstSecond
+The input format is identical to last level
+
+[p7]
+Input Output
+Example 3
+15
+start
+print number
+if true
+postpone
+postpone
+postpone
+return 1
+end
+end
+end
+end
+else
+end
+print notexecuted
+end
+number
+The input format is identical to last level

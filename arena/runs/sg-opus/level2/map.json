@@ -1,0 +1,20 @@
+{
+  "scoredFiles": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "unscoredFiles": [
+    "0-example"
+  ],
+  "inputs": {
+    "files/in_level-2_0-example.txt": "0-example",
+    "files/in_level-2_1.txt": "1",
+    "files/in_level-2_2.txt": "2",
+    "files/in_level-2_3.txt": "3",
+    "files/in_level-2_4.txt": "4",
+    "files/in_level-2_5.txt": "5"
+  }
+}

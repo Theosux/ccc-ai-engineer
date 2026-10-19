@@ -1,0 +1,32 @@
+[p1]
+LEVEL 2
+
+[p2]
+▪ You are given a list of paths for a lawn mower.
+▪ For each path, calculate the size of the
+smallest rectangular lawn, that it can fit into.
+4
+3
+
+[p3]
+Input - identical to previous level​
+Name Description Example
+N Number of paths
+3
+WASAWWDDDSS
+DDSAASDDSAA
+DSASSDWDSDWWAWDDDSASSDWDSDWWAWD
+Path
+(repeated N times) A string of characters
+Output
+Name Description Example
+Lawn size
+(repeated N times)
+The width followed by the height of the lawn,
+separated by a space
+4 3
+3 4
+8 4
+
+[p4]
+Lawn Mower

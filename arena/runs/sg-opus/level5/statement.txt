@@ -1,0 +1,117 @@
+[p1]
+26of 45
+event organizer
+
+[p2]
+27of 45
+event organizer
+Glowy:
+Considering how much help I was to you
+already, I am being paid way too little.
+It reminds me about my time in Germany.
+Damn, wages were crap there. I was
+being paid 2 tickle-watts per hour. Had a
+great friend working at a hydroelectric
+plant there, an electrician of course. He
+never complained about his salary. He
+would drive this really cool car which had
+a special place in the trunk just for tools
+and test-bulbs (that was my job).
+… it was a Volts-wagon
+
+[p3]
+28of 45
+event organizer
+Glowy:
+But in all seriousness, check this out.
+Task for Level 5:
+same like Level 4 while also fulfilling the concurrent task
+constraint
+Additional info
+Only a given amount of tasks can run at the same minute
+
+[p4]
+29of 45
+event organizer
+› You are given a maximum amount of tasks that can draw power at the same minute.
+› The power threshold from Level 4 still cannot be exceeded.
+› The maximum electricity bill still cannot be exceeded.
+› The solution does not have to be optimal, every solution that fulfills all constraints is
+valid.
+
+[p5]
+30of 45
+event organizer
+Input Output
+Format
+maxPower
+maxElectricityBill
+maxConcurrentTasks
+N
+price(repeats N times)
+M
+taskId power startInterval endInterval (repeats M times)
+M
+taskId minuteId power minuteId2 power2 ...
+(repeats N times)
+same as Level 4
+Types
+maxPower (int) maximum power that can be drawn at any given minute by all tasks combined
+maxElectricityBill (long) maximum electricity bill
+maxConcurrentTasks (int) maximum tasks that can draw power at the same time
+N (int) number of minutes that follow
+price (int) price of power at that minute
+M (int) Number of tasks that follow
+taskId (int) id of the task starting at 1
+power (int) the amount of power the task has to draw to be completed
+startInterval (int) the id of the first minute that power can be drawn for this task
+endInterval (int) the id of the last minute that power can be drawn for this task
+M (int) Number of tasks that follow
+taskId (int) id of the task
+minuteId (int) id of the minute the task is drawing power
+power (int) amount of power that is drawn for the given minute
+
+[p6]
+31of 45
+event organizer
+Input Output
+Example
+3
+100000 2
+20
+6618
+9119
+9865
+8182
+7523
+6877
+7141
+6647
+7705
+6636
+7333
+4994
+4771
+3991
+2811
+3205
+2448
+4377
+3427
+5607 5
+1 1 6 9
+2 2 8 19
+3 2 7 16
+4 7 6 13
+5 3 14 18
+5
+1 9 1
+2 14 1 15 1
+3 14 2
+4 13 3 12 3 11 1
+5 16 3
+
+[p7]
+46of 45
+event organizer
+GOOD LUCK

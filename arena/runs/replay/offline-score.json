@@ -1,0 +1,48 @@
+{
+  "gameScore": {
+    "level": 5
+  },
+  "state": {
+    "level1": {
+      "passedFiles": {
+        "1": true,
+        "4": true,
+        "2": true,
+        "5": true,
+        "3": true
+      },
+      "passedAt": "2026-10-19T16:42:03"
+    },
+    "level2": {
+      "passedFiles": {
+        "1": true,
+        "5": true,
+        "4": true,
+        "2": true,
+        "3": true
+      },
+      "passedAt": "2026-10-19T16:42:13"
+    },
+    "level3": {
+      "passedFiles": {
+        "3": true,
+        "4": true,
+        "5": true,
+        "2": true,
+        "1": true
+      },
+      "passedAt": "2026-10-19T16:42:15"
+    },
+    "level4": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "5": true,
+        "4": true,
+        "3": true
+      },
+      "passedAt": "2026-10-19T16:42:17"
+    }
+  },
+  "wrongSubmits": 1
+}

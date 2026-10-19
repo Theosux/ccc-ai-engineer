@@ -1,0 +1,14 @@
+{"t": 1792419995.9, "event": "fetch", "level": 1}
+{"t": 1792420002.5, "event": "pass", "level": 1, "wrong": 0}
+{"t": 1792420002.5, "event": "fetch", "level": 2}
+{"t": 1792420011.8, "event": "pass", "level": 2, "wrong": 0}
+{"t": 1792420011.8, "event": "fetch", "level": 3}
+{"t": 1792420018.3, "event": "pass", "level": 3, "wrong": 0}
+{"t": 1792420018.3, "event": "fetch", "level": 4}
+{"t": 1792420034.1, "event": "pass", "level": 4, "wrong": 0}
+{"t": 1792420034.1, "event": "fetch", "level": 5}
+{"t": 1792420051.9, "event": "pass", "level": 5, "wrong": 0}
+{"t": 1792420052.0, "event": "fetch", "level": 6}
+{"t": 1792420124.2, "event": "pass", "level": 6, "wrong": 0}
+{"t": 1792420124.2, "event": "fetch", "level": 7}
+{"t": 1792420258.7, "event": "pass", "level": 7, "wrong": 0}

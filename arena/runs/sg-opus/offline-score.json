@@ -1,0 +1,78 @@
+{
+  "gameScore": {
+    "level": 8
+  },
+  "state": {
+    "level1": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "passedAt": "2026-10-19T17:31:33"
+    },
+    "level2": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "passedAt": "2026-10-19T17:31:41"
+    },
+    "level3": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "passedAt": "2026-10-19T17:31:47"
+    },
+    "level4": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "passedAt": "2026-10-19T17:32:18"
+    },
+    "level5": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "passedAt": "2026-10-19T17:33:17"
+    },
+    "level6": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "passedAt": "2026-10-19T17:34:39"
+    },
+    "level7": {
+      "passedFiles": {
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "passedAt": "2026-10-19T17:35:36"
+    }
+  },
+  "wrongSubmits": 0
+}

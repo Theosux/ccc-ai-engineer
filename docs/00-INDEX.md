@@ -38,6 +38,7 @@
 | `ccc-context` | The ritual: reloads all project context after /clear |
 | `ccc-solve` | Fast loop per level: fetch → statement → solve.py → go (training + contest) |
 | `ccc-patterns` | How to solve a level: technique cheat sheet + `arena/lib` API (with ccc-solve) |
+| agents `ccc-solver-{opus,sonnet}` | `.claude/agents/`: cold timed solver used for the model A/B (results in strategy/workflow-speed.md) |
 
 ## Other
 - [progress-log.md](progress-log.md) — dated session log

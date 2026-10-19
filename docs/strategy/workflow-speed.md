@@ -81,3 +81,17 @@ Sources: code.claude.com/docs/en/fast-mode.md, model-config.md, sub-agents.md, c
 - **`/model <name>`** switches immediately mid-session. A subagent with its own `model:` keeps it. Switching away from Opus turns `/fast` off.
 - **Custom agents** (`.claude/agents/*.md`) support `model`, `effort`, `tools`, `skills`, `permissionMode`, `maxTurns`, and more. Fast mode for subagents is not documented, so treat it as unverified.
 - **Headless:** `claude -p --model <m> --effort <e> --output-format json --permission-mode acceptEdits --max-turns N`. The JSON has the cost but no wall time, so measure that with the shell.
+
+## Model A/B: Sonnet 5.5 vs Opus 5.5 (2026-10-19)
+Protocol: each model ran as a **cold** subagent (no session context; it loaded `ccc-solve` and `ccc-patterns` itself) with an identical prompt. Both played the same unseen offline game, one after the other, never in parallel. The judge was local: references plus the judge agent's validators. Times are fetch → pass from `timing.jsonl`. Runs: `arena/runs/{i21,sg}-{sonnet,opus}`. (The `sg-opus` folder was not kept: only `i21-sonnet`, `i21-opus` and `sg-sonnet` were restored to the repo, so the Opus Smart Grid row comes from its run log and report.)
+
+| Game | Model | Per level (s) | Total | Wrong | Notes |
+|---|---|---|---|---|---|
+| interp2021 (4 levels, interpreter) | Sonnet | 10 / 8 / 13 / 19 | **50 s** | 0 | |
+| interp2021 | Opus | 11 / 11 / 16 / 11 | **49 s** | 0 | |
+| smartgrid (7 levels, scheduling + convex cost) | Sonnet | 7 / 9 / 6 / 16 / 18 / 72 / 134 | **263 s** | 0 | broke 2 rules: a heredoc patch, and ran `go` despite probe TOO SLOW (73 s run) |
+| smartgrid | Opus | 6 / 7 / 7 / 31 / 58 / 83 / 57 | **249 s** | 0 | min-cost flow on L4; followed every rule |
+
+**Result: a tie on speed and correctness on these games.** Wall time is dominated by tool round trips and solver runs, not by token generation, so Sonnet's faster output does not turn into faster levels. Opus was more disciplined (it followed the process rules) and chose stronger techniques. Hard levels decide the ranking (Spaceship L7, Islands L7), and there Opus's stronger reasoning matters more.
+
+**Decision for 23 Oct: Opus 5.5 drives** (default effort). Optionally use `/fast` from the **start** of the session if Teo enables usage credits. That gives up to 2.5× faster output, which helps most on the long solver writes of hard levels. Sonnet stays a fallback if the Opus usage limit is hit.

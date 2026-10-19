@@ -1,0 +1,93 @@
+[p1]
+9of 45
+event organizer
+
+[p2]
+10of 45
+event organizer
+Glowy:
+Niiice. That’s how I would have done it.
+Which reminds me of a joke I once told to
+a neon friend working at the nearby
+power plant. “A dangerous surge of
+electricity walks into a bar. The barman
+says, “why the long phase?”
+Needless to say, I cracked him up! They
+had to change him… poor guy.
+
+[p3]
+11of 45
+event organizer
+Glowy:
+Anyway! Besides cost, there’s also time...
+Additional info
+You are additionally given tasks that draw power and take a certain
+time to complete
+Task for Level 2:
+Find the cheapest interval to complete the given tasks
+
+[p4]
+12of 45
+event organizer
+› Any given task has to draw power for a given amount of minutes.
+› Once started, the task cannot be interrupted.
+› The price of the task is calculated by adding up all the prices for each minute the
+task runs.
+› Start any task at the right time, so that the electricity cost will be as small as
+possible.
+
+[p5]
+13of 45
+event organizer
+Input Output
+Format
+N
+price
+(repeats N times)
+M
+taskId completionTime
+(repeats M times)
+M
+taskId startId
+(repeats N times)
+For each task, find the start of an interval where the price for the
+completion of the task is the lowest, if there are multiple moments
+with the same lowest price, take the one with the lower id
+Types
+N (int) number of minutes that follow
+price (int) price of power at that minute
+M (int) number of tasks that follow
+taskId (int) id of the task starting at 1
+completionTime (int) time the task needs to run in minutes
+M (int) Number of tasks that follow
+taskId (int) id of the task
+startId (int) id of the first minute the task is drawing power
+Example
+10
+8335
+8464
+9513
+9006
+8675
+5805
+2747
+2691
+5677
+7079
+5
+1 5
+2 1
+3 6
+4 9
+5 7
+5
+1 5
+2 7
+3 4
+4 1
+5 3
+
+[p6]
+46of 45
+event organizer
+GOOD LUCK

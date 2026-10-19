@@ -1,0 +1,56 @@
+[p2]
+LEVEL 1
+
+[p3]
+You are hired to program an
+autonomous robotic lawn mower.
+First, evaluate the output of the
+existing algorithm.
+SETUP…
+
+[p4]
+▪ You are given a list of paths for a lawn mover.
+▪ A path is represented by a string of characters.
+▪ Each character represents a fixed distance in a cardinal direction.
+▪ For each path, count how often each direction appears.
+North – W
+East – D
+South – S
+West – A
+WASAWWDDDSS
+W
+W W
+A
+A
+S S
+S
+D D D
+
+[p5]
+Input
+Name Description Example
+N Number of paths
+3
+WASAWWDDDSS
+DDSAASDDSAA
+DSASSDWDSDWWAWDDDSASSDWDSDWWAWD
+Path
+(repeated N times)
+A string of characters
+‘W’ represents North.
+‘D’ represents East.
+‘S’ represents South.
+‘A’ represents West.
+Output
+Name Description Example
+Counts
+(repeated N times)
+4 integers separated by spaces
+They represent the occurrence of each direction
+in this order: ‘W’ ‘D’ ‘S’ ‘A’
+3 3 3 2
+0 4 3 4
+8 11 8 4
+
+[p6]
+Lawn Mower
