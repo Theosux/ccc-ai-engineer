@@ -202,7 +202,7 @@ def game_info(ctx):
     name, run, _ = ctx
     p = run_dir(name) / "game-info.json"
     gi = load_json(p, None)
-    if gi is None:
+    if gi is None and run.get("gameBaseUrl"):
         origin = run["gameBaseUrl"].rstrip("/")
         r = req("GET", origin + "/game/game-info", headers={"Referer": origin + "/", "Sec-Fetch-Site": "same-origin"})
         try:
@@ -546,7 +546,8 @@ def download_zip(ctx, n, retry_s=0):
     return r.content
 
 
-def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0):
+def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=None):
+    """Download level N (or ingest a manually downloaded zip with zip_path) and print statement + example."""
     name, run, _ = ctx
     t0 = time.time()
     d = level_dir(name, n)
@@ -554,12 +555,13 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0):
     zpath = d / f"level-{n}.zip"
     with cf.ThreadPoolExecutor(3) as ex:
         f_gi = ex.submit(game_info, ctx)
-        reuse = png and zpath.exists()
-        f_zip = None if reuse else ex.submit(download_zip, ctx, n, retry_s)
+        reuse = png and zpath.exists() and not zip_path
+        f_zip = None if reuse or zip_path else ex.submit(download_zip, ctx, n, retry_s)
         gi = f_gi.result()
         meta = level_meta(gi, n)
-        f_sb = ex.submit(game_req, "GET", f"/api/contestant/level/{n}/sandbox", ctx) if meta.get("sandbox", True) else None
-        data = zpath.read_bytes() if reuse else f_zip.result()
+        online = bool(run.get("gameBaseUrl")) and not zip_path
+        f_sb = ex.submit(game_req, "GET", f"/api/contestant/level/{n}/sandbox", ctx) if online and meta.get("sandbox", True) else None
+        data = Path(zip_path).read_bytes() if zip_path else zpath.read_bytes() if reuse else f_zip.result()
         sandbox = f_sb.result() if f_sb else None
     if not reuse:
         zpath.write_bytes(data)
@@ -665,7 +667,18 @@ def garbled_lines(stmt):
 
 
 def cmd_fetch(a):
-    fetch_level(active_run(), a.level, png=a.png, scale=a.scale)
+    if a.zip:
+        if not Path(a.zip).is_file():
+            die(f"zip not found: {a.zip}")
+        st = state()
+        name = os.environ.get("CCC_RUN") or st.get("active") or "contest"
+        if name not in st["runs"]:  # emergency: platform API unusable, work fully offline from the zip
+            update_run(name, contestName=CONTEST, contestSlug=CONTEST, gameBaseUrl="", token=None, offline=True)
+            print(f"(created offline run {name!r}; submit by drag&drop of levelN/out/* in the browser)")
+        ctx = (name, state()["runs"][name], state())
+    else:
+        ctx = active_run()
+    fetch_level(ctx, a.level, png=a.png, scale=a.scale, zip_path=a.zip)
 
 
 # ---------------------------------------------------------------- run / submit
@@ -952,7 +965,7 @@ def main():
         p = sp.add_parser(nm); p.add_argument("contest_name", nargs="?", default=CONTEST); p.add_argument("--name", default="contest"); p.set_defaults(f=fn)
     p = sp.add_parser("use"); p.add_argument("name"); p.set_defaults(f=cmd_use)
     p = sp.add_parser("info"); p.add_argument("--raw", action="store_true"); p.set_defaults(f=cmd_info)
-    p = sp.add_parser("fetch"); p.add_argument("level", type=int); p.add_argument("--png", action="store_true"); p.add_argument("--scale", type=float, default=0.75); p.set_defaults(f=cmd_fetch)
+    p = sp.add_parser("fetch"); p.add_argument("level", type=int); p.add_argument("--png", action="store_true"); p.add_argument("--scale", type=float, default=0.75); p.add_argument("--zip", help="ingest a manually downloaded level zip (emergency, no download API)"); p.set_defaults(f=cmd_fetch)
     for nm, fn in (("run", cmd_run), ("submit", cmd_submit), ("go", cmd_go)):
         p = sp.add_parser(nm); p.add_argument("level", type=int)
         if nm != "submit":
