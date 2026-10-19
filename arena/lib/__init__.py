@@ -18,4 +18,5 @@ from .check import check_level, crosscheck
 from .opt import anneal, hill_climb
 from .pack import pack_rects, pack_guillotine, pack_pinwheel, pack_exact, render_rects, grid_rects, check_rects_grid
 from .tourney import make_fight, play_round, play_rounds, champion, build_bracket, fill_bracket, rig_bracket
+from .runner import run_cases
 from . import geom

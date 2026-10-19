@@ -143,6 +143,26 @@ def t_tourney():
         assert champion("".join(rng.choice("RPSYL") if ch == "Z" else ch for ch in o), g) == "S"
 
 
+def _sq_case(c):  # module level so pool workers can pickle it
+    time.sleep(0.05)
+    return str(int(c) ** 2)
+
+
+def t_runner():
+    import os
+    from lib.runner import run_cases
+    data = "40\n" + "\n".join(map(str, range(40))) + "\n"
+    split = lambda d: d.split()[1:]
+    want = "\n".join(str(i * i) for i in range(40)) + "\n"
+    assert run_cases(split, _sq_case, data=data, write=False) == want      # 2 s sequential -> pool path
+    os.environ["CCC_SEQ"] = "1"
+    try:
+        assert run_cases(split, _sq_case, data=data, write=False) == want
+    finally:
+        del os.environ["CCC_SEQ"]
+    assert run_cases(split, lambda c: c, data="0\n", write=False) == ""
+
+
 if __name__ == "__main__":
     t0 = time.time()
     for name, fn in list(globals().items()):

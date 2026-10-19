@@ -14,3 +14,5 @@ arena/runs/*/level*/out/
 arena/runs/*/level*/pages/
 arena/runs/*/level*/files/*.pdf
 arena/.tools/
+arena/.data/
+arena/runs/contest/preflight.json

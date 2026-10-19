@@ -444,8 +444,13 @@ from lib import *  # Reader, grid/paths/search helpers: see .claude/skills/ccc-p
 # First line '# ccc: pypy' (or CCC_PY=pypy) runs this solver on PyPy.
 
 
-def solve(data: str) -> str:
+def cases(data: str) -> list:
+    """Split the input into independent cases (picklable). One case for a whole-file problem: [data]."""
     r = Reader(data)
+    return [r.word() for _ in range(r.int())]
+
+
+def solve_case(c) -> str:
     raise NotImplementedError
 
 
@@ -453,7 +458,7 @@ def solve(data: str) -> str:
 # If defined, `go` accepts outputs that check() validates even when the example output differs.
 
 if __name__ == "__main__":
-    sys.stdout.write(solve(sys.stdin.read()))
+    run_cases(cases, solve_case)  # parallel across cases when slow, progress + ETA; `ccc.py probe N` times it
 '''
 
 
@@ -783,29 +788,65 @@ def load_checker(d):
     return getattr(mod, "check", None)
 
 
-def run_level(name, n, only=None, solver=None, timeout=600):
+def solver_env(extra=None):
+    return {**os.environ, "PYTHONPATH": str(ARENA) + os.pathsep + os.environ.get("PYTHONPATH", ""),
+            "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1", "PYTHON_COLORS": "0", "NO_COLOR": "1", **(extra or {})}
+
+
+def run_solver(cmd, shell, inp, d, env, timeout, tag):
+    """Run one solver process on one input file. Streams lib.runner's `[runner]`/`[probe]` stderr lines live
+    (prefixed with tag) so long runs are never silent. Returns (stdout or None, error text, seconds)."""
+    t0 = time.time()
+    with inp.open("rb") as fin:
+        p = subprocess.Popen(cmd, stdin=fin, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell, cwd=d, env=env)
+    err_tail, out_buf = [], []
+
+    def pump_err():
+        for raw in p.stderr:
+            line = raw.decode("utf-8", errors="replace").rstrip()
+            if line.startswith(("[runner]", "[probe]")):
+                m = re.search(r"ETA_SECONDS=([\d.]+)", line)
+                if m:
+                    run_solver.last_eta = float(m.group(1))
+                    continue
+                print(f"  {tag}: {line}", flush=True)
+            else:
+                err_tail.append(line)
+                del err_tail[:-60]
+
+    def pump_out():
+        out_buf.append(p.stdout.read())
+
+    th = [threading.Thread(target=pump_err, daemon=True), threading.Thread(target=pump_out, daemon=True)]
+    for t in th:
+        t.start()
+    try:
+        p.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(p.pid)], capture_output=True) if os.name == "nt" else p.kill()
+        p.kill()
+        return None, f"TIMEOUT after {timeout}s (raise with --timeout; check `probe` ETA first)", time.time() - t0
+    for t in th:
+        t.join(5)
+    if p.returncode != 0:
+        return None, "\n".join(err_tail)[-1500:] or f"exit code {p.returncode}", time.time() - t0
+    return (out_buf[0] if out_buf else b"").decode("utf-8", errors="replace").replace("\r\n", "\n"), None, time.time() - t0
+
+
+def run_level(name, n, only=None, solver=None, timeout=180):
     """Run the solver on every input in parallel. Returns (ok_all, list of fileIds produced)."""
     d = level_dir(name, n)
     if not (d / "map.json").exists():
         die(f"level {n} not fetched: run `fetch {n}`")
     (d / "out").mkdir(exist_ok=True)
     cmd, shell = solver_cmd(d, solver)
-    env = {**os.environ, "PYTHONPATH": str(ARENA) + os.pathsep + os.environ.get("PYTHONPATH", ""),
-           "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1",
-           "PYTHON_COLORS": "0", "NO_COLOR": "1"}
+    env = solver_env()
     jobs = [(inp, fid) for inp, fid in inputs_of(d) if not only or fid in only or inp.stem in only]
 
     def one(job):
         inp, fid = job
-        t0 = time.time()
-        try:
-            with inp.open("rb") as fin:
-                p = subprocess.run(cmd, stdin=fin, capture_output=True, timeout=timeout, shell=shell, cwd=d, env=env)
-        except subprocess.TimeoutExpired:
-            return inp, fid, None, f"TIMEOUT after {timeout}s", time.time() - t0
-        if p.returncode != 0:
-            return inp, fid, None, p.stderr.decode(errors="replace")[-1500:], time.time() - t0
-        return inp, fid, p.stdout.decode("utf-8", errors="replace").replace("\r\n", "\n"), None, time.time() - t0
+        out, err, dt = run_solver(cmd, shell, inp, d, env, timeout, fid)
+        return inp, fid, out, err, dt
 
     with cf.ThreadPoolExecutor(max(1, min(len(jobs), os.cpu_count() or 4))) as ex:
         results = list(ex.map(one, jobs))
@@ -850,6 +891,39 @@ def cmd_run(a):
     name, _, _ = active_run()
     ok, _ = run_level(name, a.level, a.only, a.solver, a.timeout)
     print("ALL OK" if ok else "NOT OK")
+
+
+def cmd_probe(a):
+    """Time the k largest cases of the largest input (lib.runner CCC_PROBE) and extrapolate. Never writes outputs."""
+    name, _, _ = active_run()
+    d = level_dir(name, a.level)
+    if not (d / "map.json").exists():
+        die(f"level {a.level} not fetched: run `fetch {a.level}`")
+    inp, fid = max(inputs_of(d), key=lambda j: j[0].stat().st_size)
+    cmd, shell = solver_cmd(d, a.solver)
+    sp = next((Path(c) for c in (cmd if isinstance(cmd, list) else cmd.split()) if str(c).endswith(".py")), d / "solve.py")
+    src = sp.read_text(encoding="utf-8", errors="replace") if sp.exists() else ""
+    uses_runner = "run_cases" in src
+    print(f"probe {fid} ({inp.stat().st_size / 1e6:.2f} MB), {a.k} sampled cases (largest + random), 20 s budget"
+          + ("" if uses_runner else "  [solve.py does not use lib.runner.run_cases: timing the WHOLE file]"))
+    run_solver.last_eta = None
+    out, err, dt = run_solver(cmd, shell, inp, d, solver_env({"CCC_PROBE": str(a.k)}), a.timeout, fid)
+    if out is None:
+        print(f"  {fid}: {err}")
+        print("VERDICT: TOO SLOW or CRASH -> change the algorithm (or fix the crash) before a full run")
+        return
+    eta = run_solver.last_eta if uses_runner else dt
+    print(f"  probe wall {dt:.1f}s")
+    if eta is None:
+        return
+    pypy = "ccc: pypy" in src.split("\n", 1)[0] or os.environ.get("CCC_PY") == "pypy"
+    if eta < 60:
+        v = "OK: full run"
+    elif eta < 300:
+        v = f"SLOW but feasible: go {a.level} --timeout {int(eta * 1.5) + 30}" + ("" if pypy else "  (or add `# ccc: pypy`: 10-60x)")
+    else:
+        v = "TOO SLOW: change the algorithm/heuristic" + ("" if pypy else " or add `# ccc: pypy`")
+    print(f"VERDICT: {v}  (ETA {eta:.0f}s for {fid})")
 
 
 def verdict_line(status, body):
@@ -1000,7 +1074,7 @@ def main():
     for nm, fn in (("run", cmd_run), ("submit", cmd_submit), ("go", cmd_go)):
         p = sp.add_parser(nm); p.add_argument("level", type=int)
         if nm != "submit":
-            p.add_argument("--timeout", type=int, default=600)
+            p.add_argument("--timeout", type=int, default=180)
             p.add_argument("--solver", help="solver .py path or shell command (default levelN/solve.py)")
         if nm != "go":
             p.add_argument("--only", nargs="*")
@@ -1010,6 +1084,7 @@ def main():
             p.add_argument("--force", action="store_true")
             p.add_argument("--no-next", action="store_true")
         p.set_defaults(f=fn)
+    p = sp.add_parser("probe"); p.add_argument("level", type=int); p.add_argument("k", type=int, nargs="?", default=os.cpu_count() or 8); p.add_argument("--timeout", type=int, default=45); p.add_argument("--solver"); p.set_defaults(f=cmd_probe)
     p = sp.add_parser("api"); p.add_argument("method"); p.add_argument("path"); p.add_argument("--game", action="store_true"); p.set_defaults(f=cmd_api)
     a = ap.parse_args()
     try:
