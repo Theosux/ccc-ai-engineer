@@ -1,0 +1,45 @@
+[p1]
+LEVEL 5
+
+[p2]
+I’m the new Chief of Operations, as the previous person was let go. I understand
+you were instructed to use 1 by 3 desks, but company policy dictates 1 by 2.
+This aligns with our current operational standards, which likely explains the
+suspension of the previous Chief of Operations.
+From: new.chief.of.operations@toxic-company.com
+Subject: New instructions
+Hint: The visualizer.html was updated
+▪ Desk size is now 1 by 2
+▪ The given number of desks is the maximum number that is possible
+
+[p3]
+Input
+Name Description Example
+N Number of rooms format identical to previous level
+3
+6 6 8
+9 7 13
+6 8 10
+Room
+(repeated N times)
+Three space separated integers representing a room
+First integer: x room length (min room length is 4)
+Second integer: y room length (min room length is 4)
+Third integer: number of desks
+Output
+Name Description Example
+Room
+(repeated N times)
+A matrix of characters, with y rows and x columns
+‘X’ represents a desk
+‘.’ represents no desk
+format identical to previous level
+X.X.XX
+X.X...
+....XX
+XX....
+...X.X
+XX.X.X
+X.X.X.X.X
+X.X.X.X.X
+...

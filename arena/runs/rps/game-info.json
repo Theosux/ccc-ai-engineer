@@ -1,0 +1,139 @@
+{
+  "id": "ccc-2023.03-classic-rock-paper-scissors",
+  "edition": "37",
+  "name": "Rock Paper Scissors",
+  "tags": [
+    "CCC37",
+    "classic",
+    "levels"
+  ],
+  "description": "Rig a knockout tournament so that Scissors always wins",
+  "levelsInfo": {
+    "count": 7,
+    "levels": [
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-small",
+          "3-medium",
+          "4-medium",
+          "5-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      }
+    ]
+  },
+  "dev": false,
+  "versions": {
+    "base": {
+      "version": "0.36.0",
+      "commit": "48090eb3"
+    },
+    "game": {
+      "version": "1.0.0-rc18",
+      "commit": "09255f27"
+    }
+  }
+}

@@ -4,7 +4,9 @@
     from lib import *
 
 Modules: parse (Reader/Lines), grid (dirs, symmetries), paths (cover/hamiltonian),
-search (BFS/Dijkstra/A*/DSU/toposort), sim (cycle skip), check (local validation), opt (annealing), geom.
+search (BFS/Dijkstra/A*/DSU/toposort), sim (cycle skip), check (local validation), opt (annealing), geom,
+pack (rectangle packing: guillotine DP + pinwheel + exact; no-touch gap; validator),
+tourney (knockout brackets: simulate, construct by counts, fill wildcards, rig vs adversary).
 """
 from .parse import Reader, Lines, paragraphs, out_lines, run, ints_of, pairs_of
 from .grid import *  # noqa: F401,F403
@@ -14,4 +16,6 @@ from .search import grid_bfs, bfs, path_to, dijkstra, astar, grid_components, to
 from .sim import find_cycle, state_at
 from .check import check_level, crosscheck
 from .opt import anneal, hill_climb
+from .pack import pack_rects, pack_guillotine, pack_pinwheel, pack_exact, render_rects, grid_rects, check_rects_grid
+from .tourney import make_fight, play_round, play_rounds, champion, build_bracket, fill_bracket, rig_bracket
 from . import geom

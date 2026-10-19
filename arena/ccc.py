@@ -595,7 +595,9 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=
         stmt, content_pages = clean_statement(pdf_pages(pdf_bytes), gi.get("name"))
         stmt = repair_garbled(stmt)
         (d / "statement.txt").write_text(stmt, encoding="utf-8")
-    pngs = render_png(pdf_bytes, content_pages, d / "pages", scale) if png and pdf_bytes else []
+    image_only = stmt is not None and looks_image_only(stmt)
+    all_pages = list(range(1, len(pdf_pages(pdf_bytes)) + 1)) if pdf_bytes else []
+    pngs = render_png(pdf_bytes, all_pages, d / "pages", scale) if (png or image_only) and pdf_bytes else []
     # solver: start from the previous level's solver (most levels extend it)
     solve, prev = d / "solve.py", level_dir(name, n - 1) / "solve.py"
     if solve.exists():
@@ -622,6 +624,9 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=
         print("page PNGs (Read these for diagrams): " + ", ".join(str(p) for p in pngs))
     if stmt is not None:
         print(f"----- statement (statement.txt, pages {content_pages}; `fetch {n} --png` renders them)\n{stmt}")
+        if image_only:
+            print(f"!!!!! RULES ARE IN IMAGES on page(s) {image_only} (text is only bullets). "
+                  f"Read {', '.join(str(d / 'pages' / f'p{k}.png') for k in image_only)} before solving.")
         bad = garbled_lines(stmt)
         if bad:
             print(f"!!!!! {len(bad)} statement line(s) were garbled (auto-repaired lines start with '[repaired]'),"
@@ -638,12 +643,27 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=
     return d
 
 
+def looks_image_only(stmt):
+    """Pages whose extracted text has no letters/digits at all (e.g. just '▪▪▪▪') hold their rules as images
+    (RPS L3/L5). Returns the list of such page numbers."""
+    pages, cur = {}, None
+    for l in stmt.splitlines():
+        m = re.fullmatch(r"\[p(\d+)\]", l.strip())
+        if m:
+            cur = int(m.group(1))
+            pages[cur] = []
+        elif cur is not None and l.strip():
+            pages[cur].append(l)
+    return [p for p, ls in pages.items() if ls and not any(c.isalnum() for l in ls for c in l)]
+
+
 def repair_garbled(stmt):
     """Some PDF fonts extract as UTF-16-ish bytes with glyph codes shifted by -29 ('D' -> 'a', '\\x03' -> ' ').
     Decode those lines in place and tag them '[repaired]'."""
     out = []
     for line in stmt.splitlines():
-        if "\x00" in line:
+        # variant 2 (Spaceship L3): same shift without NUL bytes, e.g. '7KH\x03WLPH' = 'The time'
+        if "\x00" in line or ("\x03" in line and sum(c.isupper() or c.isdigit() for c in line) > len(line) // 3):
             s = line.replace("\x00", "")
             line = "[repaired] " + "".join(chr(ord(c) + 29) if 3 <= ord(c) <= 93 else "?" if ord(c) > 126 else c for c in s)
         out.append(line)
@@ -809,7 +829,10 @@ def run_level(name, n, only=None, solver=None, timeout=600):
                 cok, msg = (res if isinstance(res, tuple) else (bool(res), ""))
             except Exception as e:
                 cok, msg = False, f"check() raised {e!r}"
-            status += f"  check:{'OK' if cok else 'FAIL ' + str(msg)[:200]}"
+            if cok and status.startswith("EXAMPLE MISMATCH"):
+                status = "check OK (example output differs; answer not unique)"
+            else:
+                status += f"  check:{'OK' if cok else 'FAIL ' + str(msg)[:200]}"
             ok_all &= bool(cok)
         print(f"  {fid}: {dt:.1f}s  {status}".rstrip())
     return ok_all, produced

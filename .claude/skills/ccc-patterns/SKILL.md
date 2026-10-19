@@ -37,6 +37,8 @@ Local run with timings: `python arena/lib/check.py arena/runs/<run>/levelN [1-sm
 - **paths:** `valid_cover(g, moves, cycle=False)` (start unknown) · `covers_once(g,start,moves)` · `snake_rows/snake_cols` · `try_symmetries(g, construct, check)` · `ham_path(g, start, end, cycle, time_limit)` (fast DFS) · `ham_cycle(g)` / `ham_path_exact(g,start,end)` (exact, constraint propagation + restarts) · `ham_cycle_graph(n, edges)` (any graph)
 - **search:** `grid_bfs(g, sources, passable)` → (dist, par) · `bfs(start, nbrs, goal)` · `dijkstra(start, nbrs→(v,c), goal)` · `astar(start, nbrs, h, is_goal)` · `path_to(par, end)` · `grid_components` · `toposort` · `DSU`
 - **sim/opt/geom:** `state_at(s0, step, n)` (cycle skip for 10^18 steps) · `anneal(sol, neighbor, cost, seconds)` · `hill_climb` · `geom.segments_intersect / rects_overlap(touch=) / convex_hull / manhattan` · `crosscheck(fast, brute, gen)`
+- **pack:** `pack_rects(W,H,[(a,b)], gap=1, target=k, value=None)` → [(x,y,w,h)] (guillotine DP + pinwheel + exact; gap=1 = no touching incl. diagonal; value=lambda w,h: w*h maximizes cover) · `render_rects(W,H,R[, ids=True, sep=' '])` · `check_rects_grid(g,W,H,sizes,gap,count)` · `grid_rects(g)`
+- **tourney:** `make_fight(beats)` (beats={'R':'SL',...}) · `play_round/play_rounds(s,f,k)/champion` · `build_bracket(counts,'S',beats)` (arrange counts so S wins) · `fill_bracket(s,'S',beats)` (choose X spots) · `rig_bracket(s,'S',beats,wild='X',adv='Z')` (S wins for every Z)
 - Also installed: `networkx` (flows, matching), `scipy.optimize` (`linear_sum_assignment`, `milp`), `numpy`.
 
 ## Decision rules
@@ -49,4 +51,7 @@ Local run with timings: `python arena/lib/check.py arena/runs/<run>/levelN [1-sm
 7. **Threshold/optimize:** valid greedy first, then flow / assignment / ILP / anneal until the threshold.
 8. **Search sometimes hangs:** heavy tail. Restart portfolio (deterministic plus short random runs), not longer timeouts.
 9. **Garbled statement line** (`' L D J R Q D O V`): font shift +29 ("Diagonals…"). Read the PDF.
-10. **No debug output on stdout**, never write "FAIL" placeholders into outputs, and use utf-8 when writing files.
+10. **Rules only in images** (statement text is just `▪▪▪`): render ALL PDF pages with pypdfium2 (diagram pages are skipped by `--png`), then Read them.
+11. **Count-only construction** (arrange given counts): search count vectors per layer/round + flow/Hall feasibility, then expand. Greedy fill orders fail on nested chains.
+12. **Heuristic misses by 1:** structural (pinwheel/parity). Solve the smallest miss exactly, add as primitive.
+13. **No debug output on stdout**, never write "FAIL" placeholders into outputs, and use utf-8 when writing files.

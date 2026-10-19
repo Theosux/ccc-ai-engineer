@@ -1,0 +1,46 @@
+[p1]
+LEVEL 7
+
+[p2]
+Due to our organizations commitment to flexibility and optimizing space utilization,
+desks at each CCC location may be of different sizes.
+You’ll need to manage these variations to ensure efficient use of the available
+space and meet our operational needs.
+From: new.chief.of.operations@toxic-company.com
+Subject: Manage variations
+Hint: The visualizer.html was updated
+▪ The used desk size can be chosen freely between 1 and 7
+▪ Desk sizes may be mixed within a room
+▪ Place desks in a way so that they cover a given number of cells
+▪ The given number of cells is the maximum number that is possible.
+
+[p3]
+Input
+Name Description Example
+N Number of rooms 3
+10 9 47
+9 7 35
+6 8 24 Room
+(repeated N times)
+Three space separated integers representing a room
+First integer: x room length (min room length is 4)
+Second integer: y room length (min room length is 4)
+Third integer: number of cells to cover
+Output
+Name Description Example
+Room
+(repeated N times)
+A matrix of integers, with y rows and x columns
+‘X’ represents a desk
+‘.’ represents no desk
+format identical to previous level
+XXXXXX.X.X
+.......X.X
+XXXXXX.X.X
+.......X.X
+XXXXXX.X.X
+.......X.X
+XXXXXX.X.X
+..........
+XXXXXX.XXX
+...

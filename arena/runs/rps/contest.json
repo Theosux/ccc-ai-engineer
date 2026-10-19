@@ -1,0 +1,27 @@
+{
+  "id": 10930,
+  "name": "training-ccc-2023.03-classic-rock-paper-scissors-54290-73f513bf",
+  "slug": "training-ccc-2023-03-classic-rock-paper-scissors-54290-73f513bf",
+  "contestType": "CLASSIC",
+  "status": "RUNNING",
+  "startTime": "2026-10-19T12:20:34.425413Z",
+  "registrationStartTime": "2026-10-19T12:20:34.425413Z",
+  "durationMinutes": 0,
+  "maxTeamSize": 1,
+  "editionName": null,
+  "gameSlug": "ccc-2023.03-classic-rock-paper-scissors",
+  "gameName": "Rock Paper Scissors",
+  "gameDescription": "Rig a knockout tournament so that Scissors always wins",
+  "gameImage": null,
+  "gameBaseUrl": "https://rock-paper-scissors.codingcontest.org/",
+  "gameTags": [
+    "CCC37",
+    "classic",
+    "levels"
+  ],
+  "venues": [],
+  "registrationCount": 1,
+  "totalLevels": 7,
+  "recruiting": false,
+  "serverNowMs": 1792412436187
+}

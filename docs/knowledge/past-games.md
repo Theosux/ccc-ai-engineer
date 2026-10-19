@@ -1,7 +1,8 @@
 # Past CCC Classic games: level progressions + techniques
 
-Sources: PDFs + Python solutions in https://github.com/gergely-elias/ccc ; Spaceship from the C# solver in
-https://github.com/angua/CCC41 ; Lawn Mower from our own run (`arena/runs/lawnmower`, 7/7 solved).
+Sources: PDFs + Python solutions in https://github.com/gergely-elias/ccc ; Spaceship: statements from
+https://github.com/blu3r4y/ccc-linz-nov2025 + C# solver https://github.com/angua/CCC41 ; Lawn Mower, Room Planner,
+RPS from our own runs (`arena/runs/lawnmower|speedtest|rps`, all 7/7).
 Practice games available on the platform (`ccc.py games`): Spaceship, Room Planner (desks), Lawn Mower, RPS (+ school games).
 
 Technique cells = what the published solutions did, or *(s)* = our suggested approach where no solution was available.
@@ -21,27 +22,30 @@ L7–8 hard search / optimization ("shortest", "maximum", "below threshold").
 | 6 | path must end next to start (cycle); PDF text garbled | strip-construction cycle; parity = both dims odd (1.5 min) |
 | 7 | multiple trees, cycle | **exact edge-propagation Hamiltonian cycle + random restarts** (`ham_cycle`). DFS+Warnsdorff failed on ~10% (24 min) |
 
-## Room Planner / Desks (2024.10, 40th CCC)
-| L | Change | Technique |
+## Room Planner / Desks (2024.10, 40th CCC): we solved 7/7 (L4–L7 in 6.5 min total, run `speedtest`)
+Input `x y k` per room (x = columns). Output: grid. "Given number is the maximum possible" = hit it exactly.
+| L | Change | Technique (our time) |
 |---|---|---|
-| 1 | count max 3×1 desks in rooms (x divisible by 3) | arithmetic `(x//3)*y` |
-| 2 | output grid of desk IDs (count given = max) | fill rows with horizontal desks, IDs 1..n |
-| 3 | x no longer divisible by 3 | *(s)* mix orientations: horizontal strip + vertical desks in remainder columns |
-| 4 | desks may not touch (incl. diagonal); IDs dropped | *(s)* pattern: desks in every other row/col; output a char matrix; validator checks gaps |
-| 5 | desk is now 1×2 (no touching) | *(s)* new tiling pattern; try both orientations, keep the one reaching the given count |
-| 6 | desk length 1..7 (width 1) | *(s)* generalize the pattern by length k; perimeter/greedy packing; validate count+no-touch |
-Pitfall: "given number is the max possible" means you must hit it exactly. Write a checker (bounds, overlap, touching via 8-neighbours) first.
+| 1 | count 3×1 desks (x divisible by 3) | `(x//3)*y` |
+| 2 | grid of desk IDs | horizontal rows, IDs 1..n |
+| 3 | x not divisible by 3 | rows of horizontal + vertical desks in remainder columns, try both orientations |
+| 4 | desks must not touch (incl. diagonal), char grid `X`/`.` | **inflate desk + room by 1** → plain packing of 4×2 into (x+1)×(y+1); guillotine DP hits all 323 (1.5 min) |
+| 5 | desk 1×2 | guillotine misses by 1 on 23 rooms (pinwheels, e.g. 6×6→8) → DP + exact small blocks (1 min) |
+| 6 | desk length 1..7 per room (4th int) | + top-level 5-region pinwheel split; all hit in 2 s (2.8 min) |
+| 7 | mix lengths freely, maximize covered cells | weighted DP `value=w*h` (1 min) |
+All via `lib.pack.pack_rects(x, y, [(L,1)], gap=1, target=k[, value])` + `check_rects_grid`.
 
-## Rock Paper Scissors (2023.03)
-| L | Change | Technique |
+## Rock Paper Scissors (2023.03): we solved 7/7 (11 min total, run `rps`)
+**Rules are only in PDF images** (extracted text = bullets): render pages. Brackets: M = 2^k, pairs (0,1),(2,3)…
+| L | Change | Technique (our time) |
 |---|---|---|
-| 1 | winner of a 2-char fight | lookup (R>S, S>P, P>R; same = same) |
-| 2 | bracket of 2^k fighters, styles left after 2 rounds | simulate pairs round by round |
-| 3 | given counts of R/P/S, build first-round order so no R remains after 2 rounds and S survives | greedy blocks `PRRR` (one P kills ≤3 R in a 4-block), then P's, then S |
-| 4 | Scissors must win the whole tournament | recursive bracket filling by halves (power-of-2 sub-brackets), simulate to verify |
-| 5 | adds Lizard, Spock (RPSLS) | *(s)* generalize beats-table; same constructive idea |
-| 6–7 | wildcards X / Z in input to be replaced | *(s)* choose replacements so the rigging works; search over bracket halves |
-Key: always keep `simulate(bracket)` as the validator.
+| 1 | winner of 2-char fight | lookup (0.4 min) |
+| 2 | M fighters, styles left after 2 rounds | simulate 2 rounds (0.3) |
+| 3 | counts R/P/S → order with no R and ≥1 S after 2 rounds | blocks `PRRR` + shuffle rest, verify (1.2, image read) |
+| 4 | S must win whole tournament | `build_bracket(counts,'S',beats)` (1.8) |
+| 5 | + Spock `Y`, Lizard `L` (diagram on PDF p4, standard RPSLS) | halving heuristic failed 18 cases → **round-based survivor chain + matching** (6.3) |
+| 6 | fixed order, fill `X` spots so S wins | tree DP over achievable-winner sets `fill_bracket` (0.5) |
+| 7 | + `Z` spots filled by adversary afterwards; S must win for every Z | DP over families of outcome-set bitmasks `rig_bracket` (0.7) |
 
 ## Islands (2023)
 | L | Change | Technique |
@@ -54,16 +58,21 @@ Key: always keep `simulate(bracket)` as the validator.
 | 6 | shortest encircling route | *(s)* BFS on (cell, winding/crossing a ray) state = "cut" trick: forbid crossing a ray from island to edge, BFS from one side to the other |
 | 7 | must not encircle other islands | *(s)* same + extra rays/constraints for other islands |
 
-## Spaceship (2025.11, 41st CCC, 8 levels; best teams 7)
-Paces 5→1 (time per step; 0 = stand still), accelerate/decelerate one pace step at a time.
-| L | Change | Technique |
+## Spaceship (2025.11, 41st CCC, 8 levels): rehearsal game, techniques only
+Pace = time per 1 unit of space (5 slow … 1 fast, negative = backwards, 0 = stand still for 1 time unit).
+Pace may only change one step at a time: `-1⇆…⇆-5⇆0⇄5⇄…⇄1`; sequences start and end with 0.
+| L | Change | Likely technique |
 |---|---|---|
-| 1–2 | sum/simulate pace sequences: time and position | simulate |
-| 3–4 | 1D: produce pace sequence to reach x (within time limit) | accel 5,4,3,2,1 … decel 2,3,4,5; precompute |
-| 5 | 2D: independent x and y sequences, pad the faster axis with waits | combine 1D solutions |
-| 6 | asteroid to avoid + time limit | try x-first / y-first L-shaped paths, detour around blocked line |
-| 7 | many asteroids | state-space search on (pos, paceX, paceY) with lower-bound pruning (time-to-reach) |
-| 8 | (nobody solved) | — |
+| 1 | total time of a pace list | sum |
+| 2 | + 0 and negative paces: final position + time | simulate |
+| 3 | 1D: reach station x within a *generous* time limit | ramp 5→…→ cruise → …→5; any valid works; validator first |
+| 4 | 2D, separate X/Y sequences; **time limit requires optimal** | min-time 1D per axis (BFS/DP over (pos, pace) or precomputed table); combine |
+| 5 | 1 asteroid; ship has square safety radius 2 (Chebyshev), generous limit | detour: go around via waypoints, check positions at every time step |
+| 6 | asteroid + tighter time | L-shaped/orthogonal paths, detour offsets when blocked |
+| 7 | many asteroids | best-first/A* over (pos, paceX, paceY, waits), h = max(minTimeX, minTimeY) |
+| 8 | ? (very few solved) | — |
+Context: blu3r4y (strong solo player, github.com/blu3r4y/ccc-linz-nov2025) finished L1–4 in-contest; L5 unfinished.
+Keys: write `simulate(seqX, seqY) -> positions per time` + collision validator at L2–3; X and Y share time steps.
 
 ## Smart Grid (2020.10)
 L1 cheapest minute → L2 cheapest contiguous interval per task (prefix sums / sliding window) →
@@ -79,6 +88,11 @@ convex cost → greedy marginal cost / annealing) → L7 many households sharing
   (`floor(k*(s-exp))`, team ratings) → build balanced teams.
 - **Addictive Game (Flow):** linear position ↔ (row,col) (1-based, `(p-1)//cols+1`) → validate paths connecting
   same-colour points → find connecting paths (BFS / backtracking).
+
+## How far real contestants get
+blu3r4y (Python, solo) finished: 2021 L1–3 (rank #16), 2022 L1–4, 2023 L1–5, 2025 L1–4 (of 8)
+(github.com/blu3r4y/ccc-linz-*). Last 1–2 levels are rarely
+solved in-contest, so **a fast clean L1–5 already ranks well**; the winners are the ones who crack the hard search level.
 
 ## Cross-game conventions
 - Input: first line N (cases), then records; grids are "paragraphs" of H rows; sizes often `W H` (width first) or a single N for square maps.

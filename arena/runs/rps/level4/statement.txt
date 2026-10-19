@@ -1,0 +1,23 @@
+[p3]
+▪▪▪▪
+
+[p4]
+N M
+amountR amountP amountS
+(repeated N times)
+fightingStyles
+(repeated N times)
+N (int): number of tournaments
+M (int): number of fighters in the tournament
+(will always be a power of 2)
+amount (int): the number of fighters of this
+style that will participate in the tournament
+fightingStyles (string): the
+pairings of the first round
+3 16
+5R 5P 6S
+4R 4P 8S
+11R 3P 2S
+PPRRRPRRSSSSSSPP
+RPRRPPRPSSSSSSSS
+RRRRRPRRSSRPRRPR

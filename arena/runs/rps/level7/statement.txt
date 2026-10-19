@@ -1,0 +1,24 @@
+[p3]
+▪▪
+
+[p4]
+N M
+fightingStyles
+(repeated N times)
+fightingStyles
+(repeated N times)
+N (int): number of tournaments
+M (int): number of fighters in the tournament
+(will always be a power of 2)
+fightingStyles (char): the fighting styles of the
+fighters of the first round
+fightingStyles (char): the
+fighting styles of the
+fighters of the first round
+3 16
+ZYPXPSXYZXRPLSZX
+LZRPPPXZLXPLLXPX
+RSRXSSXZRPLLRXXZ
+ZYPLPSSYZRRPLSZP
+LZRPPPRZLSPLLSPS
+RSRPSSPZRPLLRPRZ

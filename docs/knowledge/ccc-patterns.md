@@ -24,16 +24,32 @@ API details: `arena/lib/__init__.py` docstrings. Self-test: `python arena/lib/te
 | Dependencies / ordering | Kahn toposort (None = cycle) | `toposort(nodes, edges)` |
 | "after 10^9 / 10^18 steps" | cycle detection, fast-forward | `state_at(s0, step, n, key)` |
 | Collisions, segments, rectangles, "must not touch" | cross product, inclusive rect overlap (touch=True adds the 1-cell gap) | `geom.segments_intersect`, `geom.rects_overlap` |
-| Fill a room with rectangles/desks | greedy row packing first; handle orientation; validate overlap+bounds; try both orientations | `geom.rects_overlap`, `try_symmetries` |
+| Fill a room with rectangles/desks, "given number is the max" | guillotine DP over (w,h) + exact pinwheel blocks + top-level pinwheel split | `pack_rects(W,H,[(a,b)],target=k)`, `render_rects`, `check_rects_grid` |
+| …"must not touch (incl. diagonal)" | **inflate pieces and room by the gap**, then plain packing | `pack_rects(..., gap=1)` |
+| …mixed sizes, "cover max cells" | weighted DP (value per piece) | `pack_rects(..., value=lambda w,h: w*h)` |
 | "score ≥ threshold" / maximise | greedy baseline → hill climb / annealing until threshold | `anneal(sol, neighbor, cost, seconds)`, `hill_climb` |
 | Assign X to Y at min cost / matching | Hungarian / bipartite matching | `scipy.optimize.linear_sum_assignment`, `networkx.max_weight_matching` |
 | Distribute amounts over slots with capacities | min-cost flow | `networkx.min_cost_flow` / `max_flow_min_cost` |
 | "maximum number of X that fit" (small) | ILP (binary vars per placement) | `scipy.optimize.milp` |
-| Tournament / pairing / rigging | recursive construction by halves; simulate bracket to validate | write `simulate()` once and reuse |
+| Knockout bracket: simulate | pairs (0,1),(2,3)… per round | `make_fight(beats)`, `play_rounds(s,f,k)`, `champion` |
+| "given counts, arrange so X wins" | **round-based survivor chain**: s_t ⊂ s_{t-1}, losers matched to survivors (Hall/flow), s_t ≈ counts/2^t | `build_bracket(counts, 'S', beats)` |
+| Fixed tree + "choose the X spots" | tree DP: set of achievable values per node, reconstruct top-down | `fill_bracket(s, 'S', beats)` |
+| …+ adversary spots ("no matter what Z is") | ∃∀ tree DP over *families of outcome sets* (bitmasks) | `rig_bracket(s, 'S', beats)` |
 | Physics-ish steps (pace, accel, max speed) | precompute 1D move sequences; combine axes; BFS on (pos, vel) | `bfs` with tuple state |
 | Fast solver unsure | brute force on small random inputs + compare | `crosscheck(fast, brute, gen)` |
 
+## Meta-patterns (from Room Planner / RPS)
+- **Count-only constructions** (only how many of each type matters): search over count vectors (≤5 types),
+  check feasibility with a tiny flow/Hall test, then expand to an explicit layout. Far stronger than greedy fill orders.
+- **Greedy misses by exactly 1 on some cases** = a structural gap (non-guillotine pinwheel, parity), not a bug.
+  Find the smallest failing case, solve it exactly (`pack_exact`/brute force), and add it as a DP primitive.
+- **Exact DP on small domains**: per-node *sets* of reachable values (≤32 subsets for 5 styles) are cheap.
+  Monotone combine (bigger in → bigger out) lets you keep only minimal sets.
+
 ## Pitfalls (each cost real contests time)
+- **Rules only in images.** Some games (RPS) put every rule in PDF images. Extracted text = bullets "▪▪▪".
+  Render ALL pages (diagram pages carry no text, so `fetch --png` may skip them):
+  `python -c "import pypdfium2 as p; d=p.PdfDocument('files/level-N.pdf'); [d[i].render(scale=0.75).to_pil().save(f'pages/p{i+1}.png') for i in range(len(d))]"`
 - **Width vs height order.** CCC usually gives `W H` (width first) but grids are listed as H rows of W chars. Check the example dims vs the rows.
 - **Coordinates.** y grows DOWN in grids ("North = W = up = y-1"). Some levels use x,y with origin bottom-left or `row col`. Verify with the example.
 - **Grid sizes off by one.** "Size of lawn" = max-min+1. Coordinates may be 0- or 1-based.

@@ -1,0 +1,45 @@
+[p1]
+LEVEL 6
+
+[p2]
+Each CCC location uses different desk sizes, so you’ll need to adapt to the specific
+requirements at each site. Make sure you’re up well prepared for all these variations
+as you move forward.
+From: new.chief.of.operations@toxic-company.com
+Subject: Different desk sizes
+Hint: The visualizer.html was updated
+▪ The desk length can now vary from 1 to 7
+▪ The desk width is always 1
+▪ The given number of desks is the maximum number that is possible
+
+[p3]
+Input
+Name Description Example
+N Number of rooms 3
+9 5 6 4
+9 7 13 2
+6 8 4 5
+Room
+(repeated N times)
+Four space separated integers representing a room
+First integer: x room length (min room length is 4)
+Second integer: y room length (min room length is 4)
+Third integer: number of desks
+Fourth integer: desk size
+Output
+Name Description Example
+Room
+(repeated N times)
+A matrix of characters, with y rows and x columns
+‘X’ represents a desk
+‘.’ represents no desk
+format identical to previous level
+XXXX.XXXX
+.........
+XXXX.XXXX
+.........
+XXXX.XXXX
+X.X.X.X.X
+X.X.X.X.X
+.........
+...

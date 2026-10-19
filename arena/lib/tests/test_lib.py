@@ -106,6 +106,43 @@ def t_sim_opt_geom():
                       lambda r: " ".join(str(r.randint(0, 9)) for _ in range(5)), trials=20) is None
 
 
+def t_pack():
+    from lib.pack import pack_rects, render_rects, check_rects_grid
+    # Room Planner L4 (3x1, no touch) / L5 (1x2, pinwheel 6x6 -> 8) / L6 (len 4) / L7 (mixed, cover)
+    for (x, y, k, d) in ((7, 5, 6, (3, 1)), (9, 7, 10, (3, 1)), (6, 6, 8, (2, 1)), (9, 7, 13, (2, 1)), (9, 5, 6, (4, 1)),
+                         (17, 32, 59, (4, 1))):
+        R = pack_rects(x, y, [d], gap=1, target=k)
+        g = render_rects(x, y, R[:k])
+        assert check_rects_grid(g, x, y, [d], 1, k) == (True, ""), (x, y, k, d, len(R))
+    P = [(L, 1) for L in range(1, 8)]
+    for (x, y, k) in ((10, 9, 47), (9, 7, 35), (6, 8, 24)):
+        R = pack_rects(x, y, P, gap=1, target=k, value=lambda w, h: w * h)
+        g = render_rects(x, y, R)
+        assert check_rects_grid(g, x, y, P, 1)[0] and sum(r.count("X") for r in g) == k
+    assert not check_rects_grid(["XX.", "..X"], sizes=[(2, 1)], gap=1)[0]  # diagonal touch
+    assert not check_rects_grid(["XX", "XX"], sizes=[(2, 1)], gap=1)[0]   # merged desks
+
+
+def t_tourney():
+    from lib.tourney import make_fight, play_rounds, champion, build_bracket, fill_bracket, rig_bracket
+    rps = {"R": "S", "S": "P", "P": "R"}
+    f = make_fight(rps)
+    assert f("P", "R") == "P" and f("R", "R") == "R" and play_rounds("PRRRSSSR", f, 2) == "PR"
+    rpsls = {"R": "SL", "P": "RY", "S": "PL", "Y": "SR", "L": "YP"}
+    g = make_fight(rpsls)
+    for c in ({"R": 5, "P": 5, "S": 6}, {"R": 11, "P": 3, "S": 2}):
+        s = build_bracket(c, "S", rps)
+        assert s and champion(s, f) == "S" and all(s.count(k) == v for k, v in c.items())
+    c = {"R": 15, "P": 0, "S": 1, "Y": 10, "L": 6}  # needs asymmetric splits (halving heuristic failed)
+    s = build_bracket(c, "S", rpsls)
+    assert s and champion(s, g) == "S" and all(s.count(k) == v for k, v in c.items())
+    assert champion(fill_bracket("RYPYPSRYXYRPLXXP", "S", rpsls), g) == "S"
+    o = rig_bracket("ZYPXPSXYZXRPLSZX", "S", rpsls)
+    rng = random.Random(1)
+    for _ in range(50):
+        assert champion("".join(rng.choice("RPSYL") if ch == "Z" else ch for ch in o), g) == "S"
+
+
 if __name__ == "__main__":
     t0 = time.time()
     for name, fn in list(globals().items()):

@@ -1,0 +1,24 @@
+[p5]
+▪▪▪▪▪
+
+[p7]
+N
+fightingStyles
+fightingStyle
+(repeated N times)
+N (int): number of fights
+fightingStyles (string): two chars,
+representing the styles of the fighters
+fightingStyle (char): the winner’s
+fighting style
+5
+PR
+RR
+SS
+SR
+PS
+P
+R
+S
+R
+S

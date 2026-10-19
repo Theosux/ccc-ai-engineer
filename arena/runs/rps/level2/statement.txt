@@ -1,0 +1,23 @@
+[p3]
+•••
+
+[p5]
+N M
+fightingStyles
+fightingStyles
+(repeated N times)
+N (int): number of tournaments
+M (int): number of fighters in the
+tournament (will always be a power of 2)
+fightingStyles (string): M chars,
+representing the styles of the fighters
+fightingStyles (string): the styles of
+the participants that are still in the
+tournament after two rounds
+3 8
+PRRRSSSR
+PSRPPSPP
+PPPSRSPR
+PR
+SS
+SP
