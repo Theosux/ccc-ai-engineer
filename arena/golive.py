@@ -376,6 +376,13 @@ class Watcher:
                 def on_resp(r):
                     if "/api/" in r.url and "codingcontest.org" in r.url:
                         self.log("D6", "api", {"url": r.url.split("?")[0], "status": r.status, "method": r.request.method})
+                        host = r.url.split("/")[2]
+                        # the real UI talking to a game host (e.g. spaceship.codingcontest.org/api/contestant/...)
+                        if host != "codingcontest.org" and "/api/contestant/" in r.url and r.status == 200:
+                            base = "https://" + host + "/"
+                            if self.hints.get("gameBaseUrl") != base:
+                                self.hints["gameBaseUrl"] = base
+                                self.signal("D6", f"real UI is using game API {base}", {"gameBaseUrl": base})
                 page.on("response", on_resp)
                 url = f"{ccc.BASE}/contests/{self.slug}/game"
                 page.goto(url)

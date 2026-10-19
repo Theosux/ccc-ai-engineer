@@ -20,6 +20,8 @@
 | File | Purpose |
 |---|---|
 | [README.md](strategy/README.md) | Contest-day workflow + training status |
+| [contest-day-runbook.md](strategy/contest-day-runbook.md) | **Contest day**: timeline, golive detectors, fallback ladder |
+| [workflow-speed.md](strategy/workflow-speed.md) | Loop timings + optimizations |
 
 ## Problem-solving knowledge (`docs/knowledge/`)
 | File | Purpose |
@@ -38,5 +40,6 @@
 
 ## Other
 - [progress-log.md](progress-log.md) — dated session log
+- `arena/golive.py` — contest go-live automation (preflight, detectors D1–D6, trigger). Tests: `python arena/tests/test_golive.py`
 - `arena/lib/` — Python helper library for solvers (parse, grid, paths/Hamiltonian, search, sim, opt, geom, check). Tests: `python arena/lib/tests/test_lib.py`
 - [arena/README.md](../arena/README.md) — working folder: CLI usage, folder layout (zips, inputs, outputs, solvers)

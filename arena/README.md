@@ -15,10 +15,11 @@ Diagrams: `fetch N --png` renders the statement pages to `levelN/pages/p*.png` (
 ## Commands
 | Command | What it does |
 |---|---|
+| **`python arena/golive.py [--browser] [--preflight] [--observe school]`** | **Contest day (preferred).** Preflight, then multi-detector watch (API poll, SSE, registrations, level-1 probe, optional Edge witness), auto-register, print level 1. See `docs/strategy/contest-day-runbook.md`. |
 | `wait [contest] [--name contest]` | Contest day. Polls until the game is live (keeps the session warm), registers the run, prints level 1. Run it in the background from T-15 min. |
 | `contest [contest] [--name contest]` | Registers the contest run now (fails clearly if not started). Default contest is `42nd-classic-ccc-5872`. |
 | `train <gameSlug> [--mode exploration\|challenge] [--name X]` | Starts a practice run. Becomes active unless `CCC_RUN` is set. |
-| `fetch N [--png] [--scale 0.75]` | Downloads, unzips, writes `map.json` and `statement.txt`, and prints the statement + example. |
+| `fetch N [--png] [--scale 0.75] [--zip FILE]` | Downloads, unzips, writes `map.json` and `statement.txt`, and prints the statement + example. `--png` renders all pages; image-only pages are auto-rendered. `--zip` ingests a manually downloaded zip (emergency). |
 | `go N [--force] [--no-next] [--solver CMD] [--timeout S]` | Run + verify + submit + auto-fetch next. `--force` submits despite an example/check mismatch. |
 | `run N [--only ID] [--solver CMD]` | Outputs only (into `levelN/out/`). |
 | `submit N [--only ID ...] [--include-example]` | Submits (sequentially). With `--only` it does not stop on WRONG. |

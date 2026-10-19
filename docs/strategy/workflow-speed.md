@@ -46,7 +46,7 @@ Measured on 2026-10-09 in practice run `speedtest` (Room Planner / desks, explor
 - The zip is a static, per-game blob (`files.codingcontest.org/game-files/<game>/level-N.zip`) behind a short-lived SAS URL.
 - Case feedback fields: `caseState`, `caseMessage`, `startLineNumber`/`endLineNumberExcl`, `errorLineNumber`, `optimizationScore`. Optimization levels expose `passScore` and `scoreDirection` in game-info.
 
-## Contest-day runbook (23 Oct 2026; start 13:00 UTC = 16:00 Cluj, 240 min, end 20:00 Cluj)
+## Contest-day runbook (superseded: see [contest-day-runbook.md](contest-day-runbook.md), which uses `golive.py`)
 | When | Action |
 |---|---|
 | T-60 min | Pull the repo. Run `python arena/ccc.py info` on a practice run to prove the login works. If SESSION EXPIRED, run `login` (browser), or `login --http` if `credentials.env` exists. |
