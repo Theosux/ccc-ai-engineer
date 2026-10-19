@@ -129,3 +129,15 @@
 - "Shortest loop around X keeping Y outside" is a min vertex cut.
 
 **Next:** Thursday is a final short dress rehearsal (a School game: drones or asteroid-mining) in the contest configuration, then `golive --preflight`. On Friday, follow `contest-day-runbook.md`.
+
+## 2026-10-19: Session 6: Spaceship re-run after the speed pass (4 days left)
+**Done:** timed re-run of Spaceship, the 2025 Classic, in the `ship2` run. **8/8 in 13.9 min, down from 36.6 min.** L1–L6 took 4.6 min, L7 7.0 min (284 s of it was the solver run), L8 2.2 min. Every file is CORRECT on the real judge (verified via `submit --only`, because the platform reused the existing, already-passed training contest). Details are in `strategy/workflow-speed.md`.
+
+**Lessons**
+- The training start reuses a RUNNING contest, so re-runs need `submit --only`.
+- Never pipe `go` and then chain a submit: the exit code is lost and unverified output gets submitted.
+- Probe ETAs miss internal-retry tails (55 s predicted, 284 s actual).
+- Weighted A* needs a closed set (no reopening) when paths are rebuilt from parent pointers.
+- A heredoc patch slipped in again on L4: use Write/Edit only.
+
+**Next:** unchanged. A Thursday dress rehearsal on an unseen School game, then `golive --preflight`, then Friday's runbook.

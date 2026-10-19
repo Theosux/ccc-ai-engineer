@@ -1,0 +1,27 @@
+{
+  "id": 10928,
+  "name": "training-ccc-2025.11-classic-spaceship-54290-341e638b",
+  "slug": "training-ccc-2025-11-classic-spaceship-54290-341e638b",
+  "contestType": "CLASSIC",
+  "status": "RUNNING",
+  "startTime": "2026-10-19T12:19:30.951084Z",
+  "registrationStartTime": "2026-10-19T12:19:30.951084Z",
+  "durationMinutes": 240,
+  "maxTeamSize": 1,
+  "editionName": null,
+  "gameSlug": "ccc-2025.11-classic-spaceship",
+  "gameName": "Spaceship",
+  "gameDescription": "Pilot a spaceship and dock with a station while avoiding collisions with asteroids",
+  "gameImage": null,
+  "gameBaseUrl": "https://spaceship.codingcontest.org/",
+  "gameTags": [
+    "CCC41",
+    "classic",
+    "levels"
+  ],
+  "venues": [],
+  "registrationCount": 1,
+  "totalLevels": 8,
+  "recruiting": false,
+  "serverNowMs": 1792425084117
+}

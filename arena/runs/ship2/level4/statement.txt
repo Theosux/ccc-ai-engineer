@@ -1,0 +1,46 @@
+[p1]
+LEVEL 4
+
+[p2]
+▪ Space is now 2D
+▪ Your spaceship starts at position 0,0
+▪ Your spaceship must reach the X and Y position of the station exactly
+▪ X and Y paces can change separately from each other
+▪ Generate one sequence for X and one for Y
+▪ Both sequences must start and end with 0
+▪ The sequences may take a different amount of time
+▪ Both sequences must complete within the time limit
+▪ The given time limit requires an optimal solution
+▪ There may be multiple correct solutions
+We will keep it at 2D space for the rest of the contest.
+There is a visualizer.html in the input folder. You can use it to visualize the movement of your ship.
+
+[p3]
+Output
+Name Description Example repeated N times
+X-Sequence A list of integers separated by spaces, each representing
+a pace in X-direction
+0 5 4 5 0
+0 -5 -4 -5 0
+0 5 4 3 2 3 4 5 0
+0 5 4 3 4 5 0
+0 -5 -4 -4 -5 0
+0 -5 -4 -3 -2 -1 -2 -3 -4 -5 0
+Y-Sequence A list of integers separated by spaces, each representing
+a pace in Y-direction
+Empty lines between paragraphs are recommended but optional
+Input
+Name Description Example
+N Number of cases 3
+3,-3 16
+7,5 28
+-4,-9 31
+Space station
+and time limit
+(repeated N times)
+The X-position and the Y-position of the space station separated
+by a comma
+Followed by the time limit separated by a space
+
+[p4]
+Good Luck!

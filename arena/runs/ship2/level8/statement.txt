@@ -1,0 +1,42 @@
+[p1]
+LEVEL 8
+
+[p2]
+▪ The asteroids now move as well
+▪ Asteroids start moving as soon as your sequence starts.
+However, your sequence starts with 0 while the asteroids already have a pace
+▪ Multiple asteroids may be in the same place at the same time
+▪ Asteroids do not collide with each other
+▪ The time limit is short, but does not require an optimal solution
+Houston, we have a problem
+
+[p3]
+Output
+Name Description Example repeated N times
+X-Sequence
+0 5 4 3 2 1 1 1 2 3 4 4 5 0 0 0 0 0 0 -5 0
+0 0 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 0 0 0 0 0 5 4 3 4 5 0
+0 -5 -4 -5 0 -5 -4 -3 -2 -3 -4 -5 0
+0 -5 -5 0 0 -5 -4 -3 -2 -2 -3 -4 -5 0
+Y-Sequence
+Optional empty line
+Input
+Name Description Example
+N Number of cases 2
+11,6 62
+4
+0,3,5,0 1,-19,5,1 5,-10,0,1 8,4,0,0
+-10,-10 57
+2
+0,-10,-3,3 -10,0,3,-3
+repeated N times
+Space station and time limit
+A Number of asteroids
+Asteroids
+A list of asteroids separated by spaces
+Each asteroid consisting of X-position, Y-position,
+X-pace and Y-pace separated by a comma
+format identical to previous level
+
+[p4]
+Good Luck!

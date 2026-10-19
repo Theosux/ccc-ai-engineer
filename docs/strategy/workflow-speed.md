@@ -95,3 +95,19 @@ Protocol: each model ran as a **cold** subagent (no session context; it loaded `
 **Result: a tie on speed and correctness on these games.** Wall time is dominated by tool round trips and solver runs, not by token generation, so Sonnet's faster output does not turn into faster levels. Opus was more disciplined (it followed the process rules) and chose stronger techniques. Hard levels decide the ranking (Spaceship L7, Islands L7), and there Opus's stronger reasoning matters more.
 
 **Decision for 23 Oct: Opus 5.5 drives** (default effort). Optionally use `/fast` from the **start** of the session if Teo enables usage credits. That gives up to 2.5× faster output, which helps most on the long solver writes of hard levels. Sonnet stays a fallback if the Opus usage limit is hit.
+
+## Re-run of Spaceship after the speed pass (2026-10-19, session 6)
+Same game (Challenge mode), solved inline by Opus 5.5 without reading the old solvers. Times are fetch N to fetch N+1, from `arena/runs/ship2/timing.jsonl`.
+| Level | Rehearsal (session 4) | Re-run | Notes |
+|---|---|---|---|
+| L1–L6 | 5.4 min | **4.6 min** (13 / 45 / 32 / 41 / 70 / 78 s) | L4 lost about 15 s to a heredoc patch (again) |
+| L7 | 29.4 min | **7.0 min** | probe: ETA 55 s, but the actual run took **284 s** (the weight-fallback retries form a tail the sample missed) |
+| L8 | 1.8 min | 2.2 min | one bug: A\* reopening broke parent timing; own `check()` caught it |
+| **Total** | **36.6 min** | **13.9 min** | 8/8; every file is CORRECT on the real judge |
+
+Caveats: this is not a cold run. The progress log names the old L7/L8 techniques (A\* + geodesic heuristic, time-dependent A\*). Treat about 14 min as a lower bound for an unseen game of this difficulty.
+
+Findings:
+- `POST /api/training/<slug>/start` returns the **existing** contest while it is RUNNING (same id, 240 min window). A re-run therefore has no fresh clock, and the files count as already passed, so `go` skips submitting. To get real verdicts, use `submit N --only <ids>`.
+- **Never pipe `go` into `tail`/`grep` and then chain a submit.** The pipe masks `go`'s exit code, so unverified output was submitted (10 WRONG cases on L8; no harm, because the level was already passed). Contest day: plain `go N`.
+- `probe` underestimates when solve_case retries internally (weighted A* fallbacks). Budget about 5× the ETA on those levels.

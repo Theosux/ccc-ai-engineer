@@ -1,0 +1,35 @@
+[p1]
+LEVEL 2
+
+[p2]
+▪ The spaceship can also stand still or move back
+▪ The sequences now include zeros and negative paces
+▪ "0" represents no movement in space, while still taking 1 unit of time
+▪ Negative paces represent a movement in the opposite direction, while still taking a positive
+amount of time
+▪ For each sequence, calculate the final position of the spaceship
+as well as the time it takes to complete
+▪ The spaceship starts at position 0
+Pace -1 -2 -3 -4 -5 0 5 4 3 2 1
+Units of Space -1 -1 -1 -1 -1 0 1 1 1 1 1
+Units of Time 1 2 3 4 5 1 5 4 3 2 1
+
+[p3]
+Output
+Name Description Example
+Position and Time
+(repeated N times) The final position and time separated by a space
+2 12
+1 18
+-7 28
+Input
+Name Description Example
+N Number of sequences 3
+0 5 5 0
+0 5 5 0 -5 0
+0 -5 -4 -3 -2 -3 -4 -5 0
+Sequence
+(repeated N times) A list of integers separated by spaces, each representing a pace
+
+[p4]
+Good Luck!
