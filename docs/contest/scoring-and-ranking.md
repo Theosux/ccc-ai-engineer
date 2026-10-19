@@ -23,6 +23,11 @@ Romanian venues (Craiova, Bucharest, Timișoara, Chișinău) often place in the 
 ## Prizes
 Prizes are **per venue**, plus the global Hall of Fame and certificates. There is no global cash prize.
 
+## Hands-on finding (2026-10-19, Spaceship Challenge mode)
+- **Test:** a deliberately wrong submit on L1, followed by a correct one.
+- **Result:** `passedAt` was exactly the wall-clock time of the correct submit (12:20:29 UTC, 58.8 s after the start). **No +60 s was added.** `gameScore.timeMs` equals the last level's `passedAt`.
+- **Caveat:** a leaderboard-side penalty in the real contest cannot be ruled out, so keep using `check()`.
+
 ## Open questions
 - Does a time penalty for wrong submissions still exist in 2026? Ask the organizers, or test it in Challenge mode.
 - Tie-breaks beyond time are not documented.

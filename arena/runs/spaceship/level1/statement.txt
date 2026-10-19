@@ -1,0 +1,53 @@
+[p2]
+… humanity started mining rare minerals from the vast asteroid
+belt situated between Mars and Jupiter, to fuel even more ambitious
+engineering projects. To accomplish this, fleets of autonomous
+spaceships were deployed, tirelessly shuttling precious resources
+from asteroid mining sites back to an advanced space station
+nearby.
+Ensuring a safe return requires not just sophisticated technology,
+but also ingenious algorithms capable of plotting routes through the
+most treacherous environment known to humankind.
+In 2048…
+
+[p3]
+LEVEL 1
+
+[p4]
+This contest is about steering
+a spaceship. The movement of a
+spaceship is described using pace.
+Contrary to velocity, pace is time
+divided by distance.
+My average pace
+is 5 minutes
+per kilometer
+
+[p5]
+▪ You are given a list of movement sequences of a spaceship
+▪ A movement sequence is a list of paces
+▪ A pace is represented by an integer
+− "5" takes 5 units of time and moves 1 unit of space
+− "4" takes 4 units of time and moves 1 unit of space
+▪ For each sequence, calculate the time it takes to complete
+▪ All integers will be greater than 0
+
+[p6]
+Output
+Name Description Example
+Time
+(repeated N times) The time it takes the sequence to complete
+10
+22
+26
+Input
+Name Description Example
+N Number of sequences 3
+5 5
+5 4 4 4 5
+5 4 3 2 3 4 5
+Sequence
+(repeated N times) A list of integers separated by spaces, each representing a pace
+
+[p7]
+Good Luck!

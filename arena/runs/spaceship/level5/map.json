@@ -1,0 +1,14 @@
+{
+  "scoredFiles": [
+    "1-small",
+    "2-large"
+  ],
+  "unscoredFiles": [
+    "0-example"
+  ],
+  "inputs": {
+    "files/in_level-5_0-example.txt": "0-example",
+    "files/in_level-5_1-small.txt": "1-small",
+    "files/in_level-5_2-large.txt": "2-large"
+  }
+}

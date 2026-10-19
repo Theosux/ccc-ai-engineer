@@ -1,0 +1,37 @@
+[p1]
+LEVEL 7
+
+[p2]
+▪ There are now multiple asteroids
+▪ The time limit is short, but does not require an optimal solution
+There’s more of them?
+There is an updated visualizer.html in the input folder.
+
+[p3]
+Output
+Name Description Example repeated N times
+X-Sequence
+0 5 4 3 2 1 1 1 2 3 4 5 0
+0 -5 -4 -5 0 0 0 0 0 0 0 0 0 0 0 0 5 4 3 2 3 4 5 0
+0 -5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -5 -4 -3 -2 -1 -2 -3 -4 -5 0
+0 -5 -4 -3 -2 -1 -1 -2 -3 -4 -5 0
+Y-Sequence
+Optional empty line
+Input
+Name Description Example
+N Number of cases 2
+11,4 69
+3
+4,2 8,0 8,4
+-10,-10 66
+3
+-4,-6 -5,-5 -6,-4
+repeated N times
+Space station and time limit
+A Number of asteroids
+Asteroids A list of asteroids separated by spaces
+Each asteroid consisting of X-position and Y-position separated by a comma
+format identical to previous level
+
+[p4]
+Good Luck!

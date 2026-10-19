@@ -613,6 +613,14 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=
     flags = [k for k in ("optimization", "sandbox") if meta.get(k)]
     print(f"===== Level {n}/{total_levels(gi) or '?'}  {d}  ({time.time() - t0:.1f}s)  {' '.join(flags)}")
     print(f"inputs: {', '.join(f'{fid}' + ('*' if fid in unscored else '') for fid in mapping.values())}  (* = unscored)")
+    sizes = []
+    for rel, fid in mapping.items():  # size first: pick the algorithm for the LARGE file, not the example
+        p = d / rel
+        txt = p.read_text(encoding="utf-8", errors="replace")
+        first = txt.split(None, 1)[0] if txt.strip() else "?"
+        longest = max((len(l) for l in txt.splitlines()), default=0)
+        sizes.append(f"{fid}: {p.stat().st_size / 1024:.0f} KB, {txt.count(chr(10))} lines, first token {first}, longest line {longest}")
+    print("sizes: " + " | ".join(sizes))
     other = [str(p.relative_to(d)) for p in files if str(p.relative_to(d)).replace('\\', '/') not in mapping
              and not p.name.startswith("out_") and p.suffix.lower() != ".pdf"]
     if other:

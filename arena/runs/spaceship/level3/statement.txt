@@ -1,0 +1,48 @@
+[p1]
+LEVEL 3
+
+[p2]
+It’s your turn to steer the spaceship
+▪ You are given a list of space stations
+▪ Steer your spaceship to each space station
+▪ Space is 1-dimensional
+▪ For each space station:
+− Your spaceship starts at position 0
+− Generate a movement sequence
+− Your spaceship must reach the position of the station exactly
+− A time limit is given
+− The sequence must complete within the time limit
+− 7KHWLPHOLPLWLVYHU\JHQHURXV
+\RXGRQ¶WQHHGD
+▪ Allowed paces are explained on the next slide
+
+[p3]
+▪ There are limitations on how your spaceship can move
+▪ Each sequence must start and end with pace 0
+▪ The slowest pace is 5 or -5
+▪ The fastest pace is 1 or -1
+▪ Your spaceship can only gradually step up the pace as well as step down
+-1 ⇆ -2 ⇆ -3 ⇆ -4 ⇆ -5 ⇆ 0 ⇄ 5 ⇄ 4 ⇄ 3 ⇄ 2 ⇄ 1
+Paces
+
+[p4]
+Output
+Name Description Example
+Sequence
+(repeated N times) A list of integers separated by spaces, each representing a pace
+0 5 5 0
+0 5 4 3 4 5 0
+0 -5 -4 -3 -2 -3 -4 -5 0
+Input
+Name Description Example
+N Number of cases 3
+2 25
+5 39
+-7 46
+Space station
+and time limit
+(repeated N times)
+The position of the space station and the time limit separated by a space
+
+[p5]
+Good Luck!

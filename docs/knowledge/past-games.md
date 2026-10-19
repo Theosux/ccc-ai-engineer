@@ -58,21 +58,26 @@ All via `lib.pack.pack_rects(x, y, [(L,1)], gap=1, target=k[, value])` + `check_
 | 6 | shortest encircling route | *(s)* BFS on (cell, winding/crossing a ray) state = "cut" trick: forbid crossing a ray from island to edge, BFS from one side to the other |
 | 7 | must not encircle other islands | *(s)* same + extra rays/constraints for other islands |
 
-## Spaceship (2025.11, 41st CCC, 8 levels): rehearsal game, techniques only
-Pace = time per 1 unit of space (5 slow … 1 fast, negative = backwards, 0 = stand still for 1 time unit).
-Pace may only change one step at a time: `-1⇆…⇆-5⇆0⇄5⇄…⇄1`; sequences start and end with 0.
-| L | Change | Likely technique |
-|---|---|---|
-| 1 | total time of a pace list | sum |
-| 2 | + 0 and negative paces: final position + time | simulate |
-| 3 | 1D: reach station x within a *generous* time limit | ramp 5→…→ cruise → …→5; any valid works; validator first |
-| 4 | 2D, separate X/Y sequences; **time limit requires optimal** | min-time 1D per axis (BFS/DP over (pos, pace) or precomputed table); combine |
-| 5 | 1 asteroid; ship has square safety radius 2 (Chebyshev), generous limit | detour: go around via waypoints, check positions at every time step |
-| 6 | asteroid + tighter time | L-shaped/orthogonal paths, detour offsets when blocked |
-| 7 | many asteroids | best-first/A* over (pos, paceX, paceY, waits), h = max(minTimeX, minTimeY) |
-| 8 | ? (very few solved) | — |
-Context: blu3r4y (strong solo player, github.com/blu3r4y/ccc-linz-nov2025) finished L1–4 in-contest; L5 unfinished.
-Keys: write `simulate(seqX, seqY) -> positions per time` + collision validator at L2–3; X and Y share time steps.
+## Spaceship (2025.11, 41st CCC, 8 levels): **we solved 8/8 in 36.6 min** (timed Challenge rehearsal, 2026-10-19, run `spaceship`)
+The 2025 winners did 7/8 in 3h42m, and nobody solved L8. Pace = time per 1 unit of space (5 slow … 1 fast, negative = backwards, 0 = stand still for 1 tick). Paces change one step at a time: `-1⇆…⇆-5⇆0⇄5⇄…⇄1`. Sequences start and end with 0.
+
+**Exact semantics** come from the visualizer JS:
+- A pace p lasts |p| ticks (a 0 lasts 1) and moves at the end of the pace.
+- Collision means |dx| ≤ 2 and |dy| ≤ 2 at **any tick**.
+- An asteroid's position at tick t is p0 + trunc(t / v) on each axis.
+
+| L | Change | What worked | Time |
+|---|---|---|---|
+| 1 | total time of paces | sum | 1.0 min |
+| 2 | 0 and negative paces | sign/abs | 0.5 |
+| 3 | 1D reach x, generous limit | ramp 5→k, cruise k, ramp back. **This is the optimal 1D profile** (min over k). `check()` validator | 0.5 |
+| 4 | 2D, limit requires optimal | the same 1D optimum per axis | 1.1 |
+| 5 | 1 asteroid, generous | axis-aligned waypoint legs + exact tick simulator (from visualizer) | 1.4 |
+| 6 | tighter limit | one axis detours to a lane while the other travels (search lane, delay, return wait) | 0.9 |
+| 7 | **5000 asteroids, dist ≤ 589 (inputs 19 MB)** | event-driven **A\*** on (x, y, paceX, remX, paceY, remY). Heuristic = max(exact 1-D cost-to-go table from reverse Dijkstra, **8-connected BFS maze distance**). Weighted w=3 → 2 → 1.5 → 1, PyPy, `multiprocessing.Pool` per case: 140 s for 500 cases | **29.4** |
+| 8 | moving asteroids (500) | the same A\* made time-dependent: key (state, t), check every intermediate tick, cache asteroid cells per tick (25 lookups per query) | 1.8 |
+
+**L7 lesson:** I wasted about 10 min on a free-space heuristic and a waypoint search before looking at the input size. **Read the `sizes:` line from fetch first.** In a maze, an obstacle-aware heuristic (geodesic BFS) is what makes A\* fast.
 
 ## Smart Grid (2020.10)
 L1 cheapest minute → L2 cheapest contiguous interval per task (prefix sums / sliding window) →

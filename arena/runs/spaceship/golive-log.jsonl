@@ -1,0 +1,7 @@
+{"t": 1792412381.768, "server": 1792412381.768, "det": "D2", "event": "connect"}
+{"t": 1792412381.769, "server": 1792412381.769, "det": "W", "event": "start", "data": {"slug": "training-ccc-2025.11-classic-spaceship-54290-341e638b", "detectors": ["d1", "d4", "keepalive", "d2", "d3"], "observe": false}}
+{"t": 1792412382.886, "server": 1792412382.886, "det": "KA", "event": "user", "data": {"code": 200}}
+{"t": 1792412383.197, "server": 1792412380.36, "det": "D1", "event": "CHANGE", "data": {"status": "RUNNING", "gameSlug": "ccc-2025.11-classic-spaceship", "gameBaseUrl": "https://spaceship.codingcontest.org/", "gameName": "Spaceship", "startTime": "2026-10-19T12:19:30.951084Z", "durationMinutes": 240}}
+{"t": 1792412383.238, "server": 1792412380.4, "det": "D1", "event": "SIGNAL", "data": {"why": "status RUNNING"}}
+{"t": 1792412386.114, "server": 1792412383.293, "det": "D4", "event": "CHANGE", "data": {"code": 200, "peek": "", "gbu": "https://spaceship.codingcontest.org/"}}
+{"t": 1792412386.734, "server": 1792412384.015, "det": "T", "event": "registered", "data": {"game": "Spaceship", "gbu": "https://spaceship.codingcontest.org/", "first": "D1"}}

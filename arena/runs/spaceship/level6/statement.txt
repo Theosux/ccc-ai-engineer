@@ -1,0 +1,41 @@
+[p1]
+LEVEL 6
+
+[p2]
+▪ The time limit is now significantly shorter
+▪ It does not require an optimal solution
+▪ All other rules from the previous level apply
+No time for caution
+
+[p3]
+Output
+Name Description Example repeated N times
+X-Sequence
+0 0 0 0 0 0 0 0 0 0 5 4 3 3 4 5 0
+0 -5 -4 -5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 4 5 0
+0 5 4 3 2 1 1 2 3 4 5 0
+0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 4 5 0
+0 -5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -5 -4 -3 -3 -4 -5 0
+Y 0 -5 -4 -3 -2 -3 -4 -5 0 -Sequence
+Optional empty line
+Input
+Name Description Example
+N Number of cases 3
+6,0 58
+3,0
+10,4 55
+7,4
+-7,-7 61
+-4,-4
+repeated N times
+Space station
+and time limit
+The X-position and the Y-position of the space station separated
+by a comma
+Followed by the time limit separated by a space
+Asteroid The X-position and the Y-position of the asteroid separated by a comma
+format identical to previous level
+format identical to previous level
+
+[p4]
+Good Luck!

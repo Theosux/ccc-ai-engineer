@@ -1,0 +1,50 @@
+[p1]
+LEVEL 5
+
+[p2]
+▪ You are given the position of exactly 1 stationary asteroid
+▪ Steer your spaceship to the station
+▪ Your spaceship must not collide with the asteroid
+▪ Collisions are explained on the next slide
+▪ The given time limit is very generous; you don’t need a fast solution
+Beware!
+Here be Asteroid!
+
+[p3]
+▪ The asteroid has a size of 1
+▪ Your spaceship has a size of 1 as well.
+However, it has a square shaped safety area with a radius of 2 around it
+▪ If the asteroid penetrates this safety area, it counts as a collision
+Collisions
+
+[p4]
+Output
+Name Description Example repeated N times
+X-Sequence
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 4 3 3 4 5 0
+0 5 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -5 -4 -5 0
+0 5 4 3 2 1 1 2 3 4 5 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 4 4 5 0
+0 -5 -4 -3 -2 -3 -4 -5 0
+Y 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -5 -4 -3 -2 -3 -4 -5 0 -Sequence
+Optional empty line
+Input
+Name Description Example
+N Number of cases 3
+6,0 118
+3,0
+10,4 112
+7,4
+-7,-7 124
+-4,-4
+repeated N times
+Space station
+and time limit
+The X-position and the Y-position of the space station separated
+by a comma
+Followed by the time limit separated by a space
+Asteroid The X-position and the Y-position of the asteroid separated by a comma
+format identical to previous level
+
+[p5]
+Good Luck!
