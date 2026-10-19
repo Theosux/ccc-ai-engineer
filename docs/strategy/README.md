@@ -1,14 +1,10 @@
 # Strategy
 
-## Contest-day workflow (v1, tested 2026-10-09)
-1. **Before the start:**
-   - `python arena/ccc.py info` confirms the login is still valid. If not, run `login`.
-   - Have the repo open in Claude Code with the `ccc-solve` skill loaded.
-2. **At the start:** `python arena/ccc.py contest 42nd-classic-ccc-5872 --name contest`, then `fetch 1`.
-3. **Per level:** follow the `ccc-solve` loop.
-   - Claude reads `statement.txt` and writes `solve.py`.
-   - `go N` verifies, submits sequentially, and on a pass prints level N+1's statement (no separate fetch).
-4. **After each level:** commit the solutions.
+## Contest-day workflow (v2, rehearsed 2026-10-19)
+**Full timeline and fallbacks:** [contest-day-runbook.md](contest-day-runbook.md).
+1. **T-15:** `python arena/golive.py --browser` (background). It runs the preflight and detectors D1–D6, auto-registers, and prints level 1. Rehearsed on a Challenge training: live to level 1 statement in 19 s.
+2. **Per level:** the `ccc-solve` + `ccc-patterns` loop. Read `sizes:`, write `solve.py` (with `check()`), run `go N`. On a pass it prints level N+1.
+3. **After each level:** commit in the background.
 
 ## Training status
 | Run | Game | Mode | Levels passed | Notes |

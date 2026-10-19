@@ -58,3 +58,34 @@
 **Open:** Teo will create `arena/.auth/credentials.env` (CCC_USER/CCC_PASS) for automatic re-login.
 
 **Next:** a timed Challenge-mode rehearsal on Spaceship (8 levels, the 2025 game). It will measure the real per-level pace, the unlocking in timed mode, and whether wrong submits add penalty time.
+
+## 2026-10-19 — Session 4: Go-live automation + timed rehearsal (4 days left)
+**Done**
+- Teo created `arena/.auth/credentials.env`. It is gitignored (verified), and the automatic HTTP re-login with it works (the session had expired after 10 days).
+- **`arena/golive.py`:**
+  - Preflight checks: login, CLASSIC registration (team Krateo, CREIC Cluj; AI ignored), contest, clock offset, latency, game token, PyPy, lib tests, git, disk, browser.
+  - Multi-detector watch: D1 adaptive contest poll, D2 SSE status stream, D3 my-registrations, D4 level-1 download probe, D6 Edge witness (network-based), plus keep-alive.
+  - Trigger: register, beep and toast, `LIVE.txt`, print level 1.
+  - Read-only `--observe school` to record the real #school go-live at 08:00 UTC on contest day.
+  - 11 offline fixture tests (`arena/tests/test_golive.py`).
+- **`ccc.py`:**
+  - `fetch --zip` (emergency manual zip);
+  - `fetch` now prints input `sizes:`;
+  - pages that are image-only are auto-rendered and flagged;
+  - garble variant 2 is repaired;
+  - check-OK mismatch wording is clearer.
+- `docs/strategy/contest-day-runbook.md` (timeline, detectors, fallback ladder).
+- **Training agent:** Room Planner 7/7 and RPS 7/7 with zero wrong submits. New lib modules `pack` and `tourney`; knowledge §6/§7.
+- **Timed Challenge rehearsal on Spaceship (the 2025 game): 8/8 in 36.6 min.** golive went from live to level 1 in 19 s. L1–L6 took 5.4 min, L7 29.4 min (A* + geodesic heuristic + multiprocessing), L8 1.8 min (time-dependent A*). The 2025 winners did 7/8 in 3h42m, and nobody solved L8.
+
+**Key findings**
+- `/api/game-token` is issued days BEFORE the start, so it is not a live signal. D4 probes whether level 1 can be downloaded instead.
+- A wrong submit added NO penalty to `passedAt` (Challenge mode).
+- The visualizer JS contains the exact simulation and collision rules.
+- Check input sizes before choosing an algorithm.
+
+**Next (contest day, 23 Oct):** follow `docs/strategy/contest-day-runbook.md`.
+- 10:45 Cluj: start `golive --observe school`.
+- 11:15: compare the observed go-live against our detectors.
+- 15:45: start `golive --browser`.
+- Optional before then: one more timed rehearsal (Lawn Mower or Room Planner in Challenge mode) to keep the routine sharp.
