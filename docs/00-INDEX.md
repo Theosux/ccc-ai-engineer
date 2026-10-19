@@ -42,6 +42,7 @@
 
 ## Other
 - [progress-log.md](progress-log.md) — dated session log
+- [data-ai-bootstrap.md](data-ai-bootstrap.md) — side project: DATA/AI repo for Dobrin + Iustin (iteration checklist)
 - `arena/golive.py` — contest go-live automation (preflight, detectors D1–D6, trigger). Tests: `python arena/tests/test_golive.py`
 - `arena/offline.py` — offline past games played through the same `ccc.py` loop (local judge, unlock, `timing.jsonl`)
 - `arena/lib/` — Python helper library for solvers (parse, grid, paths/Hamiltonian, search, sim, opt, geom, check, pack, tourney, **runner** (parallel cases + probe), **cp** (CP-SAT)). Tests: `python arena/lib/tests/test_lib.py`

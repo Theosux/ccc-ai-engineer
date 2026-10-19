@@ -5,6 +5,9 @@ If the user's message begins with **"We are working on ccc check claude.md for c
 invoke the `ccc-context` skill (`.claude/skills/ccc-context/SKILL.md`) BEFORE doing anything else,
 and follow it exactly. It reloads all project knowledge after a `/clear`.
 
+**DATA/AI side project:** if the message begins with **"we are working on ccc data/ai it-N"**, read
+`docs/data-ai-bootstrap.md` (NOT the full ccc-context ritual) and continue iteration N from its first ☐ step.
+
 ## Project summary
 - **Goal:** win the **Cloudflight Coding Contest (CCC) #classic on 23 Oct 2026** by AI-engineering
   a fast, automated Claude Code workflow (AI/LLMs are allowed in the contest).
