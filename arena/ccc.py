@@ -78,6 +78,8 @@ def active_run():
     st = state()
     name = os.environ.get("CCC_RUN") or st.get("active")
     if name and name not in st["runs"]:
+        if (RUNS / name).is_dir():  # e.g. a teammate's clone: run/probe work from the local level folders
+            return name, {"gameBaseUrl": ""}, st
         die(f"Unknown run {name!r}. Known: {', '.join(st['runs'])}")
     if not name:
         die("No active run. Use `train <gameSlug>`, `contest` or `wait` first.")
