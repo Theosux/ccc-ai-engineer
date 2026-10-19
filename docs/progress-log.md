@@ -89,3 +89,43 @@
 - 11:15: compare the observed go-live against our detectors.
 - 15:45: start `golive --browser`.
 - Optional before then: one more timed rehearsal (Lawn Mower or Room Planner in Challenge mode) to keep the routine sharp.
+
+## 2026-10-19: Session 5: Speed pass, dataset, training, model A/B (4 days left)
+**Why:** Teo was not satisfied with the Spaceship rehearsal time (36.6 min). The transcript showed that about 20 of L7's 29 min were spent waiting on runs that were too slow, not thinking.
+
+**Built**
+- `lib.runner.run_cases`: a pool across cases on 16 cores, progress and ETA lines, names the cases still running at the end, `sep`/`header` output options.
+- `ccc.py probe N`: about 20 s for a sample of the largest and random cases, an ETA, and a verdict of OK / SLOW / TOO SLOW / HEAVY TAIL. It predicted 135 s for Spaceship L7, and the actual run took 154 s.
+- `ccc.py` changes:
+  - progress is streamed;
+  - default timeout 180 s;
+  - `go` blocks output whose blank-line structure differs from the example;
+  - `fetch` flags blank-line separators and text-less image pages;
+  - a teammate clone can run `run`/`probe` without state;
+  - `pass` events are logged.
+- `lib.cp`: CP-SAT with circuit and exact cover. Lawn Mower L7 first try, 128 cases in 32 s.
+- `lib.flow`: an OR-Tools vertex cut.
+- Installed ortools, python-sat, z3 and sortedcontainers.
+- `arena/offline.py`: past games from GitHub archives, played through the same `go` loop. It has a local judge (reference outputs, plus judges written by a separate agent so the trainee stays unspoiled), unlocks levels and writes `timing.jsonl`. 4 fresh games, 25 levels.
+- Agents `ccc-solver-{opus,sonnet}`. Runbook: model choice, probe-first rules, and an optional teammate second-opinion protocol.
+
+**Training (timed)**
+- Honeycomb (School): 5/5 in 3.4 min.
+- Pacman: 7/7 in 3.0 min.
+- Islands: 7/7 in 22.3 min. On L7 a heavy-tailed parity BFS was replaced by a min vertex cut, about 0.1 s per case.
+- School games are too easy to teach anything; use them only as drills.
+
+**Model A/B (cold subagents, same unseen games)**
+- interp2021: Sonnet 50 s, Opus 49 s.
+- Smart Grid: Sonnet 263 s, Opus 249 s.
+- Both had 0 WRONG. Sonnet broke 2 process rules.
+- **Opus drives on contest day.** `/fast` is optional: it uses extra usage credits and must be enabled at the start of the session.
+
+**Lessons**
+- Probe before running.
+- Read the rule images before the first submit.
+- Never strip blank lines from the output.
+- Never patch solvers through heredocs (this broke 5 times today).
+- "Shortest loop around X keeping Y outside" is a min vertex cut.
+
+**Next:** Thursday is a final short dress rehearsal (a School game: drones or asteroid-mining) in the contest configuration, then `golive --preflight`. On Friday, follow `contest-day-runbook.md`.

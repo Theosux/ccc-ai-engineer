@@ -15,7 +15,7 @@ Ignore the separate DATA/AI registration (team "The Posers"). golive only watche
 | **10:45** | Claude | `python arena/golive.py --observe school --from 07:45Z --minutes 15`, run in the **background**. It records the real #school go-live at 08:00 UTC (11:00 Cluj) as a read-only dress rehearsal. |
 | **11:15** | Claude | Read `arena/runs/observe/42nd-school-ccc-5871.jsonl` and the timeline it printed. Compare the real sequence (status values, when `gameBaseUrl`/`gameSlug` appear, SSE events) against our assumptions. If they differ, adjust the detectors in `arena/golive.py` and rerun the fixture tests. |
 | 15:00 (T-60) | Teo | Arrive at the venue, connect to Wi-Fi, `git pull`. `python arena/golive.py --preflight`. |
-| 15:30 (T-30) | Teo | Open Claude Code in the repo, then: *"We are working on ccc check claude.md for context"*, then *"contest is about to start"*. |
+| 15:30 (T-30) | Teo | Open Claude Code in the repo. **Model: Opus 5.5** (`/model opus`; the A/B showed a speed tie with Sonnet, and Opus is more disciplined on hard levels). Optional: `/fast` **now, before the first message**, if usage credits are enabled (up to 2.5× faster output; enabling it later re-bills the whole context). Then: *"We are working on ccc check claude.md for context"*, then *"contest is about to start"*. |
 | **15:45 (T-15)** | Claude | Start **`python arena/golive.py --browser`** with `run_in_background`. It runs the preflight, then watches with D1–D6 and keeps the session warm. The Edge window is the D6 witness, so leave it open. Teo can also watch the contest page in Opera GX. |
 | 16:00 (T0) | auto | The first detector fires, then golive registers run `contest`, beeps, shows a toast, writes `LIVE.txt`, prints the **level 1 statement and example**, and exits. Claude starts solving immediately. |
 | During | Claude | The `ccc-solve` loop: write `solve.py`, then `go N`. PASSED prints level N+1. Commit in the background after each level. |
@@ -46,6 +46,9 @@ Everything is logged raw, with tokens redacted, to `arena/runs/contest/golive-lo
 | Laptop dies | A teammate's laptop: clone the repo, `pip install requests playwright pypdf pypdfium2`, `python arena/ccc.py login`, `contest`, `fetch N`. Solvers are in git if they were committed after each level. |
 
 ## Rules of the road
+- **Probe first:** read `sizes:`, then `python arena/ccc.py probe N` before any full run that might be slow. HEAVY TAIL or TOO SLOW means change the formulation (min-cut/flow, CP-SAT, DP over a smaller state, exact search). Never wait blind on a 180 s timeout.
+- **No side work while a level is unsolved.** Tooling and doc fixes wait until after the contest.
+- **Solvers are written only with Write/Edit**, never through heredoc or `python -c` patches. These broke 5 times in training on 2026-10-19.
 - **Submit sequentially from one place.** The server lost concurrent updates in testing (5 parallel CORRECT, only 2 recorded). Teo says simultaneous submits by different teammates are fine, but we keep one submitter anyway.
 - **Wrong submits:** a wrong submit did **not** add penalty time to `passedAt` in Challenge mode (tested 2026-10-19). Still, use `check()` and never submit unverified output.
 - **Visualizers:** `levelN/sandbox.html` or `files/sandbox-level-N.html` is the official visualizer. Its JavaScript contains the **exact simulation and collision rules** (Spaceship L5), so read it when the semantics are unclear.
