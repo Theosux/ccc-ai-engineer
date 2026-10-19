@@ -224,6 +224,8 @@ def total_levels(gi):
 
 
 def contestant_info(ctx):
+    if ctx[1].get("offlineGame"):
+        return {"score": off_score(ctx[0])}
     r = game_req("GET", "/api/contestant/contestant-info", ctx)
     if not r.ok:
         die(f"contestant-info: HTTP {r.status_code} {r.text[:300]}")
@@ -532,7 +534,72 @@ def head(path, n=25, width=160):
     return "\n".join(shown) + more
 
 
+# ---------------------------------------------------------------- offline games (arena/offline.py)
+OFFLINE_GAMES = ARENA / ".data" / "games"
+
+
+def log_timing(name, event, n, **kw):
+    """Append to runs/<run>/timing.jsonl: fetch/pass/wrong events per level (training retros, A/B)."""
+    with (run_dir(name) / "timing.jsonl").open("a", encoding="utf-8") as f:
+        f.write(json.dumps({"t": round(time.time(), 1), "event": event, "level": n, **kw}) + "\n")
+
+
+def off_score(name):
+    return load_json(run_dir(name) / "offline-score.json", {"gameScore": {"level": 1}, "state": {}, "wrongSubmits": 0})
+
+
+def offline_judge(ctx, n, fid, path):
+    """Local stand-in for POST submit-N-fid: reference output, else judges/levelN.py, else accept (UNVERIFIED)."""
+    name, run, _ = ctx
+    g = OFFLINE_GAMES / run["offlineGame"]
+    d = level_dir(name, n)
+    inp = next((i for i, f in inputs_of(d) if f == fid), None)
+    out = path.read_text(encoding="utf-8")
+    exp_p = g / "expected" / f"level{n}" / f"{fid}.txt"
+    judge_p = g / "judges" / f"level{n}.py"
+    ok, msg, line = False, "", None
+    if exp_p.exists() and norm(exp_p.read_text(encoding="utf-8")) == norm(out):
+        ok, msg = True, "matches reference"
+    elif judge_p.exists():
+        spec = importlib.util.spec_from_file_location(f"judge_{n}", str(judge_p))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        try:
+            res = mod.judge(inp.read_text(encoding="utf-8"), out)
+            ok, msg = res if isinstance(res, tuple) else (bool(res), "")
+        except Exception as e:
+            ok, msg = False, f"judge raised {e!r}"
+    elif exp_p.exists():
+        msg = "differs from reference: " + first_diff(norm(exp_p.read_text(encoding="utf-8")), norm(out))
+        m = re.match(r"line (\d+)", msg.split(": ", 1)[1])
+        line = int(m.group(1)) if m else None
+    else:
+        ok, msg = True, "UNVERIFIED: no reference output and no judge for this file"
+    sc = off_score(name)
+    lv = sc["state"].setdefault(f"level{n}", {"passedFiles": {}, "passedAt": None})
+    if ok:
+        lv["passedFiles"][fid] = True
+    else:
+        sc["wrongSubmits"] = sc.get("wrongSubmits", 0) + 1
+        log_timing(name, "wrong", n, file=fid, msg=str(msg)[:200])
+    scored = load_json(d / "map.json", {"scoredFiles": []})["scoredFiles"]
+    if not lv["passedAt"] and all(lv["passedFiles"].get(f) for f in scored):
+        lv["passedAt"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        sc["gameScore"]["level"] = max(sc["gameScore"]["level"], n + 1)
+        log_timing(name, "pass", n, wrong=sc.get("wrongSubmits", 0))
+    save_json(run_dir(name) / "offline-score.json", sc)
+    case = {"isCorrect": ok, "caseState": "CORRECT" if ok else "WRONG", "caseMessage": msg,
+            "startLineNumber": 1, "endLineNumberExcl": None, "errorLineNumber": line}
+    return fid, 200, {"evaluation": {"isCorrect": ok, "cases": [case]}, "score": sc}
+
+
 def download_zip(ctx, n, retry_s=0):
+    name, run, _ = ctx
+    if run.get("offlineGame"):
+        lvl = off_score(name)["gameScore"]["level"]
+        if n > lvl:
+            die(f"level {n} is locked (offline game: pass level {lvl} first)")
+        return (OFFLINE_GAMES / run["offlineGame"] / f"level-{n}.zip").read_bytes()
     deadline = time.time() + retry_s
     while True:
         r = game_req("GET", f"/api/contestant/level/{n}/files", ctx)
@@ -569,6 +636,8 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=
         data = Path(zip_path).read_bytes() if zip_path else zpath.read_bytes() if reuse else f_zip.result()
         sandbox = f_sb.result() if f_sb else None
     if not reuse:
+        if not zpath.exists():
+            log_timing(name, "fetch", n)
         zpath.write_bytes(data)
         with zipfile.ZipFile(io.BytesIO(data)) as z:
             z.extractall(d / "files")
@@ -949,6 +1018,8 @@ def verdict_line(status, body):
 
 
 def submit_one(ctx, n, fid, path):
+    if ctx[1].get("offlineGame"):
+        return offline_judge(ctx, n, fid, path)
     for _ in range(6):
         r = game_req("POST", f"/api/contestant/submit-{n}-{fid}", ctx,
                      files={"solution": (path.name, path.read_bytes(), "text/plain")})
