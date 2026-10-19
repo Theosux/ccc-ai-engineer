@@ -64,3 +64,20 @@ Measured on 2026-10-09 in practice run `speedtest` (Room Planner / desks, explor
 - **New game format.** If the 2026 zip naming differs, fetch falls back to the "last number picks the case" rule, and game-info still lists the file ids. Check the `inputs:` line in the fetch output.
 - **Challenge-mode unlock timing** is untested. If `fetch N+1` returns 403 right after passing, `go` retries for 20 s, then prints an error. Re-run `fetch N+1`.
 - `wait` was only tested against an already-running training contest and the pre-start branch of the real contest. The real status flip (OPEN_REGISTRATION → RUNNING, `gameBaseUrl` set) happens live for the first time on contest day.
+
+## Session 5 (2026-10-19): where the Spaceship rehearsal time went, and the fixes
+Timestamps come from the session transcript. L1–L6 took 5.3 min, about 50 s per level, of which 15–25 s per turn was model think and write time. **L7 took 29.4 min, and about 20 min of that was waiting:**
+| Window | What happened | Fix |
+|---|---|---|
+| 12:25–12:35 | 10 min blocked on a brute-force run with the 600 s default timeout, before looking at `sizes:` | `go`/`run` default to 180 s; skill rule "sizes → probe → full run" |
+| 12:37–12:48 | the first A\* ran in the background while I did infra work; then a 5-case timing test burned its 300 s | `ccc.py probe N`: parallel sample (largest + random cases) under a 20 s budget, ETA plus a verdict, and flags heavy tails; rule "no side work during a level" |
+| 12:51–12:54 | the final run took 3.3 min with a hand-written `multiprocessing.Pool` | `lib.runner.run_cases`: an automatic pool across cases, with progress and ETA streamed through `go` |
+Measured on Spaceship L7 (500 cases, 20 MB): `probe` returned in **22 s** with an ETA of 135 s (lower bound, heavy tail flagged), and the full run via `run_cases` took **154 s**. So the forecast is accurate, and the rehearsal's 20 min of blind waiting shrinks to about 30 s of probing.
+
+## Claude Code speed settings (researched 2026-10-19)
+Sources: code.claude.com/docs/en/fast-mode.md, model-config.md, sub-agents.md, cli-reference.md, headless.md.
+- **`/fast`** uses the same Opus model with faster output, **up to 2.5× faster**. It works on Opus 5.5, Opus 5 and Opus 4.8, **not Sonnet or Haiku**. It is billed at $8/$40 per MTok on Opus 5.5 and draws **only from usage credits** (extra usage), not from the subscription limits. Turn it on **at the start** of a session: enabling it mid-conversation charges the whole context uncached once. Settings key: `"fastMode": true`.
+- **Effort:** `/effort low|medium|high|xhigh|max`, `--effort`, `CLAUDE_CODE_EFFORT_LEVEL`, or the settings key `effortLevel`. Lower effort is faster. Thinking cannot be fully disabled on the 5.5 models.
+- **`/model <name>`** switches immediately mid-session. A subagent with its own `model:` keeps it. Switching away from Opus turns `/fast` off.
+- **Custom agents** (`.claude/agents/*.md`) support `model`, `effort`, `tools`, `skills`, `permissionMode`, `maxTurns`, and more. Fast mode for subagents is not documented, so treat it as unverified.
+- **Headless:** `claude -p --model <m> --effort <e> --output-format json --permission-mode acceptEdits --max-turns N`. The JSON has the cost but no wall time, so measure that with the shell.

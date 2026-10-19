@@ -30,6 +30,7 @@
 | [solving-playbook.md](knowledge/solving-playbook.md) | Step-by-step procedure per level under time pressure; slow-solver recipe |
 | [past-games.md](knowledge/past-games.md) | Level-by-level progressions + techniques of past CCC games |
 | [resources.md](knowledge/resources.md) | External references + locally available libraries |
+| [datasets.md](knowledge/datasets.md) | Training datasets: offline past games (local judge) + platform games |
 
 ## Custom skills (`.claude/skills/`)
 | Skill | Purpose |
@@ -41,5 +42,6 @@
 ## Other
 - [progress-log.md](progress-log.md) — dated session log
 - `arena/golive.py` — contest go-live automation (preflight, detectors D1–D6, trigger). Tests: `python arena/tests/test_golive.py`
-- `arena/lib/` — Python helper library for solvers (parse, grid, paths/Hamiltonian, search, sim, opt, geom, check). Tests: `python arena/lib/tests/test_lib.py`
+- `arena/offline.py` — offline past games played through the same `ccc.py` loop (local judge, unlock, `timing.jsonl`)
+- `arena/lib/` — Python helper library for solvers (parse, grid, paths/Hamiltonian, search, sim, opt, geom, check, pack, tourney, **runner** (parallel cases + probe), **cp** (CP-SAT)). Tests: `python arena/lib/tests/test_lib.py`
 - [arena/README.md](../arena/README.md) — working folder: CLI usage, folder layout (zips, inputs, outputs, solvers)

@@ -9,8 +9,16 @@ CLI: `python arena/ccc.py` from the repo root (details in `arena/README.md`). **
 
 ## 0. Setup (once)
 - **Contest:** follow `docs/strategy/contest-day-runbook.md`. From T-15 min, run `python arena/golive.py --browser` in the **background** (run_in_background). It does preflight, multi-detector watch and auto-register, and when it exits its output already contains the level 1 statement and example. On failure it prints the fallback ladder (`fetch N --zip <file>` for manual zips).
-- **Training:** `python arena/ccc.py train <gameSlug> --mode exploration|challenge --name <short>`, then `fetch 1`.
+- **Training (platform):** `python arena/ccc.py train <gameSlug> --mode exploration|challenge --name <short>`, then `fetch 1`.
+- **Training (offline past games, local judge):** `python arena/offline.py list`, then `python arena/offline.py start <game> --name <run>`. It prints level 1. Use `go N` as usual: the judge is local, levels unlock as you pass, and `runs/<run>/timing.jsonl` logs fetch/pass/wrong events.
 - Check: `python arena/ccc.py info`.
+
+## The speed rules (Spaceship rehearsal: about 20 of L7's 29 min were spent waiting on runs that were too slow)
+1. **Read `sizes:` first.** It decides the algorithm.
+2. **Never start a full run blind.** For anything non-trivial, run `python arena/ccc.py probe N` first (≤ 25 s). It times a sample of the largest and random cases in parallel and prints `VERDICT: OK / SLOW (go N --timeout X) / TOO SLOW`. On TOO SLOW, or "heavy tail" (cases unfinished at the budget), change the algorithm or heuristic. Don't wait.
+3. **Use `run_cases(cases, solve_case)`** (the stub template). It gives free parallelism across cases on 16 cores, progress and ETA lines, and probe support.
+4. **No side work while a level is unsolved.** No infra fixes and no doc edits. Every minute goes to the current level.
+5. `go`/`run` default to a 180 s timeout. Raise it only with a probe ETA in hand.
 
 ## 1. Read
 `fetch N` (or the tail of `go N-1`) prints the cleaned statement, the example input and the expected output. **Do not re-read files that were already printed.**
@@ -23,13 +31,14 @@ CLI: `python arena/ccc.py` from the repo root (details in `arena/README.md`). **
 ## 2. Write `arena/runs/<run>/levelN/solve.py`
 - It is already a **copy of level N-1's solver**. Edit it: keep the parsing, change what is new.
 - It reads stdin and writes stdout. For arena/lib, use the header `import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))` and then `from lib import ...`.
+- Shape: `cases(data) -> list` and `solve_case(c) -> str`, with `if __name__ == "__main__": run_cases(cases, solve_case)`. For a whole-file problem, return `[data]` from cases. Shared precomputed tables: `run_cases(cases, solve_case, init=fn, initargs=(...))`. `CCC_SEQ=1` gives sequential runs for debugging. `CCC_ONLY=3,7` runs only those cases.
 - **Many valid answers** ("order does not matter", constructions): define `check(data, out) -> bool | (bool, msg)` in solve.py. `go` then accepts outputs that pass `check()` even if the example differs. A copied `check()` from the previous level must be updated, or deleted.
 
 - **Patterns and helpers:** see the `ccc-patterns` skill (lib cheat sheet, pattern → technique). For profiling: `python arena/lib/check.py arena/runs/<run>/levelN --profile`.
 - **Heavy brute force or simulation:** make the first line of solve.py `# ccc: pypy` to run it on PyPy (~60× faster on plain loops). Or set `CCC_PY=pypy` per command.
 
 ## 3. `python arena/ccc.py go N` (use a tool timeout of 600000 ms)
-It runs all inputs in parallel and verifies (example or check). It submits sequentially, smallest first, and stops at the first WRONG. Passed files are skipped.
+It runs all inputs in parallel and verifies (example or check). It submits sequentially, smallest first, and stops at the first WRONG. Passed files are skipped. Slow levels: `probe N` first (see the speed rules).
 - **PASSED:** it prints the next level's statement in the same output. Go straight to step 2 for N+1.
 - **WRONG:** read the case line ranges and messages, fix, and run `go N` again.
 - **EXAMPLE MISMATCH** with no check: look at the shown first diff and fix. If the answer is non-unique, add `check()`. `--force` is the last resort.
