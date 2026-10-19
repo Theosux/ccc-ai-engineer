@@ -141,3 +141,19 @@
 - A heredoc patch slipped in again on L4: use Write/Edit only.
 
 **Next:** unchanged. A Thursday dress rehearsal on an unseen School game, then `golive --preflight`, then Friday's runbook.
+
+## 2026-10-19: Session 7: DATA/AI side repo for Dobrin + Iustin (bootstrap it-1..it-3, all done)
+**Done:** private repo `Theosux/ccc-ai-engineer-data-ai` (clone: `..\AiEngineer - ccc-data-ai`). It holds:
+- our tooling, re-pointed to `42nd-data-ai-ccc-5873`, plus `lib/ml.py`;
+- 3 research agents' reports: contest facts, problems, and a verification report;
+- a hands-on **Migratory Birds 6/6 in 16.1 min**;
+- knowledge, strategy and runbook docs, plus 3 skills;
+- a two-Claude git protocol: signature, handoff board, signed commits.
+
+The desktop prompt is `C:\Users\Teo\Desktop\ccc-data-ai-prompt.txt`. Checklist: `docs/data-ai-bootstrap.md`.
+
+**Findings relevant to CLASSIC**
+- A WRONG verdict also prints the achieved score/message.
+- Teo's account is on DATA/AI team "The Posers" (3/3, CREIC Cluj) as well as on Krateo.
+
+**Next:** Teo sends the GitHub invites to Dobrin + Iustin. The CLASSIC plan is unchanged: Thursday dress rehearsal, preflight, Friday runbook.

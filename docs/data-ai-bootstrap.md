@@ -27,9 +27,10 @@ separate private repo with our tooling, workflow and Data/AI research. After the
 ## it-3: strategy, skills, prompt, handover
 - ☑ 1. Merge verified research into `docs/contest/`
 - ☑ 2. `strategy/workflow.md`, `contest-day-runbook.md`, `training-plan.md`
-- ◐ 3. (skills + INDEX done; progress-log entry pending) Skills `ccc-ai-solve`, `ccc-ai-patterns`; INDEX complete; signed progress-log entry
-- ☐ 4. Desktop prompt file
-- ☐ 5. Final consistency pass (fresh clone, link check), push both repos
+- ☑ 3. Skills `ccc-ai-solve`, `ccc-ai-patterns`; INDEX complete; signed progress-log entry
+- ☑ 4. Desktop prompt file (copy in repo: docs/team/session-prompt.txt)
+- ☑ 5. Final consistency pass (fresh clone, link check), push both repos
 
 ## Notes
-(agent outputs, decisions, next step go here)
+- **Status: BOOTSTRAP COMPLETE (2026-10-19).** Repo handed over; Dobrin + Iustin continue on their own (training-plan.md). Teo only sends the GitHub invites.
+- Findings worth knowing for CLASSIC too: the verdict shows the achieved score even on WRONG; Teo is also on DATA/AI team "The Posers" (3/3, CREIC Cluj).
