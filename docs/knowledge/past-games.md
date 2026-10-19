@@ -47,6 +47,23 @@ All via `lib.pack.pack_rects(x, y, [(L,1)], gap=1, target=k[, value])` + `check_
 | 6 | fixed order, fill `X` spots so S wins | tree DP over achievable-winner sets `fill_bracket` (0.5) |
 | 7 | + `Z` spots filled by adversary afterwards; S must win for every Z | DP over families of outcome-set bitmasks `rig_bracket` (0.7) |
 
+## Pacman (≈2022, offline via `arena/offline.py`): we solved 7/7 in 3.0 min, 1 WRONG (run `pacman`, 2026-10-19)
+Board N×N, 1-based `row col`, moves L/R/U/D. **Rules for L3 and up are in PDF images** (p2, and L7 on p3).
+| L | Change | Technique (time) |
+|---|---|---|
+| 1 | count coins `C` | count (8 s) |
+| 2 | simulate Pacman's moves, count coins (each once) | simulate (15 s) |
+| 3 | + ghosts with move sequences; dead if on the same cell after a step (swapping places is OK) and on a wall | simultaneous simulation (17 s) |
+| 4 | construct a route collecting all coins, static ghosts as walls, ≤ 25000 | repeated BFS to the nearest coin + `check()` (15 s) |
+| 5 | one coin, moving ghosts walk their sequence then back (period 2L) | BFS over (cell, t mod P) (21 s) |
+| 6 | **shortest** route collecting all ≤ 7 coins with moving ghosts ("shortest" only in the image) | exact layered BFS over (cell, coin mask), visited (cell, mask, t mod P), PyPy, ≤ 2.4 s (61 s, 1 WRONG: greedy first) |
+| 7 | coins persist and score on every visit; ghosts shuttle on the alphabetically-smallest shortest path to Pacman's start; max score in exactly L = 100 steps | DP over time: best[cell] (43 s) |
+
+## Wasp in the Honeycomb (School 2023.03, platform Challenge): we solved 5/5 in 3.4 min, 2 WRONG (run `honeycomb`)
+Hex grid as ASCII rows `O-X-O-...`, alternate rows offset; neighbours (0,±2), (±1,±1).
+L1 count `O` · L2 empty neighbours of `W` · L3 straight-line escape in 6 directions · L4 flood fill to the border · L5 place ≤ k barriers to trap the wasp = **min vertex cut** (networkx max-flow, node splitting). Output is `N`, a blank line, then blocks separated by blank lines (2 WRONGs: separators missing).
+**School games are easy** (L5 ≈ Classic L3–L4). Use them only as speed drills.
+
 ## Islands (2023)
 | L | Change | Technique |
 |---|---|---|

@@ -22,7 +22,10 @@ CLI: `python arena/ccc.py` from the repo root (details in `arena/README.md`). **
 
 ## 1. Read
 `fetch N` (or the tail of `go N-1`) prints the cleaned statement, the example input and the expected output. **Do not re-read files that were already printed.**
-- `!!!!! RULES ARE IN IMAGES`: Read the listed page PNGs first.
+- `!!!!! RULES ARE IN IMAGES`: **Read the listed page PNGs before the first submit, every time**, even when the example looks self-explanatory. The objective ("shortest", "highest score", "exactly L steps") and special rules ("coins respawn", "ghost tie-break by alphabet") live there. Pacman L6 cost a WRONG when it was skipped.
+- `!!!!! expected output has N BLANK separator line(s)`: keep them (`run_cases(..., sep='
+
+', header=True)`). **Never pipe fetch/go output through `grep -v '^\s*$'`**: it hides the output format (Honeycomb L5: 2 WRONGs).
 - **Movement/collision/simulation semantics unclear?** The visualizer HTML (`files/sandbox-level-N.html`) contains the exact rules in its JS. Grep it (e.g. `hasShipCollided`, `move`, `calculateHistory`).
 - Write solvers with the Write tool. Don't patch them through shell heredocs: escaping errors cost minutes in rehearsal.
 - Lines starting `[repaired]` were garbled in the PDF and were auto-decoded. If a diagram, colours or a picture matter, run `fetch N --png` and Read `levelN/pages/pK.png`. The page numbers appear as `[pK]` in the statement.

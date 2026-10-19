@@ -1,0 +1,58 @@
+[p2]
+...
+
+[p3]
+Hint: Ghosts movement patterns could overlap and multiple ghosts
+could be at the same place at the same time. Ghosts movement
+sequence will not go through walls. Ghosts do not collect coins.
+
+[p4]
+N
+boardMatrix
+pacmanRow pacmanColumn
+sequenceLength
+movement (repeated sequenceLength times)
+numberOfGhosts
+ghostRow ghostColumn
+sequenceLength
+movement (repeated sequenceLength times)
+(the 3 above lines are repeated numberOfGhost times)
+coinCount survivedStatus
+N (int): the number of rows and columns of the board (range: 1 - 100)
+boardMatrix (StringList): N strings with the length of N
+pacmanRow (int): the row that Pacman is in (starting with 1)
+pacmanColumn (int): the column that Pacman is in (starting with 1)
+sequenceLength (int): the lenght of a movement sequence
+movement (char): a movement that an object will execute
+numberOfGhosts (int): the number of ghosts
+ghostRow (int): the row that the ghost is in (starting with 1)
+ghostColumn (int): the column that the ghost is in (starting with 1)
+coinCount (int): the number of coins that
+Pacman has collected(not counting coins he
+collected after his death)
+survivedStatus (boolean): if Pacman has
+survived ‘YES’ if Pacman died ‘NO’
+
+[p5]
+7
+WWWWWWW
+WCCCCCW
+WCWCWCW
+WCWCWCW
+WCWGWCW
+WGCPCCW
+WWWWWWW
+6 4 5
+UUDUU 2
+6 2 5
+UUDUD
+5 4 5
+UDUUU
+2 YES
+Explanation:
+In step two Pacman moves up while the ghost
+that started on ‘5 4’ moves down, causing
+pacman and the ghost to switch places. Pacman
+does not die from this since Pacman and the
+ghost are on different cells at the end of the
+step.

@@ -1,0 +1,2 @@
+{"t": 1792418166.2617867, "results": {"1": {"correct": false, "bad": [{"isCorrect": false, "caseState": "WRONG", "caseMessage": "valid but not the shortest: 74 steps, shortest is 62", "startLineNumber": 1, "endLineNumberExcl": null, "errorLineNumber": null}]}}}
+{"t": 1792418213.3874574, "results": {"1": {"correct": true, "bad": []}, "2": {"correct": true, "bad": []}, "3": {"correct": true, "bad": []}, "5": {"correct": true, "bad": []}, "4": {"correct": true, "bad": []}}}

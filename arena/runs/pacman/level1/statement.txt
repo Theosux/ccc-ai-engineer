@@ -1,0 +1,26 @@
+[p2]
+Pacman and the ghosts forgot how to play the game of Pacman. Can you teach them how to
+do it?
+(Please pretend that those figures are Pacman and the ghosts, the design of the slides
+is still WIP)
+
+[p4]
+...
+
+[p5]
+N
+boardMatrix coinCount
+N (int): the number of rows and columns of the board
+(range: 1 - 100)
+boardMatrix (StringList): N strings with the length of N
+coinCount (int): the number of coins
+(‘C’s) that are on the board
+7
+WWWWWWW
+WCPCCCW
+WCWWWCW
+WCCCCCW
+WCWWWCW
+WCCCCCW
+WWWWWWW
+18

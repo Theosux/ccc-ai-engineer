@@ -670,6 +670,9 @@ def fetch_level(ctx, n, png=False, scale=0.75, quiet=False, retry_s=0, zip_path=
         stmt = repair_garbled(stmt)
         (d / "statement.txt").write_text(stmt, encoding="utf-8")
     image_only = stmt is not None and looks_image_only(stmt)
+    if content_pages:  # pages with NO text at all between content pages are pure images (Pacman L7 rules on p3)
+        gaps = [k for k in range(min(content_pages) + 1, max(content_pages)) if k not in content_pages]
+        image_only = sorted(set(image_only or []) | set(gaps)) or image_only
     all_pages = list(range(1, len(pdf_pages(pdf_bytes)) + 1)) if pdf_bytes else []
     pngs = render_png(pdf_bytes, all_pages, d / "pages", scale) if (png or image_only) and pdf_bytes else []
     # solver: start from the previous level's solver (most levels extend it)

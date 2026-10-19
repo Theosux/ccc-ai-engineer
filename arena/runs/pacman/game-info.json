@@ -1,0 +1,115 @@
+{
+  "name": "offline pacman",
+  "levelsInfo": {
+    "count": 7,
+    "levels": [
+      {
+        "inputFiles": [
+          "0-example",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ],
+        "sandbox": false,
+        "optimization": false
+      },
+      {
+        "inputFiles": [
+          "0-example",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ],
+        "sandbox": false,
+        "optimization": false
+      },
+      {
+        "inputFiles": [
+          "0-example",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ],
+        "sandbox": false,
+        "optimization": false
+      },
+      {
+        "inputFiles": [
+          "0-example",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ],
+        "sandbox": false,
+        "optimization": false
+      },
+      {
+        "inputFiles": [
+          "0-example",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ],
+        "sandbox": false,
+        "optimization": false
+      },
+      {
+        "inputFiles": [
+          "0-example",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ],
+        "sandbox": false,
+        "optimization": false
+      },
+      {
+        "inputFiles": [
+          "0-example",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ],
+        "sandbox": false,
+        "optimization": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+[p2]
+...
+
+[p4]
+N
+boardMatrix
+pacmanRow pacmanColumn
+sequenceLength
+movement (repeated sequenceLength times)
+coinCount
+N (int): the number of rows and columns of the board (range: 1 -
+100)
+boardMatrix (StringList): N strings with the length of N
+pacmanRow (int): the row that Pacman is in (starting with 1)
+pacmanColumn (int): the column that Pacman is in (starting with 1)
+sequenceLength (int): the lenght of Pacmans movement sequence
+movement (char): a movement that Pacman will execute
+coinCount (int): the number of coins that
+Pacman has collected
+10
+WWWWWWWWWW
+WCCCCPCCCW
+WCWWCWWWCW
+WCWWCWWWCW
+WCWWCWWWCW
+WCWWCCCCCW
+WCWWCWWWCW
+WCWWCWWWCW
+WCCCCCCCCW
+WWWWWWWWWW
+2 6
+5
+LDDDU
+4
+The path that Pacman walks is highlighted. The
+last ‘U’ command makes Pacman cross a coin for
+a second time. Since the coin was already
+collected, it does not count a second time

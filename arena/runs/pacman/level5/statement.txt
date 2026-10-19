@@ -1,0 +1,58 @@
+[p2]
+...
+
+[p3]
+Hint: all the ghosts movement
+patterns have the same length
+
+[p4]
+N
+boardMatrix
+(the above row is repeated numberOfRows times)
+pacmanRow pacmanColumn
+numberOfGhosts
+ghostRow ghostColumn
+sequenceLength
+movement (repeated sequenceLength times)
+(the 3 above lines are repeated numberOfGhost times)
+maxMovementSequenceLength
+movementSequence
+N (int): the number of rows and columns of the board (range: 1 - 100)
+boardMatrix (StringList): N strings with the length of N
+pacmanRow (int): the row that Pacman is in (starting with 1)
+pacmanColumn (int): the column that Pacman is in (starting with 1)
+sequenceLength (int): the lenght of a movement sequence
+movement (char): a movement that an object will execute
+numberOfGhosts (int): the number of ghosts
+ghostRow (int): the row that the ghost is in (starting with 1)
+ghostColumn (int): the column that the ghost is in (starting with 1)
+maxMovementSequenceLength (int): the maximum amount of steps that
+Pacman can take (always 500000 in this level)
+movementSequence (String): a sequence of
+movements that will collect the final coin
+
+[p5]
+7
+WWWWWWW
+WEEEPEW
+WEWWWEW
+WEWWWEW
+WGWWWCW
+WEGEEEW
+WWWWWWW
+2 5 2
+5 2 5
+DRLRR
+6 3 5
+RRLLR
+500000
+RDDD
+The ghost that starts on ‘5 2’ will visit the
+following cells in order: ‘5 2’,'6 2','6 3','6
+2','6 3','6 4','6 3','6 2','6 3','6 2','5 2'
+Once it it’s his initial cell ‘5 2’ it will
+start with the same pattern again.
+(DRLRRLLRLU)
+This solution is correct, since it will
+collect the coin, however there would be many
+other correct solutions.
