@@ -72,6 +72,9 @@ def watch(fake, tmp, timeout=5, **kw):
     w = golive.Watcher(SLUG, fake, Path(tmp) / "log.jsonl", interval_fn=FAST, quiet=True, **kw)
     first = w.run_until_live(timeout)
     w.stop.set()
+    w.poke.set()
+    for th in w.threads:
+        th.join(timeout=2)
     return w, first
 
 
@@ -202,7 +205,7 @@ if __name__ == "__main__":
     t0, failed = time.time(), 0
     for name, fn in list(globals().items()):
         if name.startswith("t_") and callable(fn):
-            with tempfile.TemporaryDirectory() as tmp:
+            with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
                 try:
                     fn(tmp)
                     print(f"ok   {name}")
