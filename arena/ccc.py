@@ -1124,6 +1124,8 @@ def cmd_go(a):
     level_now = ((sc or {}).get("gameScore") or {}).get("level")
     if at or (level_now or 0) > n:
         print(f"LEVEL {n} PASSED  (unlocked level {level_now}/{total})  [{time.time() - T0:.1f}s]")
+        if not ctx[1].get("offlineGame") and todo:
+            log_timing(name, "pass", n)
         if total and n >= total:
             print("ALL LEVELS DONE.")
         elif (level_dir(name, n + 1) / "map.json").exists():
