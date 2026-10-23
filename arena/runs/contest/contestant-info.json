@@ -1,0 +1,19 @@
+{
+  "score": {
+    "gameScore": {
+      "timeMs": 0,
+      "level": 1,
+      "score": 0,
+      "displayScore": "-"
+    },
+    "state": {
+      "level1": {
+        "kind": "levels",
+        "passedFiles": {
+          "1-small": null,
+          "2-large": null
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "id": "ccc-2026.10-classic-nanofabricator",
+  "edition": "42",
+  "name": "Nanofabricator",
+  "tags": [
+    "CCC42",
+    "classic",
+    "levels",
+    "optimisation"
+  ],
+  "description": "Program a microscopic machine that uses lasers on a hexagonal grid to fabricate specific patterns",
+  "levelsInfo": {
+    "count": 6,
+    "levels": [
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": false,
+        "sandbox": false,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-large"
+        ],
+        "unscoredFiles": [
+          "0-example"
+        ]
+      },
+      {
+        "optimization": true,
+        "sandbox": true,
+        "scoreDirection": "LOWER_IS_BETTER",
+        "inputFiles": [
+          "0-example",
+          "1-small",
+          "2-medium",
+          "3-large",
+          "4-enormous"
+        ],
+        "unscoredFiles": [
+          "0-example",
+          "1-small"
+        ]
+      }
+    ]
+  },
+  "dev": false,
+  "versions": {
+    "base": {
+      "version": "0.36.0",
+      "commit": "48090eb3"
+    },
+    "game": {
+      "version": "1.0.0-rc20",
+      "commit": "cc7186c3"
+    }
+  }
+}
