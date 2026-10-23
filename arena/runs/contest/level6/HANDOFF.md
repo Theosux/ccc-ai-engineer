@@ -4,7 +4,7 @@
 - Levels 1-6 all PASSED (L1-L5 by ~16:09, L6 baseline ~16:24). Run name `contest`, CLI `python arena/ccc.py`.
 - Level 6 is an optimization level: rank = level, then the total line count of level 6 (lower is better) = the sum over
   2-medium + 3-large + 4-enormous. **The server keeps the LATEST submission, not the best**, so only ever submit merged best files.
-- Last submitted: medium 6763, large 8063, enormous 9187 (total about 24.0k). Leaderboard top at 16:45 was 15531 (many at 16614).
+- **Last submitted (final before reset): medium 6708, large 7473, enormous 9187 = 23368.**
   Leaderboard: `game_req('GET','/api/game-engine/leaderboard?scope=WORLD',ctx)` (see the snippet in this session: `import ccc; ctx=ccc.active_run()`).
 - Noop lines DO count (tested).
 
@@ -23,3 +23,11 @@
 ## Ideas not finished
 - Larger tbeam W on large/enormous (W=10 large and W=3 enormous were stopped before finishing).
 - Enormous/large are mazes: row writes allow only 4 holes per tick; creation by crossings plus beam looks better.
+
+## Resume next (biggest expected gains, from the agents' final reports)
+1. Opus beam on enormous, which was never run (expected -20..30%): `cd arena/runs/contest/level6 && ../../../.tools/pypy/pypy3.exe opt_run.py 4-enormous b4 25 1 opt_beam`
+2. Finish the large beam (stopped at 120/190): `../../../.tools/pypy/pypy3.exe opt_run.py 3-large b4 25 1 opt_beam`
+3. Re-merge with `pypy3 opt_final.py <fid>` or `python merge.py <fid> best/... cand/*_<fid>.txt`, then submit.
+4. Medium: the W=32 pass of med_tb2.py (masked-board tbeam) over all 210 patterns (it stopped at 31). See med_NOTES.md.
+5. Untested: allow temporary skirting M with a penalty (opt_macro2.py / opt_beam2.py).
+All agents are stopped and no background jobs are running.
