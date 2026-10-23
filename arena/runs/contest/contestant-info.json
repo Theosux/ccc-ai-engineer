@@ -1,8 +1,8 @@
 {
   "score": {
     "gameScore": {
-      "timeMs": 1792760467924,
-      "level": 3,
+      "timeMs": 1792760486911,
+      "level": 4,
       "score": 0,
       "displayScore": "-"
     },
@@ -60,6 +60,32 @@
         }
       },
       "level3": {
+        "kind": "levels",
+        "passedAt": 1792760486911,
+        "submissions": [
+          {
+            "fileId": "1-small",
+            "submittedAt": 1792760486115,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "2-large",
+            "submittedAt": 1792760486911,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          }
+        ],
+        "passedFiles": {
+          "1-small": 1792760486115,
+          "2-large": 1792760486911
+        }
+      },
+      "level4": {
         "kind": "levels",
         "passedFiles": {
           "1-small": null,
