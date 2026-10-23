@@ -157,3 +157,18 @@ The desktop prompt is `C:\Users\Teo\Desktop\ccc-data-ai-prompt.txt`. Checklist: 
 - Teo's account is on DATA/AI team "The Posers" (3/3, CREIC Cluj) as well as on Krateo.
 
 **Next:** Teo sends the GitHub invites to Dobrin + Iustin. The CLASSIC plan is unchanged: Thursday dress rehearsal, preflight, Friday runbook.
+
+## 2026-10-23: Session 8: CONTEST DAY (42nd CLASSIC, Nanofabricator)
+**Result:** levels 1-6 all passed. golive fired at 16:00:12, and L1-L5 took about 9 minutes. L6 is an optimization level (the score is the total number of program lines across 3 files, lower is better). Our L6 score went from a baseline of 123551 to about 24.0k by about 17:20. The leaderboard top was about 15.5k.
+
+**L6 methods** (details in `arena/runs/contest/level6/HANDOFF.md`):
+- **Row-write sweep:** emitters 1 and 4 on the same row write the whole row in one tick, and extra emitters crossing that row cut holes.
+- **Tick-level beam search:** a beam over all 4096 action combinations per tick, with bitmask simulation.
+- **Helper agents:** an Opus agent (high effort) for large/enormous, a Sonnet agent for medium, and a Sonnet agent for research, which found no public write-up.
+- **Merging:** each pattern keeps the shortest program that verifies.
+
+**Lessons:**
+- Check the leaderboard as soon as the last level passes. We optimized for 20 minutes without knowing that we were 2.5× behind.
+- The server keeps the LATEST optimization submission, not the best, so submit only merged best files.
+- No-op lines count toward the score.
+- Helper agents that write `cand/` files, while one coordinator verifies, merges and submits, worked well.

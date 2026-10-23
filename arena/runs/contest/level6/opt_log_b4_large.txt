@@ -1,0 +1,14 @@
+10/190 total 8530 best 8989 t=62s
+20/190 total 8324 best 8989 t=81s
+30/190 total 8191 best 8989 t=100s
+40/190 total 8063 best 8989 t=117s
+50/190 total 7951 best 8989 t=132s
+60/190 total 7880 best 8989 t=144s
+70/190 total 7809 best 8989 t=153s
+80/190 total 7700 best 8989 t=160s
+90/190 total 7636 best 8989 t=169s
+100/190 total 7577 best 8989 t=178s
+110/190 total 7536 best 8989 t=183s
+120/190 total 7507 best 8989 t=188s
+130/190 total 7487 best 8989 t=192s
+140/190 total 7473 best 8989 t=196s

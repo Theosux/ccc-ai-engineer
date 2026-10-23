@@ -14,3 +14,5 @@
 {"t": 1792763872.8759136, "results": {"3-large": {"correct": true, "bad": []}}}
 {"t": 1792763997.722357, "results": {"3-large": {"correct": true, "bad": []}}}
 {"t": 1792764017.85401, "results": {"4-enormous": {"correct": true, "bad": []}}}
+{"t": 1792764166.452972, "results": {"2-medium": {"correct": true, "bad": []}}}
+{"t": 1792764359.6850085, "results": {"3-large": {"correct": true, "bad": []}}}
