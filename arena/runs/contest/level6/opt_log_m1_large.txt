@@ -1,0 +1,20 @@
+10/190 total 9474 best 9797 t=16s
+20/190 total 9378 best 9797 t=21s
+30/190 total 9279 best 9797 t=25s
+40/190 total 9223 best 9797 t=29s
+50/190 total 9174 best 9797 t=34s
+60/190 total 9152 best 9797 t=37s
+70/190 total 9135 best 9797 t=40s
+80/190 total 9084 best 9797 t=42s
+90/190 total 9076 best 9797 t=44s
+100/190 total 9043 best 9797 t=46s
+110/190 total 9039 best 9797 t=47s
+120/190 total 9030 best 9797 t=48s
+130/190 total 9028 best 9797 t=50s
+140/190 total 9025 best 9797 t=51s
+150/190 total 9024 best 9797 t=52s
+160/190 total 9022 best 9797 t=53s
+170/190 total 9014 best 9797 t=53s
+180/190 total 9011 best 9797 t=54s
+190/190 total 9011 best 9797 t=54s
+FINAL 3-large m1 total 9011 best 9797 True score 9011

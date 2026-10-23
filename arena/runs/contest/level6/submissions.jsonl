@@ -11,3 +11,6 @@
 {"t": 1792763505.5547636, "results": {"2-medium": {"correct": true, "bad": []}}}
 {"t": 1792763587.7207928, "results": {"2-medium": {"correct": true, "bad": []}}}
 {"t": 1792763798.9712565, "results": {"4-enormous": {"correct": true, "bad": []}}}
+{"t": 1792763872.8759136, "results": {"3-large": {"correct": true, "bad": []}}}
+{"t": 1792763997.722357, "results": {"3-large": {"correct": true, "bad": []}}}
+{"t": 1792764017.85401, "results": {"4-enormous": {"correct": true, "bad": []}}}

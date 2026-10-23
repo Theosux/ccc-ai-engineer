@@ -2,3 +2,14 @@
 20/140 total 10189 best 11459 t=32s
 30/140 total 9885 best 11459 t=40s
 40/140 total 9651 best 11459 t=48s
+50/140 total 9545 best 11459 t=56s
+60/140 total 9525 best 11459 t=63s
+70/140 total 9409 best 11459 t=68s
+80/140 total 9356 best 11459 t=72s
+90/140 total 9333 best 11459 t=76s
+100/140 total 9276 best 11459 t=81s
+110/140 total 9263 best 11459 t=85s
+120/140 total 9237 best 11459 t=88s
+130/140 total 9220 best 11459 t=90s
+140/140 total 9188 best 11459 t=92s
+FINAL 4-enormous m1 total 9188 best 11459 True score 9188
