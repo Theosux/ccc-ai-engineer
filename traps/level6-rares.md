@@ -1,14 +1,17 @@
-# Level 6 Traps - rares
+# Level 6 Traps — rares (updated)
 
-- **Exact Count Requirement**: The statement says "how many times each must be submitted" (line 15). This implies `acc == cnt`, not `acc >= cnt`.
-- **Score is Total Lines**: "Your score is the total number of instruction lines in your programs" (line 18). This is a global optimization problem.
-- **Matter Persistence**: Matter persists across ticks. A cell created as matter in tick $T$ stays matter until hit by 3+ rays. This can cause "legacy matter" to violate the skirt rule of later rows.
-- **The Skirt Rule**: A pattern is only accepted if all pattern cells are matter AND no cells in the "skirt" (neighbors of the pattern that aren't in the pattern) are matter.
-- **Pattern Consumption**: When a pattern is accepted, the pattern cells are removed from the matter set (`matter -= pcells`). They must be re-created for the next instance.
-- **Simultaneous Execution**: Movement (`F/B`) and toggling (`T`) happen before the beam fires. The beam always originates from the updated position.
-- **Acceptance Timing**: The pattern check happens at the end of the tick. If a pattern and a skirt violation are created in the same line, the pattern is NOT accepted.
-- **Output Formatting**: "Mandatory empty line between programs" (line 36). Lines within a program must have exactly 6 space-separated instructions.
-- **Input Scale**: `in_level-6_4-enormous.txt` has $r$ up to 12 and counts up to 140. Efficiency per pattern is critical.
-- **Ring Modulo**: Emitters move on a ring of size $6r$. Distances must be calculated using $\min((B-A)\%6r, (A-B)\%6r)$.
-- **Ray Overlap**: Emitters on the ring can have rays that overlap. Punching a hole in a skirt cell might accidentally destroy a pattern cell.
-- **Instruction Set**: Only `F`, `B`, and `T` are allowed.
+- **Exact Count Enforced**: "how many times each must be submitted" (line 15) + "creates the pattern the required number of times" (line 16). Our `check()` enforces `acc == cnt`. Extra acceptances waste ticks AND might be rejected by the judge. Programs must produce **exactly** `cnt` acceptances, no more.
+- **Score = Total Lines Globally**: "Your score is the total number of instruction lines in your programs" (line 18). Noop lines (`- - - - - -`) COUNT toward the score. Every saved line matters, even padding.
+- **Matter Persistence Across Ticks**: Matter created in earlier ticks persists forever unless hit by ≥3 rays. "Legacy" matter in skirt cells from previous rows will block pattern acceptance. Must erase or avoid creating junk in skirt cells.
+- **The Skirt Rule is Strict**: A pattern is accepted ONLY when `pcells ⊆ matter AND skirt ∩ matter = ∅` (simulate:92). The skirt = all interior neighbors of pattern cells that aren't themselves pattern cells. One stray matter cell in the skirt kills acceptance.
+- **O Cells ≠ Skirt Cells**: The `O` markers in the input pattern grid are for visualization. They include interior cells near the pattern that are NOT neighbors of M cells. The actual skirt is computed independently. Relying on `O` positions instead of computing neighbors would be wrong.
+- **Tick Ordering: Move → Beam → Update → Check**: Each tick: (1) all 6 emitters move/toggle simultaneously, (2) all active emitters fire rays, (3) cells with count=2 become matter / count≥3 become empty / count≤1 unchanged, (4) pattern check. A skirt violation and pattern creation in the same tick = pattern NOT accepted.
+- **Pattern Consumption**: On acceptance, `matter -= pcells` (simulate:93). Pattern cells are removed from the matter set. They must be fully re-created for the next acceptance. This is the core of the cnt>1 difficulty.
+- **Ring Modulo Distances**: Emitters move on a ring of size `6r`. Shortest distance = `min((B-A)%6r, (A-B)%6r)`. Off-by-one in ring arithmetic silently produces wrong emitter positions → wrong beams → failed rows.
+- **Ray Overlap / Collateral Damage**: Moving an emitter to punch a hole (3+ rays) in a skirt cell can accidentally hit 3+ rays on a pattern cell in an already-written row, destroying it. The `protected_rows` logic in `check_ticks` guards against this but only for rows already written.
+- **Full-Height Patterns**: 49/210 medium, 19/190 large, 15/140 enormous patterns span the full board height (rows 1 to 2r−1). For these, there are NO safe rows to dump junk matter — every row is either pattern or skirt. Extra care needed.
+- **Rows With >4 Skirt Holes**: When a row has >4 skirt cells, only 4 of the 4 extra emitters can punch holes in one tick. The remaining holes need separate erase operations (3+ ray hits). Enormous input has up to 16 holes per row → multiple erase ticks per row.
+- **Mirror Variant Bug (Performance)**: `best_sweep2` generates mirror+rotation variants (12 total) but `relabel()` only handles rotation. Mirror solutions fail `simulate()` verification and are silently discarded. ~50% of beam search budget is wasted on variants that can never pass.
+- **Output Format**: "Mandatory empty line between programs" (line 36). Each line has exactly 6 space-separated instructions from {F, B, T, -}. Our `check()` validates this. Missing blank lines between programs → parse failure.
+- **Input Scale**: enormous has 140 patterns, r=9–12, cnt=1–2. Medium has 210 patterns, r=3–5, cnt=1–19 (high cnt = high repetition cost). Large has 190 patterns, r=6–8, cnt=1–6.
+- **Leaderboard Gap**: Top teams score ~15.5k vs our ~21k. Sum of (rows_spanned × cnt) across all patterns = 18182 > 16614, so top teams must be writing >1 row per tick on average or using fundamentally different approaches (column-based, diagonal sweeps, or static configs for small patterns).
