@@ -171,7 +171,15 @@ def solve_one(r, pat, cnt):
     P = Prog(geo)
     for _ in range(cnt):
         plan_baseline(geo, pcells, P)
-    return P.lines
+    best = P.lines
+    try:
+        import sweep
+        s = sweep.best_sweep(geo, pcells, cnt)
+        if s is not None and len(s) < len(best):
+            best = s
+    except Exception as ex:  # keep baseline on any planner bug
+        sys.stderr.write(f"sweep error: {ex!r}\n")
+    return best
 
 
 def check(data, out):
