@@ -149,6 +149,8 @@ def plan_baseline(geo, pcells, P):
         seq1 += P.moves(1, e1)
         seq1.append("T")
         mv3 = P.moves(3, s3[0])
+        if not P.act[3]:
+            mv3 = ["T"] + mv3
         L = max(len(seq1), len(mv3))
         seq1 = seq1[:-1] + ["-"] * (L - len(seq1)) + ["T"]
         seq3 = ["-"] * (L - len(mv3)) + mv3

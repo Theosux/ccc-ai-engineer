@@ -1,10 +1,10 @@
 {
   "score": {
     "gameScore": {
-      "timeMs": 1792760533032,
-      "level": 5,
-      "score": 0,
-      "displayScore": "-"
+      "timeMs": 1792760821957,
+      "level": 6,
+      "score": -123551,
+      "displayScore": "123551"
     },
     "state": {
       "level1": {
@@ -113,9 +113,71 @@
       },
       "level5": {
         "kind": "levels",
+        "passedAt": 1792760564477,
+        "submissions": [
+          {
+            "fileId": "1-small",
+            "submittedAt": 1792760564330,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "2-large",
+            "submittedAt": 1792760564477,
+            "result": {
+              "correct": true
+            },
+            "submittedBy": "teosux"
+          }
+        ],
         "passedFiles": {
-          "1-small": null,
-          "2-large": null
+          "1-small": 1792760564330,
+          "2-large": 1792760564477
+        }
+      },
+      "level6": {
+        "kind": "optimization",
+        "lastImprovedAt": 1792760821957,
+        "submissions": [
+          {
+            "fileId": "4-enormous",
+            "submittedAt": 1792760819615,
+            "result": {
+              "correct": true
+            },
+            "optimizationScore": -31369,
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "3-large",
+            "submittedAt": 1792760820929,
+            "result": {
+              "correct": true
+            },
+            "optimizationScore": -39924,
+            "submittedBy": "teosux"
+          },
+          {
+            "fileId": "2-medium",
+            "submittedAt": 1792760821957,
+            "result": {
+              "correct": true
+            },
+            "optimizationScore": -52258,
+            "submittedBy": "teosux"
+          }
+        ],
+        "scoresPerFile": {
+          "2-medium": -52258,
+          "3-large": -39924,
+          "4-enormous": -31369
+        },
+        "passedFiles": {
+          "2-medium": 1792760821957,
+          "3-large": 1792760820929,
+          "4-enormous": 1792760819615
         }
       }
     }
