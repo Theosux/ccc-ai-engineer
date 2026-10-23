@@ -1,0 +1,117 @@
+[p1]
+LEVEL 4
+
+[p2]
+SIX ON THE RAIL
+FAB-42 > program loaded: night_shift_FINAL_v3_really_final.fab
+FAB-42 > RUN? [y/N] _
+FAB-42 is finally complete: six emitters, one for each
+direction, riding on a rail along the border.
+Each emitter can move along the border, toggle on
+and off or just sit there quietly.
+The night shift left a stack of programs. No
+comments, no notes, and no idea what any of them
+will leave on the board.
+Before anyone presses RUN on the real machine,
+simulate each program and find out.
+
+[p3]
+The nanofabricator now has 6 emitters, one for each direction.
+▪ Emitters always start in their corner
+▪ Emitters can be moved along the border, but not rotated
+▪ Multiple emitters can be in the same place at the same time
+▪ Emitters can be active or inactive
+▪ Active emitters produce laser beams
+▪ Emitters are inactive at the start
+▪ If they are activated, they stay active until they are deactivated
+Your task is to simulate a program that controls the emitters.
+▪ A program is a list of instruction lines
+▪ An instruction line has 6 instructions, one for each emitter
+▪ Instructions are explained on the next page
+Initial emitter positions
+F T - T B -
+
+[p4]
+Each tick, one instruction line is
+processed
+1. All 6 instructions are executed simultaneously
+2. Matter is created and destroyed
+▪ An example is provided on the next page
+▪ You are given a list of radii and programs
+▪ At the start of each program the board is empty
+▪ Simulate each program
+Instruction Description
+F move emitter one cell in clockwise direction
+B move emitter one cell in counterclockwise direction
+T
+toggle emitter state:
+activate if it was inactive,
+deactivate if it was active
+- no operation
+
+[p5]
+---2-*-*-3---
+--*-O-O-O-*--
+-*-O-M-M-O-4-
+1-O-M-O-O-M-*
+-*-O-M-M-O-*-
+--6-O-O-O-*--
+---*-*-5-*---
+Matter is created
+and destroyed
+Tick N+1
+---2-*-*-3---
+--*-O-O-O-*--
+-*-O-O-O-O-4-
+1-O-M-M-O-M-*
+-*-O-M-M-O-*-
+--6-O-O-O-*--
+---*-*-5-*---
+F T - T B -
+is executed
+---2-*-*-3---
+--*-O-O-O-*--
+-*-O-O-O-O-4-
+*-O-M-M-O-M-*
+-1-O-M-M-O-*-
+--6-O-O-O-*--
+---*-5-*-*---
+Example state
+Tick N
+
+[p6]
+Output
+Name Description Example repeated N times
+Board The character representation of the board
+You can print the border with emitters or without. Both will be judged as correct.
+--*-*-*--
+-*-M-M-*-
+*-M-O-O-*
+-*-M-M-*-
+--*-*-*--
+---*-*-*-*---
+--*-O-O-O-*--
+Mandatory empty line between boards ...
+Input
+Name Description Example
+N Number of programs
+3
+2
+3
+F T T F - -
+T - - T - -
+T B - B T -
+3
+6
+B B B B B B
+- - - T T -
+- - T - T -
+- T - T - -
+T - T - - -
+...
+repeated N times
+R The radius of the board
+L Number of instruction lines
+Program A list of L instruction lines
+Each line contains 6 instructions, separated by spaces
+Empty line between programs
