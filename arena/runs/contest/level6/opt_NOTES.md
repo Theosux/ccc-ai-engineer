@@ -21,3 +21,12 @@ Planner over TARGET configurations (pos + active for all 6 emitters), not single
 - `pypy3 opt_run.py <fid> m1 40 1` (opt_macro greedy, fast: ~2 min per file)
 - `pypy3 opt_final.py <fid>` -> cand/opt_final_<fid>.txt = per-pattern min of best/ + every cand/opt_*, verified.
 - opt_run.py also folds in earlier cand/opt_* files, so later runs only add improvements.
+
+## main agent (17:10-17:55)
+- main_run.py = opt_run.py + folds ALL cand/*_<fid>.txt, procs arg (argv6), skip arg (argv7), MAIN_KW env json passed to plan()
+  (e.g. MAIN_KW='{"W":24}'), writes cand/main_<var>_<fid>.txt after every pattern, resume via main_done_<var>_<fid>.txt.
+- main_final.py = per-pattern min of best/ + all cand/* (verified) -> cand/main_final_<fid>.txt.
+- Results: opt_beam W4 enormous 9187->7160 (3 min); W12 enormous ->6417 (10 min), large W12 7432->6664 (6 min),
+  medium opt_beam W8 6708->6616 (1 min). Beam width is the lever: W24 started (enormous 20/140 gave -137) but was stopped.
+- med_tb2 W=32 over the 26 largest medium patterns: 0 improvements -> not worth it.
+- Next: MAIN_KW='{"W":24}' (or 48) pypy3 main_run.py <fid> b24 25 3 opt_beam 5  (resumes from main_done_b24_<fid>.txt).

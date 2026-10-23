@@ -22,4 +22,7 @@
 - Merge: `python ana_merge.py <fid> line` -> cand/ana_line_<fid>.txt = best/ + all ana_parts improvements, verified.
 
 ## Results (gains vs best/ at merge time)
-- medium: 6648 -> 6582, large: 6664 -> 6604, enormous: about -28 (already absorbed into best/).
+- ana_line2 sweep: medium -66 (6648 -> 6582), large -60 (6664 -> 6604), enormous -28. ana_line3: large -39, enormous -6.
+  All of these were absorbed into best/ by the coordinator. The final re-merge against best/ (medium 6550, large 6604,
+  enormous 6246) found no further gains; the last medium/large reruns were killed during wrap-up.
+- Candidate files: cand/ana_line_<fid>.txt (= best/ + ana improvements); raw programs in cand/ana_parts/*.jsonl.

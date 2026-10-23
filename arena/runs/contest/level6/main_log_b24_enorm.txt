@@ -1,2 +1,51 @@
-10/140 total 6335 best 6389 t=347s
-20/140 total 6252 best 6389 t=510s
+jobs 125
+1/125 total 6238 best 6246 t=64s
+2/125 total 6238 best 6246 t=78s
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\multiprocessing\spawn.py", line 108, in spawn_main
+    source_process = _winapi.OpenProcess(
+                             ^^^^^^^^^^^
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 317, in OpenProcess
+    RaiseFromWindowsErr(0)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 51, in RaiseFromWindowsErr
+    raise_WinError(type)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 36, in raise_WinError
+    raise excep
+OSError: [WinError 87] The parameter is incorrect
+  File "<string>", line 1, in <module>
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\multiprocessing\spawn.py", line 108, in spawn_main
+    source_process = _winapi.OpenProcess(
+                             ^^^^^^^^^^^
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 317, in OpenProcess
+    RaiseFromWindowsErr(0)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 51, in RaiseFromWindowsErr
+    raise_WinError(type)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 36, in raise_WinError
+    raise excep
+OSError: [WinError 87] The parameter is incorrect
+  File "<string>", line 1, in <module>
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\multiprocessing\spawn.py", line 108, in spawn_main
+    source_process = _winapi.OpenProcess(
+                             ^^^^^^^^^^^
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 317, in OpenProcess
+    RaiseFromWindowsErr(0)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 51, in RaiseFromWindowsErr
+    raise_WinError(type)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 36, in raise_WinError
+    raise excep
+OSError: [WinError 87] The parameter is incorrect
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\multiprocessing\spawn.py", line 108, in spawn_main
+    source_process = _winapi.OpenProcess(
+                             ^^^^^^^^^^^
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 317, in OpenProcess
+    RaiseFromWindowsErr(0)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 51, in RaiseFromWindowsErr
+    raise_WinError(type)
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\.tools\pypy\Lib\_winapi.py", line 36, in raise_WinError
+    raise excep
+OSError: [WinError 87] The parameter is incorrect

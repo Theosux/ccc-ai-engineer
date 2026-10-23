@@ -9,7 +9,7 @@ best = [b.strip().split("\n") for b in open(f"best/out_level-6_{fid}.txt").read(
 os.makedirs("cand/ana_parts", exist_ok=True)
 out = open(f"cand/ana_parts/{tag}_{fid}_{k}.jsonl", "a")
 for i, (r, pat, cnt) in enumerate(pats):
-    if i % K != k:
+    if i % K != k or i < int(os.environ.get("ANA_MIN", "0")):
         continue
     p = mod.solve_pat(r, pat, cnt, W=W, maxwait=mw)
     if p is not None and len(p) < len(best[i]):

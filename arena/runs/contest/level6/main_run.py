@@ -60,13 +60,18 @@ if __name__ == "__main__":
     t0 = time.time()
     imp = 0
     out = here / "cand" / f"main_{var}_{fid}.txt"
+    donef = here / f"main_done_{var}_{fid}.txt"
+    done = set(int(x) for x in donef.read_text().split()) if donef.exists() else set()
+    jobs = [j for j in jobs if j[0] not in done]
+    print("jobs", len(jobs), flush=True)
     with mp.Pool(int(sys.argv[6]) if len(sys.argv) > 6 else 5) as pool:
         for k, (i, l) in enumerate(pool.imap_unordered(work, jobs)):
+            with open(donef, "a") as fh: fh.write(f"{i} ")
             if l is not None and len(l) < len(res[i]):
                 imp += len(res[i]) - len(l)
                 res[i] = l
                 src[i] = var
-            if k % 10 == 9:
+            if True:
                 out.write_text("\n\n".join("\n".join(b) for b in res) + "\n")
                 print(f"{k+1}/{len(jobs)} total {sum(map(len, res))} best {sum(map(len, best))} t={time.time()-t0:.0f}s", flush=True)
     out.write_text("\n\n".join("\n".join(b) for b in res) + "\n")
