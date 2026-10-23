@@ -290,6 +290,255 @@ class Planner:
         return None
 
 
+def _plan_op_multi(self, st, cands, goal, protected_rows, n, slack=1):
+    m = self.g.m
+    res = []
+    bestL = None
+    for lb, tp, ta in cands:
+        if bestL is not None and lb > bestL + slack:
+            break
+        if len(res) >= n and lb > bestL:
+            break
+        found = None
+        for L in range(max(1, lb), max(1, lb) + 5):
+            if bestL is not None and L > bestL + slack:
+                break
+            for s1, s4, sx in self.STRATS:
+                plans = {}
+                okk = True
+                for e in range(1, 7):
+                    mode = s1 if e == 1 else s4 if e == 4 else sx
+                    pl = emitter_plan(st.pos[e], st.act[e], tp[e], ta[e], mode, L, m)
+                    if pl is None and mode == "spread":
+                        pl = emitter_plan(st.pos[e], st.act[e], tp[e], ta[e], "right", L, m)
+                    if pl is None:
+                        okk = False
+                        break
+                    plans[e] = pl
+                if not okk:
+                    continue
+                lines = [[plans[e][i] for e in range(1, 7)] for i in range(L)]
+                if self.check_ticks(st, lines, goal, protected_rows) is not None:
+                    found = lines
+                    break
+            if found:
+                break
+        if found:
+            res.append(found)
+            if bestL is None or len(found) < bestL:
+                bestL = len(found)
+    res.sort(key=len)
+    return res[:n]
+
+
+Planner.plan_op_multi = _plan_op_multi
+
+
+def _create_candidates(self, st, y, cells):
+    """Row emitter (1 or 4) alone on row y + extras crossing at `cells` (count 2 -> M)."""
+    f, g = self.f, self.g
+    m = g.m
+    out = []
+    for re in (1, 4):
+        o = 5 - re
+        for perm in itertools.permutations(EXTRAS, len(cells)):
+            assign = dict(zip(perm, cells))
+            rest = [e for e in EXTRAS if e not in assign]
+            opts = [[(o, "keep"), (o, "off")] if st.act[o] else [(o, "keep")]]
+            for e in rest:
+                opts.append([(e, "keep"), (e, "off")] if st.act[e] else [(e, "keep")])
+            for combo in itertools.product(*opts):
+                tp = st.pos[:]
+                ta = st.act[:]
+                tp[re] = f.L[y] if re == 1 else f.R[y]; ta[re] = True
+                for e, c in assign.items():
+                    tp[e] = f.src[e][c]; ta[e] = True
+                for e, op in combo:
+                    if op == "off":
+                        ta[e] = False
+                lb = 0
+                for e in range(1, 7):
+                    dd, _ = rdist(st.pos[e], tp[e], m)
+                    lb = max(lb, dd + (1 if st.act[e] != ta[e] else 0))
+                out.append((lb, tp, ta))
+    out.sort(key=lambda t: t[0])
+    return out
+
+
+Planner.create_candidates = _create_candidates
+
+
+def create_mode(f, y):
+    return len(f.srow.get(y, ())) > 4 and len(f.prow.get(y, ())) <= CREATE_MAX
+
+
+CREATE_MAX = 8
+
+BEAM_K = 6
+BEAM_CHILD = 3
+
+
+class Node:
+    __slots__ = ("st", "out", "acc")
+
+    def __init__(self, st, out, acc):
+        self.st = st
+        self.out = out
+        self.acc = acc
+
+
+def plan_pattern_beam(geo, pcells, cnt, K=None, C=None):
+    K = K or BEAM_K
+    C = C or BEAM_CHILD
+    f = Frame(geo, pcells)
+    P = Planner(f)
+    r = geo.r
+    rows = list(range(f.top, f.bot + 1))
+    allrows = set(range(1, 2 * r))
+    crows = {y for y in rows if create_mode(f, y)}
+    outside = (allrows - set(rows)) | crows
+    skirt = f.skirt
+    pc = f.p
+
+    def create_row(ch, y, prot):
+        """Greedy: create remaining pattern cells of row y. Returns 'fin', 'ok' or 'fail'."""
+        while True:
+            rem = sorted((c for c in f.prow.get(y, ()) if c not in ch.st.board), key=lambda c: c[1])
+            if not rem:
+                return "ok"
+            k = min(4, len(rem))
+            subs = list(itertools.combinations(rem, k))
+            if len(subs) > 6:
+                subs = [tuple(rem[i:i + k]) for i in range(len(rem) - k + 1)]
+            bestl = None
+            for sub in subs:
+                cells = list(sub)
+                goal = (lambda cs: (lambda cnt: all(cnt.get(c, 0) == 2 for c in cs)))(cells)
+                for lines in P.plan_op_multi(ch.st, P.create_candidates(ch.st, y, cells), goal, prot, 1):
+                    if bestl is None or len(lines) < len(bestl):
+                        bestl = lines
+            if bestl is None:
+                if k == 1:
+                    return "fail"
+                # fall back to single cells
+                for c in rem:
+                    goal = (lambda cc: (lambda cnt: cnt.get(cc, 0) == 2))(c)
+                    for lines in P.plan_op_multi(ch.st, P.create_candidates(ch.st, y, [c]), goal, prot, 1):
+                        if bestl is None or len(lines) < len(bestl):
+                            bestl = lines
+                if bestl is None:
+                    return "fail"
+            if execute(ch, bestl):
+                return "fin"
+
+    def execute(node, lines):
+        st = node.st
+        for line in lines:
+            apply_line(geo, st.pos, st.act, line)
+            cnts = step_counts(geo, st.pos, st.act)
+            for c, k in cnts.items():
+                if k == 2:
+                    st.board.add(c)
+                elif k >= 3:
+                    st.board.discard(c)
+            node.out.append(" ".join(line))
+            if pc <= st.board and not (skirt & st.board):
+                st.board -= pc
+                node.acc += 1
+                return True
+        return False
+
+    def clone(node):
+        return Node(node.st.copy(), node.out[:], node.acc)
+
+    best = Node(State([0] + [(e - 1) * r for e in range(1, 7)], [False] * 7, set()), [], 0)
+    while best.acc < cnt:
+        cur = None
+        for y in range(1, 2 * r):
+            if f.L[y] == best.st.pos[1]:
+                cur = y
+        if cur is not None and abs(cur - f.bot) < abs(cur - f.top):
+            order = rows[::-1]
+        else:
+            order = rows
+        start_acc = best.acc
+        nodes = [best]
+        finished = []
+        written = set()
+        for y in order:
+            prot = outside | written
+            holes = f.srow.get(y, [])
+            children = []
+            for node in nodes:
+                st = node.st
+                if y in crows:
+                    ch = clone(node)
+                    res = create_row(ch, y, prot)
+                    if res == "fin":
+                        finished.append(ch)
+                    elif res == "ok":
+                        children.append(ch)
+                elif len(holes) <= 4:
+                    opts = P.plan_op_multi(st, P.candidates(st, y, holes), P.row_goal(y, holes), prot, C)
+                    for lines in opts:
+                        ch = clone(node)
+                        if execute(ch, lines):
+                            finished.append(ch)
+                        else:
+                            children.append(ch)
+                else:
+                    hs = sorted(holes, key=lambda c: c[1])
+                    subsets = list(itertools.combinations(range(len(hs)), 4))
+                    if len(subsets) > MAX_SUBSETS:
+                        subsets = subsets[:: max(1, len(subsets) // MAX_SUBSETS)]
+                    wopts = []
+                    for sub in subsets:
+                        H = [hs[i] for i in sub]
+                        for lines in P.plan_op_multi(st, P.candidates(st, y, H), P.row_goal(y, H), prot, 1):
+                            wopts.append((len(lines), lines, H))
+                    wopts.sort(key=lambda t: t[0])
+                    for _, lines, H in wopts[:C]:
+                        ch = clone(node)
+                        if execute(ch, lines):
+                            finished.append(ch)
+                            continue
+                        prot2 = prot | {y}
+                        rest = [c for c in hs if c not in H]
+                        ok = True
+                        fin = False
+                        while rest:
+                            eo = []
+                            for X in rest:
+                                el = P.plan_erase(ch.st, y, X, prot2)
+                                if el is not None:
+                                    eo.append((len(el), X, el))
+                            if not eo:
+                                ok = False
+                                break
+                            eo.sort(key=lambda t: t[0])
+                            _, X, el = eo[0]
+                            rest.remove(X)
+                            if execute(ch, el):
+                                fin = True
+                                break
+                        if fin:
+                            finished.append(ch)
+                        elif ok:
+                            children.append(ch)
+            written.add(y)
+            children.sort(key=lambda n: len(n.out))
+            nodes = children[:K]
+            if not nodes:
+                break
+        if not finished:
+            return None
+        finished.sort(key=lambda n: len(n.out))
+        best = finished[0]
+        if best.acc <= start_acc:
+            return None
+    return best.out
+
+
 def plan_pattern(geo, pcells, cnt):
     """Returns list of instruction lines (strings) or None."""
     f = Frame(geo, pcells)
@@ -402,6 +651,40 @@ def relabel(lines, k):
             nt[(e - k) % 6] = t[e]
         res.append(" ".join(nt))
     return res
+
+
+def best_sweep2(geo, pcells, cnt):
+    """Variant search: rotations x create thresholds with a cheap beam, then refine the best 2 with a wide beam."""
+    global CREATE_MAX
+    res = []
+    for k in range(6):
+        pc = rotate_pattern(pcells, geo.r, k)
+        for cm in (0, 4, 8, 99):
+            CREATE_MAX = cm
+            try:
+                lines = plan_pattern_beam(geo, pc, cnt, K=2, C=2)
+            except Exception:
+                lines = None
+            if lines is not None:
+                res.append((len(lines), k, cm, lines))
+    res.sort(key=lambda t: t[0])
+    best = None
+    for n, k, cm, lines in res[:2]:
+        pc = rotate_pattern(pcells, geo.r, k)
+        CREATE_MAX = cm
+        try:
+            l2 = plan_pattern_beam(geo, pc, cnt, K=6, C=3)
+        except Exception:
+            l2 = None
+        for cand in (lines, l2):
+            if cand is None:
+                continue
+            orig = relabel(cand, k)
+            if best is not None and len(orig) >= len(best):
+                continue
+            if simulate(geo, pcells, [l.split() for l in orig]) == cnt:
+                best = orig
+    return best
 
 
 def best_sweep(geo, pcells, cnt):

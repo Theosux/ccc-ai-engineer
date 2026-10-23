@@ -172,14 +172,19 @@ def solve_one(r, pat, cnt):
     for _ in range(cnt):
         plan_baseline(geo, pcells, P)
     best = P.lines
-    try:
-        import sweep
-        s = sweep.best_sweep(geo, pcells, cnt)
-        if s is not None and len(s) < len(best):
-            best = s
-    except Exception as ex:  # keep baseline on any planner bug
-        sys.stderr.write(f"sweep error: {ex!r}\n")
+    import sweep
+    for fn in (sweep.best_sweep, sweep.best_sweep2):
+        try:
+            s = fn(geo, pcells, cnt)
+            if s is not None and len(s) < len(best):
+                best = s
+        except Exception as ex:  # keep baseline on any planner bug
+            sys.stderr.write(f"sweep error: {ex!r}\n")
     return best
+
+
+def solve_case(c):
+    return "\n".join(solve_one(*c))
 
 
 def check(data, out):
@@ -209,4 +214,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3]))
+    from lib.runner import run_cases
+    run_cases(parse, solve_case, sep="\n\n")
