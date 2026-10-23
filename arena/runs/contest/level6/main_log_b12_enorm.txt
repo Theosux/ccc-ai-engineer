@@ -1,0 +1,15 @@
+10/140 total 7002 best 7160 t=140s
+20/140 total 6940 best 7160 t=228s
+30/140 total 6872 best 7160 t=298s
+40/140 total 6802 best 7160 t=354s
+50/140 total 6721 best 7160 t=437s
+60/140 total 6651 best 7160 t=467s
+70/140 total 6608 best 7160 t=493s
+80/140 total 6568 best 7160 t=509s
+90/140 total 6539 best 7160 t=529s
+100/140 total 6507 best 7160 t=544s
+110/140 total 6476 best 7160 t=570s
+120/140 total 6442 best 7160 t=580s
+130/140 total 6420 best 7160 t=592s
+140/140 total 6417 best 7160 t=599s
+FINAL 4-enormous b12 total 6417 best 7160 True score 6417

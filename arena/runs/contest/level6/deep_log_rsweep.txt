@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\runs\contest\level6\deep_rsweep_test.py", line 1, in <module>
+    import sys, time, solve, deep_rsweep
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\runs\contest\level6\deep_rsweep.py", line 495
+    global CREATE_MAX
+    ^^^^^^^^^^^^^^^^^
+SyntaxError: name 'CREATE_MAX' is assigned to before global declaration
+Traceback (most recent call last):
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\runs\contest\level6\deep_rsweep_test.py", line 1, in <module>
+    import sys, time, solve, deep_rsweep
+  File "C:\Personal\Business\mvp\AiEngineer - ccc\arena\runs\contest\level6\deep_rsweep.py", line 495
+    global CREATE_MAX
+    ^^^^^^^^^^^^^^^^^
+SyntaxError: name 'CREATE_MAX' is assigned to before global declaration

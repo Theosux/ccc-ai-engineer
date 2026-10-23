@@ -1,0 +1,22 @@
+10/210 total 6695 best 6708 t=19s
+20/210 total 6684 best 6708 t=26s
+30/210 total 6680 best 6708 t=31s
+40/210 total 6653 best 6708 t=34s
+50/210 total 6648 best 6708 t=38s
+60/210 total 6639 best 6708 t=43s
+70/210 total 6636 best 6708 t=47s
+80/210 total 6636 best 6708 t=52s
+90/210 total 6636 best 6708 t=55s
+100/210 total 6633 best 6708 t=58s
+110/210 total 6630 best 6708 t=61s
+120/210 total 6624 best 6708 t=63s
+130/210 total 6624 best 6708 t=66s
+140/210 total 6619 best 6708 t=68s
+150/210 total 6619 best 6708 t=69s
+160/210 total 6618 best 6708 t=70s
+170/210 total 6616 best 6708 t=71s
+180/210 total 6616 best 6708 t=72s
+190/210 total 6616 best 6708 t=72s
+200/210 total 6616 best 6708 t=72s
+210/210 total 6616 best 6708 t=72s
+FINAL 2-medium b8 total 6616 best 6708 True score 6616

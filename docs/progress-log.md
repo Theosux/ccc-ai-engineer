@@ -172,3 +172,25 @@ The desktop prompt is `C:\Users\Teo\Desktop\ccc-data-ai-prompt.txt`. Checklist: 
 - The server keeps the LATEST optimization submission, not the best, so submit only merged best files.
 - No-op lines count toward the score.
 - Helper agents that write `cand/` files, while one coordinator verifies, merges and submits, worked well.
+
+## 2026-10-23: Session 9: CONTEST DAY, L6 optimization with a 3-agent team (17:10–17:50)
+**Result:** the L6 score went from 23368 to **19400** (medium 6550, large 6604, enormous 6246). Every file is CORRECT on the
+server. At 17:48 the leaderboard top was 14852, and the 20th place (the last one shown) was 15190.
+
+**Setup**
+- I was the coordinator and ran 3 Opus agents:
+  - main: the pending beams from HANDOFF, `main_*`;
+  - analyst: hunting the formula behind the 15642 tie, `ana_*`, see `ana_NOTES.md`;
+  - deep-review at xhigh effort: an idea audit plus SAT/LNS experiments, `deep_*`.
+- `level6/coord.py` merges every `cand/` file per pattern and verifies it with the simulator. It submits a file only if it
+  improved by at least N lines (the server keeps the LATEST submission). It ran on an auto loop every 4 minutes.
+- A GitHub watcher looked for teammate commits. Rares's `origin/rares-traps` branch has a traps file (rule restatements, all
+  already handled by our simulator) and a sweep.py rewrite (mirror-variant fix, commit 1449d94), which was not merged.
+
+**Findings**
+- The enormous beam (opt_beam, never run before) was the biggest win: 9187 → 6246.
+- One line per tick is impossible on noisy patterns. A pair writes a whole line, but only 4 holes can be punched per tick.
+  The gap to the top teams is in noisy large/enormous patterns (126 of 140 enormous patterns have 5+ holes per line).
+- The 15596 line formula is close to the 15642 tie but is almost certainly a coincidence.
+
+**Stopped:** all agents, monitors and solver processes, at Teo's request.

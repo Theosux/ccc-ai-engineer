@@ -1,0 +1,20 @@
+10/190 total 7473 best 7473 t=23s
+20/190 total 7473 best 7473 t=31s
+30/190 total 7473 best 7473 t=45s
+40/190 total 7473 best 7473 t=59s
+50/190 total 7473 best 7473 t=69s
+60/190 total 7473 best 7473 t=77s
+70/190 total 7473 best 7473 t=84s
+80/190 total 7473 best 7473 t=91s
+90/190 total 7473 best 7473 t=97s
+100/190 total 7473 best 7473 t=102s
+110/190 total 7473 best 7473 t=106s
+120/190 total 7473 best 7473 t=110s
+130/190 total 7473 best 7473 t=114s
+140/190 total 7462 best 7473 t=117s
+150/190 total 7455 best 7473 t=119s
+160/190 total 7448 best 7473 t=121s
+170/190 total 7437 best 7473 t=122s
+180/190 total 7433 best 7473 t=122s
+190/190 total 7432 best 7473 t=122s
+FINAL 3-large b4 total 7432 best 7473 True score 7432

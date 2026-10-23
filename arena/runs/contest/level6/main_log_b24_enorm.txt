@@ -1,0 +1,2 @@
+10/140 total 6335 best 6389 t=347s
+20/140 total 6252 best 6389 t=510s

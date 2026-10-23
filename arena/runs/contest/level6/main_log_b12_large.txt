@@ -1,0 +1,20 @@
+10/190 total 7258 best 7432 t=130s
+20/190 total 7157 best 7432 t=185s
+30/190 total 7064 best 7432 t=228s
+40/190 total 6985 best 7432 t=249s
+50/190 total 6917 best 7432 t=260s
+60/190 total 6858 best 7432 t=271s
+70/190 total 6816 best 7432 t=281s
+80/190 total 6800 best 7432 t=289s
+90/190 total 6770 best 7432 t=303s
+100/190 total 6742 best 7432 t=314s
+110/190 total 6717 best 7432 t=319s
+120/190 total 6698 best 7432 t=329s
+130/190 total 6690 best 7432 t=340s
+140/190 total 6682 best 7432 t=347s
+150/190 total 6672 best 7432 t=355s
+160/190 total 6669 best 7432 t=361s
+170/190 total 6668 best 7432 t=363s
+180/190 total 6665 best 7432 t=364s
+190/190 total 6664 best 7432 t=364s
+FINAL 3-large b12 total 6664 best 7432 True score 6664

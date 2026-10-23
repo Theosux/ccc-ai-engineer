@@ -1,0 +1,15 @@
+10/140 total 8570 best 9187 t=37s
+20/140 total 8271 best 9187 t=64s
+30/140 total 8007 best 9187 t=91s
+40/140 total 7811 best 9187 t=108s
+50/140 total 7683 best 9187 t=128s
+60/140 total 7608 best 9187 t=138s
+70/140 total 7495 best 9187 t=145s
+80/140 total 7415 best 9187 t=150s
+90/140 total 7386 best 9187 t=157s
+100/140 total 7314 best 9187 t=163s
+110/140 total 7262 best 9187 t=168s
+120/140 total 7200 best 9187 t=172s
+130/140 total 7180 best 9187 t=175s
+140/140 total 7160 best 9187 t=177s
+FINAL 4-enormous b4 total 7160 best 9187 True score 7160
