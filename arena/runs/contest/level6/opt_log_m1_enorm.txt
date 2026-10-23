@@ -1,0 +1,4 @@
+10/140 total 10631 best 11459 t=22s
+20/140 total 10189 best 11459 t=32s
+30/140 total 9885 best 11459 t=40s
+40/140 total 9651 best 11459 t=48s

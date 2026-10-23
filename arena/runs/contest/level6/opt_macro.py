@@ -1,4 +1,6 @@
 # opt: macro-step greedy planner. Each macro step picks a TARGET configuration (pos+active for all 6 emitters)
+import sys
+TRACE = 0
 # by coordinate ascent maximizing (pattern gain)/(travel ticks); travel is simulated exactly.
 import random
 from solve import Geo, NB, pattern_cells, simulate
@@ -313,6 +315,7 @@ def plan(geo, pcells, cnt, nseed=40, topk=6, seed=1, maxlen=2000):
             return None
         _, st, seq = bestv
         lines.extend(seq)
+        if TRACE: print(len(seq), pc(st[2] & ctx.P) - before, st[3], file=sys.stderr)
     return [" ".join(ACT[a] for a in c) for c in lines]
 
 
