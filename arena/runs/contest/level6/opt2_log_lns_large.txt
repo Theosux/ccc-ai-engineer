@@ -1,0 +1,284 @@
+improved 141 187 -> 172 35
+1/190 t=36 gain=15 cand=6589 best=6604
+improved 143 211 -> 201 42
+2/190 t=42 gain=25 cand=6579 best=6604
+improved 172 148 -> 134 41
+3/190 t=83 gain=39 cand=6565 best=6604
+improved 64 186 -> 177 49
+4/190 t=85 gain=48 cand=6556 best=6604
+improved 118 117 -> 110 27
+5/190 t=112 gain=55 cand=6549 best=6604
+improved 103 122 -> 109 39
+6/190 t=122 gain=68 cand=6536 best=6604
+improved 184 114 -> 106 30
+7/190 t=142 gain=76 cand=6528 best=6604
+improved 127 113 -> 108 23
+8/190 t=145 gain=81 cand=6523 best=6604
+improved 54 93 -> 85 10
+9/190 t=152 gain=89 cand=6515 best=6604
+improved 168 85 -> 78 8
+10/190 t=153 gain=96 cand=6508 best=6604
+improved 148 81 -> 73 10
+11/190 t=162 gain=104 cand=6500 best=6604
+improved 146 75 -> 72 11
+12/190 t=164 gain=107 cand=6497 best=6604
+improved 94 78 -> 70 10
+13/190 t=172 gain=115 cand=6489 best=6604
+improved 76 75 -> 62 13
+14/190 t=177 gain=128 cand=6476 best=6604
+improved 104 75 -> 70 7
+15/190 t=179 gain=133 cand=6471 best=6604
+improved 31 70 -> 67 12
+16/190 t=189 gain=136 cand=6468 best=6604
+improved 60 69 -> 67 16
+17/190 t=195 gain=138 cand=6466 best=6468
+improved 86 70 -> 68 16
+18/190 t=205 gain=140 cand=6464 best=6468
+improved 26 64 -> 57 19
+19/190 t=214 gain=147 cand=6457 best=6468
+improved 74 67 -> 61 14
+20/190 t=218 gain=153 cand=6451 best=6468
+improved 62 66 -> 64 13
+21/190 t=227 gain=155 cand=6449 best=6468
+improved 95 64 -> 61 12
+22/190 t=239 gain=158 cand=6446 best=6468
+improved 124 63 -> 60 22
+23/190 t=240 gain=161 cand=6443 best=6468
+improved 73 60 -> 59 11
+24/190 t=251 gain=162 cand=6442 best=6468
+improved 63 61 -> 55 18
+25/190 t=257 gain=168 cand=6436 best=6468
+improved 91 59 -> 58 12
+26/190 t=264 gain=169 cand=6435 best=6468
+improved 22 59 -> 58 10
+27/190 t=267 gain=170 cand=6434 best=6468
+improved 102 60 -> 56 16
+28/190 t=280 gain=174 cand=6430 best=6468
+improved 145 58 -> 56 13
+29/190 t=280 gain=176 cand=6428 best=6468
+improved 163 56 -> 50 13
+30/190 t=293 gain=182 cand=6422 best=6468
+improved 114 55 -> 50 16
+31/190 t=295 gain=187 cand=6417 best=6468
+improved 44 51 -> 47 15
+32/190 t=308 gain=191 cand=6413 best=6468
+improved 43 53 -> 44 14
+33/190 t=309 gain=200 cand=6404 best=6468
+improved 88 53 -> 50 10
+34/190 t=317 gain=203 cand=6401 best=6468
+improved 16 51 -> 47 11
+36/190 t=329 gain=207 cand=6397 best=6468
+improved 105 52 -> 49 11
+37/190 t=330 gain=210 cand=6394 best=6468
+improved 2 51 -> 50 8
+38/190 t=337 gain=211 cand=6393 best=6468
+39/190 t=344 gain=211 cand=6393 best=6468
+improved 77 47 -> 44 15
+40/190 t=344 gain=214 cand=6390 best=6468
+improved 158 47 -> 43 6
+42/190 t=350 gain=218 cand=6386 best=6468
+improved 21 45 -> 44 5
+43/190 t=354 gain=219 cand=6385 best=6468
+improved 174 47 -> 41 5
+44/190 t=355 gain=225 cand=6379 best=6468
+improved 6 46 -> 45 4
+45/190 t=358 gain=226 cand=6378 best=6468
+improved 135 46 -> 44 4
+46/190 t=359 gain=228 cand=6376 best=6468
+improved 109 44 -> 41 4
+47/190 t=362 gain=231 cand=6373 best=6468
+improved 122 45 -> 43 4
+48/190 t=363 gain=233 cand=6371 best=6468
+improved 37 45 -> 43 6
+50/190 t=369 gain=235 cand=6369 best=6468
+improved 80 42 -> 39 8
+51/190 t=373 gain=238 cand=6366 best=6468
+improved 144 43 -> 35 9
+52/190 t=379 gain=246 cand=6358 best=6468
+improved 167 43 -> 38 9
+53/190 t=382 gain=251 cand=6353 best=6468
+improved 46 41 -> 40 6
+54/190 t=385 gain=252 cand=6352 best=6468
+improved 56 41 -> 40 6
+55/190 t=388 gain=253 cand=6351 best=6468
+improved 177 40 -> 37 7
+56/190 t=391 gain=256 cand=6348 best=6468
+improved 27 39 -> 34 8
+57/190 t=396 gain=261 cand=6343 best=6468
+improved 51 39 -> 37 7
+58/190 t=398 gain=263 cand=6341 best=6468
+improved 100 37 -> 32 10
+59/190 t=406 gain=268 cand=6336 best=6468
+improved 165 36 -> 33 9
+60/190 t=407 gain=271 cand=6333 best=6468
+improved 58 35 -> 34 6
+61/190 t=412 gain=272 cand=6332 best=6468
+improved 164 38 -> 36 6
+62/190 t=413 gain=274 cand=6330 best=6468
+improved 169 38 -> 35 7
+63/190 t=419 gain=277 cand=6327 best=6468
+improved 156 37 -> 35 5
+65/190 t=425 gain=279 cand=6325 best=6468
+improved 153 35 -> 32 6
+66/190 t=425 gain=282 cand=6322 best=6468
+improved 65 33 -> 31 6
+67/190 t=430 gain=284 cand=6320 best=6468
+improved 71 34 -> 32 6
+68/190 t=432 gain=286 cand=6318 best=6468
+improved 106 36 -> 34 6
+69/190 t=437 gain=288 cand=6316 best=6468
+improved 108 33 -> 31 6
+70/190 t=437 gain=290 cand=6314 best=6468
+improved 183 33 -> 32 6
+71/190 t=443 gain=291 cand=6313 best=6468
+improved 140 35 -> 34 7
+72/190 t=444 gain=292 cand=6312 best=6468
+improved 134 35 -> 30 7
+74/190 t=450 gain=297 cand=6307 best=6468
+improved 111 32 -> 30 5
+75/190 t=453 gain=299 cand=6305 best=6468
+improved 159 29 -> 28 4
+77/190 t=458 gain=300 cand=6304 best=6468
+improved 48 28 -> 26 6
+78/190 t=459 gain=302 cand=6302 best=6468
+improved 4 31 -> 29 4
+79/190 t=462 gain=304 cand=6300 best=6468
+improved 34 28 -> 27 4
+80/190 t=463 gain=305 cand=6299 best=6468
+improved 126 29 -> 27 4
+81/190 t=466 gain=307 cand=6297 best=6468
+improved 25 28 -> 27 4
+82/190 t=466 gain=308 cand=6296 best=6468
+improved 55 27 -> 25 4
+83/190 t=470 gain=310 cand=6294 best=6468
+improved 50 28 -> 25 4
+84/190 t=470 gain=313 cand=6291 best=6468
+improved 181 30 -> 28 4
+85/190 t=474 gain=315 cand=6289 best=6468
+improved 155 30 -> 26 6
+86/190 t=475 gain=319 cand=6285 best=6468
+improved 17 29 -> 26 4
+87/190 t=478 gain=322 cand=6282 best=6468
+improved 36 28 -> 25 4
+88/190 t=479 gain=325 cand=6279 best=6468
+improved 40 29 -> 28 3
+89/190 t=482 gain=326 cand=6278 best=6468
+90/190 t=483 gain=326 cand=6278 best=6468
+improved 12 23 -> 19 4
+92/190 t=487 gain=330 cand=6274 best=6468
+improved 90 24 -> 22 4
+93/190 t=489 gain=332 cand=6272 best=6468
+improved 185 24 -> 22 4
+94/190 t=494 gain=334 cand=6270 best=6468
+improved 107 22 -> 17 7
+95/190 t=494 gain=339 cand=6265 best=6468
+96/190 t=497 gain=339 cand=6265 best=6468
+improved 23 25 -> 22 6
+97/190 t=500 gain=342 cand=6262 best=6468
+99/190 t=503 gain=342 cand=6262 best=6468
+improved 132 24 -> 23 3
+100/190 t=504 gain=343 cand=6261 best=6468
+improved 133 21 -> 19 4
+101/190 t=507 gain=345 cand=6259 best=6468
+improved 151 23 -> 22 3
+102/190 t=507 gain=346 cand=6258 best=6468
+improved 160 25 -> 21 5
+104/190 t=511 gain=350 cand=6254 best=6468
+improved 57 25 -> 23 3
+105/190 t=513 gain=352 cand=6252 best=6468
+improved 84 22 -> 20 3
+106/190 t=514 gain=354 cand=6250 best=6468
+improved 89 23 -> 21 3
+107/190 t=516 gain=356 cand=6248 best=6468
+improved 136 24 -> 23 3
+108/190 t=516 gain=357 cand=6247 best=6468
+improved 10 21 -> 20 4
+110/190 t=520 gain=358 cand=6246 best=6468
+improved 78 22 -> 21 3
+111/190 t=522 gain=359 cand=6245 best=6468
+improved 41 23 -> 21 3
+114/190 t=527 gain=361 cand=6243 best=6468
+improved 29 22 -> 19 5
+115/190 t=528 gain=364 cand=6240 best=6468
+improved 53 22 -> 20 2
+116/190 t=529 gain=366 cand=6238 best=6468
+improved 66 23 -> 22 3
+117/190 t=530 gain=367 cand=6237 best=6468
+improved 8 20 -> 18 4
+120/190 t=534 gain=369 cand=6235 best=6468
+123/190 t=539 gain=369 cand=6235 best=6468
+improved 189 19 -> 17 3
+124/190 t=539 gain=371 cand=6233 best=6468
+improved 42 20 -> 17 3
+126/190 t=543 gain=374 cand=6230 best=6468
+improved 101 19 -> 17 2
+128/190 t=545 gain=376 cand=6228 best=6468
+improved 130 21 -> 20 2
+129/190 t=545 gain=377 cand=6227 best=6468
+improved 178 18 -> 17 2
+130/190 t=547 gain=378 cand=6226 best=6468
+132/190 t=549 gain=378 cand=6226 best=6468
+improved 179 18 -> 16 2
+135/190 t=551 gain=380 cand=6224 best=6468
+improved 7 16 -> 14 2
+136/190 t=553 gain=382 cand=6222 best=6468
+138/190 t=555 gain=382 cand=6222 best=6468
+improved 85 18 -> 17 2
+139/190 t=555 gain=383 cand=6221 best=6468
+141/190 t=557 gain=383 cand=6221 best=6468
+improved 83 17 -> 16 2
+142/190 t=559 gain=384 cand=6220 best=6468
+improved 81 16 -> 14 3
+143/190 t=560 gain=386 cand=6218 best=6468
+improved 99 13 -> 12 2
+144/190 t=561 gain=387 cand=6217 best=6468
+improved 115 15 -> 13 2
+145/190 t=562 gain=389 cand=6215 best=6468
+improved 131 13 -> 12 2
+146/190 t=563 gain=390 cand=6214 best=6468
+147/190 t=564 gain=390 cand=6214 best=6468
+improved 175 17 -> 15 3
+149/190 t=566 gain=392 cand=6212 best=6468
+150/190 t=567 gain=392 cand=6212 best=6468
+improved 30 13 -> 12 2
+151/190 t=568 gain=393 cand=6211 best=6468
+improved 112 12 -> 11 2
+152/190 t=569 gain=394 cand=6210 best=6468
+153/190 t=570 gain=394 cand=6210 best=6468
+improved 152 14 -> 12 2
+155/190 t=571 gain=396 cand=6208 best=6468
+improved 120 13 -> 10 3
+156/190 t=573 gain=399 cand=6205 best=6468
+improved 125 14 -> 13 2
+157/190 t=574 gain=400 cand=6204 best=6468
+improved 32 11 -> 10 2
+158/190 t=575 gain=401 cand=6203 best=6468
+improved 69 12 -> 10 2
+159/190 t=576 gain=403 cand=6201 best=6468
+improved 123 12 -> 10 2
+161/190 t=578 gain=405 cand=6199 best=6468
+improved 129 10 -> 9 2
+162/190 t=578 gain=406 cand=6198 best=6468
+improved 11 10 -> 8 2
+165/190 t=580 gain=408 cand=6196 best=6468
+improved 33 13 -> 12 1
+167/190 t=581 gain=409 cand=6195 best=6468
+168/190 t=582 gain=409 cand=6195 best=6468
+improved 70 9 -> 8 2
+169/190 t=583 gain=410 cand=6194 best=6468
+171/190 t=584 gain=410 cand=6194 best=6468
+improved 75 10 -> 9 2
+172/190 t=585 gain=411 cand=6193 best=6468
+174/190 t=585 gain=411 cand=6193 best=6468
+177/190 t=587 gain=411 cand=6193 best=6468
+180/190 t=588 gain=411 cand=6193 best=6468
+improved 128 7 -> 6 1
+181/190 t=588 gain=412 cand=6192 best=6468
+183/190 t=589 gain=412 cand=6192 best=6468
+improved 166 7 -> 6 1
+184/190 t=589 gain=413 cand=6191 best=6468
+186/190 t=589 gain=413 cand=6191 best=6468
+improved 121 7 -> 6 1
+189/190 t=590 gain=414 cand=6190 best=6468
+190/190 t=590 gain=414 cand=6190 best=6468
+FINAL 3-large lns cand 6190 best 6468

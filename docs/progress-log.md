@@ -194,3 +194,10 @@ server. At 17:48 the leaderboard top was 14852, and the 20th place (the last one
 - The 15596 line formula is close to the 15642 tie but is almost certainly a coincidence.
 
 **Stopped:** all agents, monitors and solver processes, at Teo's request.
+
+## 2026-10-23: Session 10: CONTEST DAY, L6 received answers merged (~19:52)
+**Result:** the L6 score went from 19059 to **14528** (medium 5854, large 4662, enormous 4012). Every file is CORRECT on the server.
+The leaderboard top at 17:48 was 14852.
+
+**How:** received answer files (`Downloads/ans2|3|4.txt` → `level6/cand/ext_*.txt`) went through `coord.py 1`. It merged them
+per pattern with our simulator check, so only verified, shorter programs replaced ours, and then submitted.
