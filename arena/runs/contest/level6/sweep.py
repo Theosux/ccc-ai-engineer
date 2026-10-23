@@ -6,6 +6,7 @@ import itertools
 from solve import Geo, DIRS, NB, pattern_cells, simulate
 
 EXTRAS = (2, 3, 5, 6)
+MAX_SUBSETS = 12
 
 
 def rot_cell(c, r):
@@ -128,8 +129,8 @@ class Planner:
         self.f = frame
         self.g = frame.geo
 
-    def check_ticks(self, st, lines, y, protected_rows):
-        """Simulate lines from state st (no mutation). Return final (pos, act, changes) if no damage and row y correct."""
+    def check_ticks(self, st, lines, goal, protected_rows):
+        """Simulate lines from state st (no mutation). True if no damage and goal(cnt) holds at the final tick."""
         g, f = self.g, self.f
         pos = st.pos[:]
         act = st.act[:]
@@ -152,22 +153,60 @@ class Planner:
                         if not newv:
                             return None
                     elif c in f.skirt:
-                        if newv:
+                        if newv and not over.get(c, c in board):
                             return None
                 over[c] = newv
-            if i == n - 1:
-                # row y must be correct
-                for c in f.prow.get(y, ()):
-                    if cnt.get(c, 0) != 2:
-                        return None
-                for c in f.srow.get(y, ()):
-                    if cnt.get(c, 0) < 3:
-                        return None
-        return pos, act, over
+            if i == n - 1 and not goal(cnt):
+                return None
+        return True
 
-    def candidates(self, st, y):
+    def row_goal(self, y, holes):
+        f = self.f
+        prow = f.prow.get(y, ())
+
+        def goal(cnt):
+            for c in prow:
+                if cnt.get(c, 0) != 2:
+                    return False
+            for c in holes:
+                if cnt.get(c, 0) < 3:
+                    return False
+            return True
+        return goal
+
+    def erase_candidates(self, st, y, X):
         f, g = self.f, self.g
-        holes = f.srow.get(y, [])
+        m = g.m
+        out = []
+        for re in (1, 4):
+            o = 5 - re
+            for d in (2, 5):
+                for a in (3, 6):
+                    others = [e for e in EXTRAS if e not in (d, a)]
+                    opts = [[(o, "keep"), (o, "off")] if st.act[o] else [(o, "keep")]]
+                    for e in others:
+                        opts.append([(e, "keep"), (e, "off")] if st.act[e] else [(e, "keep")])
+                    for combo in itertools.product(*opts):
+                        tp = st.pos[:]
+                        ta = st.act[:]
+                        tp[re] = f.L[y] if re == 1 else f.R[y]; ta[re] = True
+                        tp[d] = f.src[d][X]; ta[d] = True
+                        tp[a] = f.src[a][X]; ta[a] = True
+                        for e, op in combo:
+                            if op == "off":
+                                ta[e] = False
+                        lb = 0
+                        for e in range(1, 7):
+                            dd, _ = rdist(st.pos[e], tp[e], m)
+                            lb = max(lb, dd + (1 if st.act[e] != ta[e] else 0))
+                        out.append((lb, tp, ta))
+        out.sort(key=lambda t: t[0])
+        return out
+
+    def candidates(self, st, y, holes=None):
+        f, g = self.f, self.g
+        if holes is None:
+            holes = f.srow.get(y, [])
         if len(holes) > 4:
             return []
         m = g.m
@@ -213,15 +252,19 @@ class Planner:
         ("spread", "left", "spread"),
     ]
 
-    def plan_row(self, st, y, protected_rows):
+    def plan_row(self, st, y, protected_rows, holes=None):
+        if holes is None:
+            holes = self.f.srow.get(y, [])
+        return self.plan_op(st, self.candidates(st, y, holes), self.row_goal(y, holes), protected_rows)
+
+    def plan_erase(self, st, y, X, protected_rows):
+        return self.plan_op(st, self.erase_candidates(st, y, X), lambda cnt: cnt.get(X, 0) >= 3, protected_rows)
+
+    def plan_op(self, st, cands, goal, protected_rows):
         g = self.g
         m = g.m
-        cands = self.candidates(st, y)
         if not cands:
             return None
-        best = None
-        # try increasing L
-        maxlb = cands[-1][0]
         for L in range(max(1, cands[0][0]), max(1, cands[0][0]) + 6):
             for lb, tp, ta in cands:
                 if lb > L:
@@ -241,7 +284,7 @@ class Planner:
                     if not okk:
                         continue
                     lines = [[plans[e][i] for e in range(1, 7)] for i in range(L)]
-                    res = self.check_ticks(st, lines, y, protected_rows)
+                    res = self.check_ticks(st, lines, goal, protected_rows)
                     if res is not None:
                         return lines
         return None
@@ -275,11 +318,9 @@ def plan_pattern(geo, pcells, cnt):
             order = rows
         written = set()
         done = False
-        for y in order:
-            prot = (allrows - set(rows)) | written
-            lines = P.plan_row(st, y, prot)
-            if lines is None:
-                return None
+
+        def execute(lines):
+            nonlocal acc
             for line in lines:
                 apply_line(geo, st.pos, st.act, line)
                 cnts = step_counts(geo, st.pos, st.act)
@@ -292,10 +333,53 @@ def plan_pattern(geo, pcells, cnt):
                 if pc <= st.board and not (skirt & st.board):
                     st.board -= pc
                     acc += 1
+                    return True
+            return False
+
+        for y in order:
+            prot = (allrows - set(rows)) | written
+            holes = f.srow.get(y, [])
+            if len(holes) <= 4:
+                lines = P.plan_row(st, y, prot)
+                if lines is None:
+                    return None
+                if execute(lines):
                     done = True
                     break
-            if done:
-                break
+            else:
+                hs = sorted(holes, key=lambda c: c[1])
+                best = None
+                subsets = list(itertools.combinations(range(len(hs)), 4))
+                if len(subsets) > MAX_SUBSETS:
+                    subsets = subsets[:: max(1, len(subsets) // MAX_SUBSETS)]
+                for sub in subsets:
+                    H = [hs[i] for i in sub]
+                    lines = P.plan_row(st, y, prot, H)
+                    if lines is not None and (best is None or len(lines) < len(best[0])):
+                        best = (lines, H)
+                if best is None:
+                    return None
+                if execute(best[0]):
+                    done = True
+                    break
+                prot2 = prot | {y}
+                rest = [c for c in hs if c not in best[1]]
+                while rest:
+                    opts = []
+                    for X in rest:
+                        lines = P.plan_erase(st, y, X, prot2)
+                        if lines is not None:
+                            opts.append((len(lines), X, lines))
+                    if not opts:
+                        return None
+                    opts.sort(key=lambda t: t[0])
+                    _, X, lines = opts[0]
+                    rest.remove(X)
+                    if execute(lines):
+                        done = True
+                        break
+                if done:
+                    break
             written.add(y)
         if not done:
             return None
