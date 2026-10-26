@@ -1,4 +1,4 @@
-# Cloudflight Coding Contest Classic 2026
+# [Cloudflight Coding Contest Classic 2026](https://codingcontest.org)
 
 | Ranking | Place |
 |---|---|
