@@ -11,7 +11,7 @@ and follow it exactly. It reloads all project knowledge after a `/clear`.
 ## Project summary
 - **Goal:** win the **Cloudflight Coding Contest (CCC) #classic on 23 Oct 2026** by AI-engineering
   a fast, automated Claude Code workflow (AI/LLMs are allowed in the contest).
-- **Owner:** Teo (GitHub: Theosux). Repo: `Theosux/ccc-ai-engineer` (private until after the contest).
+- **Owner:** Teo (GitHub: Theosux). Repo: `Theosux/ccc-ai-engineer-classic` (public).
 - **Approach:** structured knowledge base in `docs/`, custom skills in `.claude/skills/`, training on
   past games in `arena/runs/`, then a battle-tested contest-day pipeline.
 - **Budget:** Teo's Claude Code usage limit — prefer efficient workflows over brute-force agent spam.
